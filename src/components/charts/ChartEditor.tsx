@@ -7,7 +7,7 @@ import { CHART_TYPES, PALETTES, type ChartConfig, type ChartRecord, type ChartTy
 import { Field, Segmented } from "@/components/ui/misc";
 import { distinctCount } from "@/lib/data/transform";
 
-const ICONS: Record<ChartType, React.ComponentType<{ className?: string }>> = {
+export const ICONS: Record<ChartType, React.ComponentType<{ className?: string }>> = {
   column: BarChart3,
   bar: BarChartHorizontal,
   stackedColumn: Layers,
@@ -266,7 +266,7 @@ export function ChartEditor({ chart, columns, rows, onChange, onClose, embedded 
   );
 }
 
-function FilterEditor({ filters, columns, rows, onChange }: { filters: Filter[]; columns: Column[]; rows: Row[]; onChange: (f: Filter[]) => void }) {
+export function FilterEditor({ filters, columns, rows, onChange }: { filters: Filter[]; columns: Column[]; rows: Row[]; onChange: (f: Filter[]) => void }) {
   const [draftCol, setDraftCol] = useState(columns[0]?.name ?? "");
   const col = columns.find((c) => c.name === draftCol);
   const values = col && col.type !== "number" ? [...new Set(rows.map((r) => String(r[col.name] ?? "")).filter(Boolean))].slice(0, 60) : [];
@@ -333,7 +333,7 @@ function FilterEditor({ filters, columns, rows, onChange }: { filters: Filter[];
   );
 }
 
-function Toggle({ label, value, onChange }: { label: string; value: boolean; onChange: (v: boolean) => void }) {
+export function Toggle({ label, value, onChange }: { label: string; value: boolean; onChange: (v: boolean) => void }) {
   return (
     <button type="button" role="switch" aria-checked={value} onClick={() => onChange(!value)} className="flex w-full items-center justify-between rounded-lg px-1 py-1.5 text-sm text-ink hover:bg-surface-2">
       {label}

@@ -9,12 +9,11 @@ import { AppShell } from "@/components/layout/AppShell";
 import { Widget } from "@/components/charts/Widget";
 import { DashboardGrid } from "@/components/charts/DashboardGrid";
 import { WidgetBuilder, type WidgetDraft } from "@/components/charts/WidgetBuilder";
-import { AskAI, suggestPrompts } from "@/components/ai/AskAI";
+import { suggestPrompts } from "@/components/ai/AskAI";
 import { DataTable } from "@/components/data/DataTable";
-import { SourcePicker, type SourceOption } from "@/components/data/SourcePicker";
+import type { SourceOption } from "@/components/data/SourcePicker";
 import type { DataDraft } from "@/components/data/DataUploader";
 import { Button } from "@/components/ui/Button";
-import { Dialog } from "@/components/ui/Dialog";
 import { Menu } from "@/components/ui/Menu";
 import { Modal } from "@/components/ui/Modal";
 import { EmptyState, PageLoader, Tooltip, Wordmark, timeAgo } from "@/components/ui/misc";
@@ -22,9 +21,9 @@ import { useToast } from "@/components/ui/Toast";
 import { api } from "@/lib/api";
 import { suggestCharts } from "@/lib/charts/suggest";
 import { DEFAULT_CONFIG, type ChartConfig, type ChartRecord, type Column, type DatasetRecord, type DatasetSummary, type ReportRecord, type Row } from "@/lib/charts/types";
-import { buildLayout, compact, defaultBox, firstFit, minBox, type LayoutItem } from "@/lib/layout/grid";
+import { buildLayout, compact, defaultBox, firstFit, minBox, resizeItem, type LayoutItem } from "@/lib/layout/grid";
 
-type Builder = { mode: "add"; initial: WidgetDraft | null } | { mode: "edit"; chartId: string } | null;
+type Builder = { mode: "add"; initial: WidgetDraft | null } | { mode: "edit"; chartId: string } | { mode: "ask"; initial: WidgetDraft; prompt: string | null } | null;
 
 export default function ReportPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -48,9 +47,6 @@ function ReportEditor({ id }: { id: string }) {
   const [layout, setLayout] = useState<LayoutItem[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [builder, setBuilder] = useState<Builder>(null);
-  const [aiOpen, setAiOpen] = useState(false);
-  const [aiSource, setAiSource] = useState<string | null>(null);
-  const [aiPrompt, setAiPrompt] = useState<string | null>(null);
   const [dataOpen, setDataOpen] = useState(false);
   const [dataTab, setDataTab] = useState<string | null>(null);
   const [shareOpen, setShareOpen] = useState(false);
@@ -101,7 +97,6 @@ function ReportEditor({ id }: { id: string }) {
   }, [datasets, workspace, usedIds]);
   const reportSources = sources.filter((s) => s.inReport);
 
-  const aiDataset = (aiSource && datasets[aiSource]) || primary;
   const prompts = useMemo(() => suggestPrompts(primary?.columns ?? EMPTY_COLS, primary?.rows ?? EMPTY_ROWS), [primary]);
 
   const getDataset = useCallback(
@@ -163,8 +158,8 @@ function ReportEditor({ id }: { id: string }) {
   );
 
   const createChart = useCallback(
-    async (input: { title: string; subtitle?: string; note?: string; config: ChartConfig; datasetId?: string | null }) => {
-      const { w, h } = defaultBox(input.config.type);
+    async (input: { title: string; subtitle?: string; note?: string; config: ChartConfig; datasetId?: string | null; box?: { w: number; h: number } }) => {
+      const { w, h } = input.box ?? defaultBox(input.config.type);
       const pos = firstFit(w, h, layoutRef.current);
       const box = { ...pos, w, h };
       const d = await api<{ chart: ChartRecord }>("/api/charts", {
@@ -195,13 +190,17 @@ function ReportEditor({ id }: { id: string }) {
 
   const saveWidget = async (draft: WidgetDraft) => {
     if (builder?.mode === "edit") {
+      const chartId = builder.chartId;
       const patch = { title: draft.title, subtitle: draft.subtitle, note: draft.note, config: draft.config, ...(draft.datasetId ? { datasetId: draft.datasetId } : {}) };
-      await api(`/api/charts/${builder.chartId}`, { method: "PATCH", json: patch });
-      setCharts((cs) => cs.map((c) => (c._id === builder.chartId ? { ...c, ...patch, datasetId: draft.datasetId ?? c.datasetId } : c)));
+      await api(`/api/charts/${chartId}`, { method: "PATCH", json: patch });
+      setCharts((cs) => cs.map((c) => (c._id === chartId ? { ...c, ...patch, datasetId: draft.datasetId ?? c.datasetId } : c)));
+      // Size chosen in the studio → resize on the grid (others re-flow).
+      const cur = layout.find((l) => l.i === chartId);
+      if (draft.box && cur && (cur.w !== draft.box.w || cur.h !== draft.box.h)) saveLayout(resizeItem(layout, chartId, draft.box.w, draft.box.h));
       toast.success("Widget updated");
     } else {
       await createChart(draft);
-      toast.success("Widget added");
+      toast.success(builder?.mode === "ask" ? "Added to dashboard" : "Widget added");
     }
   };
 
@@ -290,13 +289,14 @@ function ReportEditor({ id }: { id: string }) {
     return best && best.score > 0 ? best.id : null;
   };
 
+  /** Ask AI opens the chart studio in "ask" mode, on the source that best fits the question. */
   const openAsk = (prompt?: string) => {
-    if (prompt) {
-      const pick = bestSourceFor(prompt);
-      if (pick) setAiSource(pick);
-      setAiPrompt(prompt);
-    }
-    setAiOpen(true);
+    const pick = prompt ? bestSourceFor(prompt) : null;
+    setBuilder({
+      mode: "ask",
+      prompt: prompt ?? null,
+      initial: { title: "", subtitle: "", note: "", config: { ...DEFAULT_CONFIG, palette: report?.palette ?? "aurora" }, datasetId: pick ?? primaryId ?? sources[0]?.id ?? null },
+    });
   };
 
   // ---- keyboard ------------------------------------------------------------------
@@ -304,14 +304,14 @@ function ReportEditor({ id }: { id: string }) {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
-        if (aiOpen || builder) return;
+        if (builder) return;
         composerRef.current?.focus();
       }
       if (e.key === "Escape" && present) setPresent(false);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [aiOpen, builder, present]);
+  }, [builder, present]);
 
   // ---- render --------------------------------------------------------------------
   if (error) {
@@ -503,7 +503,7 @@ function ReportEditor({ id }: { id: string }) {
         )}
 
         {/* Floating AI composer */}
-        {sources.length > 0 && !aiOpen && !builder && (
+        {sources.length > 0 && !builder && (
           <div className="pointer-events-none fixed inset-x-0 bottom-5 z-30 flex justify-center px-4 lg:left-[248px]">
             <form
               onSubmit={(e) => {
@@ -534,72 +534,34 @@ function ReportEditor({ id }: { id: string }) {
         )}
       </div>
 
-      {/* Widget builder (add / edit) */}
+      {/* Chart studio: add / edit / Ask AI */}
       <WidgetBuilder
-        open={!!builder && (builder.mode === "add" || !!editing)}
+        open={!!builder && (builder.mode !== "edit" || !!editing)}
         mode={builder?.mode ?? "add"}
+        initialPrompt={builder?.mode === "ask" ? builder.prompt : null}
         initial={
           builder?.mode === "edit" && editing
-            ? { title: editing.title, subtitle: editing.subtitle, note: editing.note, config: editing.config, datasetId: editing.datasetId }
-            : builder?.mode === "add"
-              ? builder.initial ?? { title: "New chart", subtitle: "", note: "", config: { ...DEFAULT_CONFIG, palette: report.palette }, datasetId: primaryId ?? sources[0]?.id ?? null }
-              : null
+            ? (() => {
+                const l = layout.find((x) => x.i === editing._id);
+                return { title: editing.title, subtitle: editing.subtitle, note: editing.note, config: editing.config, datasetId: editing.datasetId, box: l ? { w: l.w, h: l.h } : undefined };
+              })()
+            : builder?.mode === "ask"
+              ? builder.initial
+              : builder?.mode === "add"
+                ? builder.initial ?? { title: "New chart", subtitle: "", note: "", config: { ...DEFAULT_CONFIG, palette: report.palette }, datasetId: primaryId ?? sources[0]?.id ?? null }
+                : null
         }
         sources={sources}
         theme={theme}
         palette={report.palette}
+        reportTitle={report.title}
+        onEditData={(dsId, next) => void saveDataset(dsId, next)}
         getDataset={getDataset}
         createDataset={createDataset}
         onSave={saveWidget}
         onClose={() => setBuilder(null)}
       />
 
-      {/* Ask AI */}
-      <Dialog open={aiOpen && !!aiDataset} onClose={() => setAiOpen(false)} label="Ask AI" className="sm:max-w-[920px]">
-        {aiDataset && (
-          <AskAI
-            key={aiDataset._id}
-            wide
-            datasetId={aiDataset._id}
-            datasetName={aiDataset.name}
-            columns={aiDataset.columns}
-            rows={aiDataset.rows}
-            palette={report.palette}
-            initialPrompt={aiPrompt}
-            onConsumePrompt={() => setAiPrompt(null)}
-            onClose={() => setAiOpen(false)}
-            headerSlot={
-              <div className="mt-1">
-                <SourcePicker
-                  compact
-                  value={aiDataset._id}
-                  options={sources}
-                  onChange={async (dsId) => {
-                    try {
-                      await getDataset(dsId);
-                      setAiSource(dsId);
-                    } catch (err) {
-                      toast.error((err as Error).message);
-                    }
-                  }}
-                  onAddNew={() => {
-                    setAiOpen(false);
-                    setBuilder({ mode: "add", initial: { title: "New chart", subtitle: "", note: "", config: { ...DEFAULT_CONFIG, palette: report.palette }, datasetId: null } });
-                  }}
-                />
-              </div>
-            }
-            onAddChart={async (c) => {
-              try {
-                await createChart({ title: c.title, subtitle: c.subtitle, config: c.config, datasetId: aiDataset._id });
-                toast.success("Added to dashboard");
-              } catch (err) {
-                toast.error((err as Error).message);
-              }
-            }}
-          />
-        )}
-      </Dialog>
 
       {/* Data sources */}
       <Modal open={dataOpen} onClose={() => setDataOpen(false)} title={multiSource ? "Data sources" : primary?.name ?? "Data"} description="Edit cells, rename columns or change types. Widgets update as you go." size="xl">

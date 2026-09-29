@@ -285,6 +285,10 @@
   .animate-slide-in-left {
     animation: slide-in-left 0.35s var(--ease-out) both;
   }
+  .studio-frame {
+    background: linear-gradient(135deg, rgba(76, 95, 213, 0.32), rgba(123, 140, 240, 0.22) 45%, rgba(235, 104, 52, 0.16));
+    box-shadow: 0 30px 70px -40px rgba(11, 15, 30, 0.45);
+  }
   .animate-dialog-in {
     animation: dialog-in 0.32s var(--ease-out) both;
   }

@@ -31,6 +31,8 @@ interface Props {
   sourceName?: string;
   /** Fill the parent's height (grid cell) instead of a fixed chart height. */
   fill?: boolean;
+  /** Hide the hover actions (used for previews). */
+  hideActions?: boolean;
 }
 
 export const SIZE_LABEL: Record<WidgetSize, string> = { sm: "Small", half: "Half", wide: "Wide", full: "Full" };
@@ -65,7 +67,7 @@ function useSize<T extends HTMLElement>() {
   return [ref, size] as const;
 }
 
-export function Widget({ chart, rows, columns, theme, selected, readOnly, index = 0, draggable, onSelect, onDuplicate, onDelete, sourceName, fill }: Props) {
+export function Widget({ chart, rows, columns, theme, selected, readOnly, index = 0, draggable, onSelect, onDuplicate, onDelete, sourceName, fill, hideActions }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const [bodyRef, body] = useSize<HTMLDivElement>();
   const [cardRef, card] = useSize<HTMLDivElement>();
@@ -206,7 +208,8 @@ export function Widget({ chart, rows, columns, theme, selected, readOnly, index 
                 />
               </div>
             ) : (
-              !isText && (
+              !isText &&
+              !hideActions && (
                 <div data-export-ignore="1" className={clsx("absolute right-2.5 top-2.5 z-20 flex items-center gap-0.5 rounded-lg border p-0.5 opacity-0 shadow-[var(--shadow-sm)] transition-opacity group-hover:opacity-100", dark ? "border-white/10 bg-[#1c2038]" : "border-border bg-surface")}>
                   <button onClick={() => setExpanded(true)} className={iconBtn} aria-label="Expand">
                     <Maximize2 className="h-4 w-4" />
