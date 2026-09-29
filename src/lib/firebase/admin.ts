@@ -1,31 +1,56 @@
 import "server-only";
-import { cert, getApps, initializeApp, type App } from "firebase-admin/app";
-import { getAuth, type DecodedIdToken } from "firebase-admin/auth";
+import { createRemoteJWKSet, decodeJwt, jwtVerify, type JWTPayload } from "jose";
 
-let app: App | undefined;
+/**
+ * Verifies Firebase ID tokens on the server.
+ *
+ * We check the token ourselves with `jose` (Google's public signing keys +
+ * issuer/audience checks) instead of loading `firebase-admin`. firebase-admin
+ * pulls in a CommonJS package that `require()`s the ESM-only `jose`, which
+ * crashes on serverless runtimes such as Vercel. This is the same check
+ * firebase-admin does for `verifyIdToken`.
+ */
 
-function ensureApp(): App {
-  if (app) return app;
-  if (getApps().length) {
-    app = getApps()[0];
-    return app;
-  }
-  const projectId =
-    process.env.FIREBASE_PROJECT_ID || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
-  const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT;
+export interface DecodedIdToken extends JWTPayload {
+  uid: string;
+  email?: string;
+  name?: string;
+  picture?: string;
+  firebase?: { sign_in_provider?: string };
+}
 
-  if (serviceAccount) {
-    // Optional: a full service-account JSON gives access to more admin features.
-    const parsed = JSON.parse(serviceAccount);
-    app = initializeApp({ credential: cert(parsed), projectId: parsed.project_id || projectId });
-  } else {
-    // verifyIdToken only needs the project id (public certs are fetched from Google).
-    app = initializeApp({ projectId });
-  }
-  return app;
+const GOOGLE_JWKS = createRemoteJWKSet(new URL("https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com"));
+
+function projectId(): string {
+  const id = process.env.FIREBASE_PROJECT_ID || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+  if (!id) throw new Error("Firebase project id is not configured");
+  return id;
+}
+
+function toDecoded(payload: JWTPayload): DecodedIdToken {
+  const sub = payload.sub;
+  if (!sub) throw new Error("Token has no subject");
+  return { ...payload, uid: sub } as DecodedIdToken;
 }
 
 export async function verifyIdToken(token: string): Promise<DecodedIdToken> {
-  const auth = getAuth(ensureApp());
-  return auth.verifyIdToken(token);
+  const pid = projectId();
+
+  // Local Auth emulator: tokens are unsigned, so only check who they're for.
+  if (process.env.FIREBASE_AUTH_EMULATOR_HOST) {
+    const payload = decodeJwt(token);
+    if (payload.aud !== pid) throw new Error("Token is for a different project");
+    if (payload.exp && payload.exp * 1000 < Date.now()) throw new Error("Token expired");
+    return toDecoded(payload);
+  }
+
+  const { payload } = await jwtVerify(token, GOOGLE_JWKS, {
+    issuer: `https://securetoken.google.com/${pid}`,
+    audience: pid,
+    algorithms: ["RS256"],
+  });
+  if (typeof payload.auth_time === "number" && payload.auth_time * 1000 > Date.now() + 5 * 60_000) {
+    throw new Error("Token auth time is in the future");
+  }
+  return toDecoded(payload);
 }

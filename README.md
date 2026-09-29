@@ -86,7 +86,7 @@ One switch themes the whole report. Present mode gives a clean full-screen view 
 | App | Next.js 16 (App Router, TypeScript), React 19 |
 | Styling | Tailwind CSS v4 with theme tokens (`src/app/globals.css`) |
 | Charts | Recharts 3 |
-| Auth | Firebase Authentication (email/password + Google). ID tokens are checked on the server with `firebase-admin`. |
+| Auth | Firebase Authentication (email/password + Google). ID tokens are checked on the server against Google's public keys (with `jose`). |
 | Database | MongoDB Atlas via Mongoose (`users`, `datasets`, `reports`, `charts`) |
 | AI | Groq → Gemini → Mistral → GitHub Models → OpenRouter → Z.ai → Hugging Face |
 
