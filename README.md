@@ -6,7 +6,7 @@
 
 Drop in a CSV, paste a table or pick a sample. VizPilot's AI analyst reads your rows, answers in plain English and builds interactive widgets you can drag, resize, restyle and share.
 
-<!-- LIVE_DEMO -->
+**[🚀 Live demo → vizpilot-puce.vercel.app](https://vizpilot-puce.vercel.app)**
 
 ![Next.js 16](https://img.shields.io/badge/Next.js-16-000?logo=nextdotjs)
 ![React 19](https://img.shields.io/badge/React-19-149eca?logo=react)
