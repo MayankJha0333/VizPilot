@@ -181,7 +181,7 @@ export function Tooltip({ label, side = "right", children }: { label: string; si
       <span
         role="tooltip"
         className={clsx(
-          "pointer-events-none absolute z-50 whitespace-nowrap rounded-lg bg-ink px-2 py-1 text-[11px] font-medium text-white opacity-0 shadow-[var(--shadow-md)] transition-opacity duration-150 group-hover/tip:opacity-100",
+          "pointer-events-none absolute z-50 whitespace-nowrap rounded-lg bg-inverse px-2 py-1 text-[11px] font-medium text-inverse-fg opacity-0 shadow-[var(--shadow-md)] transition-opacity duration-150 group-hover/tip:opacity-100",
           pos
         )}
       >

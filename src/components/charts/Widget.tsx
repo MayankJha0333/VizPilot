@@ -105,7 +105,7 @@ export function Widget({ chart, rows, columns, theme, selected, readOnly, index 
     setDownloading(true);
     try {
       const { toPng } = await import("html-to-image");
-      const dataUrl = await toPng(ref.current, { pixelRatio: 2, backgroundColor: dark ? "#13162a" : "#ffffff", filter: (n) => !(n instanceof HTMLElement && n.dataset.exportIgnore === "1") });
+      const dataUrl = await toPng(ref.current, { pixelRatio: 2, backgroundColor: dark ? "#151a26" : "#ffffff", filter: (n) => !(n instanceof HTMLElement && n.dataset.exportIgnore === "1") });
       const a = document.createElement("a");
       a.href = dataUrl;
       a.download = `${chart.title || "chart"}.png`.replace(/[^\w.-]+/g, "_");
@@ -127,42 +127,41 @@ export function Widget({ chart, rows, columns, theme, selected, readOnly, index 
     a.click();
   };
 
-  const iconBtn = clsx("flex h-7 w-7 items-center justify-center rounded-md transition-colors", dark ? "text-white/70 hover:bg-white/10 hover:text-white" : "text-ink-2 hover:bg-surface-3 hover:text-ink");
+  const iconBtn = clsx("flex h-7 w-7 items-center justify-center rounded-md transition-colors", "text-ink-2 hover:bg-surface-3 hover:text-ink");
 
   return (
     <>
       <div
         className={clsx(
-          "group relative flex h-full flex-col rounded-[18px] border transition-[box-shadow,border-color] duration-300 animate-fade-up",
-          dark ? "chart-dark border-[#272b47] bg-[#13162a] text-white" : "border-border bg-surface",
-          selected ? "border-brand shadow-[0_0_0_3px_var(--ring),var(--shadow-md)]" : "shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)]",
-          !readOnly && "hover:border-border-strong"
+          "widget-card group relative flex h-full flex-col rounded-2xl text-ink animate-fade-up",
+          selected && "!border-brand !shadow-[0_0_0_3px_var(--ring)]"
         )}
         style={{ animationDelay: `${Math.min(index, 8) * 60}ms` }}
         onDoubleClick={readOnly ? undefined : onSelect}
         ref={cardRef}
         data-chart-card
       >
-        <div ref={ref} className={clsx("flex min-h-0 flex-1 flex-col rounded-[18px]", narrow || short ? "p-3" : "p-4 sm:p-5", dark ? "bg-[#13162a]" : "bg-surface")}>
+        <div ref={ref} className={clsx("flex min-h-0 flex-1 flex-col rounded-2xl bg-surface", narrow || short ? "p-3" : "px-[18px] pb-4 pt-4")}>
           <div data-drag-handle className={clsx("flex items-start justify-between gap-3", !isText && "mb-3", draggable && !readOnly && "cursor-grab active:cursor-grabbing")}>
             <div className="flex min-w-0 items-start gap-2">
+              {/* Drag hint floats in the corner so it never pushes the title. */}
               {draggable && !readOnly && (
-                <span data-export-ignore="1" className={clsx("mt-0.5 hidden cursor-grab opacity-0 transition-opacity group-hover:opacity-100 sm:block", dark ? "text-white/40" : "text-ink-3")} title="Drag to move">
-                  <GripVertical className="h-4 w-4" />
+                <span data-export-ignore="1" className="absolute left-1 top-[18px] hidden cursor-grab text-ink-3 opacity-0 transition-opacity group-hover:opacity-60 sm:block" title="Drag to move">
+                  <GripVertical className="h-3.5 w-3.5" />
                 </span>
               )}
               <div className="min-w-0">
-                <h3 className={clsx("line-clamp-2 font-semibold leading-snug", isText ? "text-base" : "text-[15px]", dark ? "text-white" : "text-ink")} title={chart.title}>{chart.title || (isText ? "" : "Untitled chart")}</h3>
-                {chart.subtitle && !narrow && !short && <p className={clsx("mt-0.5 truncate text-xs", dark ? "text-white/60" : "text-ink-2")}>{chart.subtitle}</p>}
+                <h3 className={clsx("line-clamp-2 font-semibold leading-snug tracking-[-0.01em] text-ink", isText ? "text-base" : "text-[14px]")} title={chart.title}>{chart.title || (isText ? "" : "Untitled chart")}</h3>
+                {chart.subtitle && !narrow && !short && <p className="mt-0.5 truncate text-xs text-ink-3">{chart.subtitle}</p>}
                 {sourceName && !narrow && !short && (
-                  <span className={clsx("mt-1 inline-flex max-w-full items-center gap-1 truncate text-[10px] font-medium", dark ? "text-white/45" : "text-ink-3")} title={`Data: ${sourceName}`}>
+                  <span className={clsx("mt-1 inline-flex max-w-full items-center gap-1 truncate text-[10px] font-medium", "text-ink-3")} title={`Data: ${sourceName}`}>
                     <Database className="h-2.5 w-2.5 shrink-0" /> {sourceName}
                   </span>
                 )}
                 {filtered.length > 0 && (
                   <div className="mt-1.5 flex flex-wrap gap-1">
                     {filtered.map((f, i) => (
-                      <span key={i} className={clsx("inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-medium", dark ? "bg-white/10 text-white/70" : "bg-brand-soft text-brand-ink")}>
+                      <span key={i} className={clsx("inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-medium", "bg-brand-soft text-brand-ink")}>
                         <FilterIcon className="h-2.5 w-2.5" />
                         {f.column} {f.op === "in" ? "in" : f.op === "eq" ? "=" : f.op === "neq" ? "≠" : f.op === "contains" ? "∋" : f.op.replace("gte", "≥").replace("lte", "≤").replace("gt", ">").replace("lt", "<")} {Array.isArray(f.value) ? f.value.join(", ") : String(f.value)}
                       </span>
@@ -178,7 +177,7 @@ export function Widget({ chart, rows, columns, theme, selected, readOnly, index 
                 className={clsx(
                   "absolute right-2.5 top-2.5 z-20 flex items-center gap-0.5 rounded-lg border p-0.5 shadow-[var(--shadow-sm)] transition-opacity duration-200 sm:opacity-0 sm:group-hover:opacity-100",
                   selected && "sm:opacity-100",
-                  dark ? "border-white/10 bg-[#1c2038]" : "border-border bg-surface"
+                  "border-border bg-surface"
                 )}
               >
                 <Tooltip label="Edit" side="bottom">
@@ -210,7 +209,7 @@ export function Widget({ chart, rows, columns, theme, selected, readOnly, index 
             ) : (
               !isText &&
               !hideActions && (
-                <div data-export-ignore="1" className={clsx("absolute right-2.5 top-2.5 z-20 flex items-center gap-0.5 rounded-lg border p-0.5 opacity-0 shadow-[var(--shadow-sm)] transition-opacity group-hover:opacity-100", dark ? "border-white/10 bg-[#1c2038]" : "border-border bg-surface")}>
+                <div data-export-ignore="1" className={clsx("absolute right-2.5 top-2.5 z-20 flex items-center gap-0.5 rounded-lg border p-0.5 opacity-0 shadow-[var(--shadow-sm)] transition-opacity group-hover:opacity-100", "border-border bg-surface")}>
                   <button onClick={() => setExpanded(true)} className={iconBtn} aria-label="Expand">
                     <Maximize2 className="h-4 w-4" />
                   </button>
@@ -236,17 +235,18 @@ export function Widget({ chart, rows, columns, theme, selected, readOnly, index 
                 height={fill ? Math.max(60, bodyH) : widgetHeight(chart)}
                 width={fill ? body.w : undefined}
                 floatTooltip={floatTip}
+                showKpiLabel={!chart.title}
                 hidden={hidden}
                 text={chart.note}
               />
             )}
           </div>
-          {chart.note && !isText && !short && !narrow && <p className={clsx("mt-3 line-clamp-3 shrink-0 rounded-lg px-3 py-2 text-xs leading-relaxed", dark ? "bg-white/5 text-white/70" : "bg-surface-2 text-ink-2")}>{chart.note}</p>}
+          {chart.note && !isText && !short && !narrow && <p className={clsx("mt-3 line-clamp-3 shrink-0 rounded-lg px-3 py-2 text-xs leading-relaxed", "bg-surface-2 text-ink-2")}>{chart.note}</p>}
         </div>
       </div>
 
       <Modal open={expanded} onClose={() => setExpanded(false)} title={chart.title} description={chart.subtitle || undefined} size="xl">
-        <div className={clsx("rounded-2xl border p-4", dark && "chart-dark border-[#272b47] bg-[#13162a]")}>
+        <div className="rounded-2xl border bg-surface p-4" data-theme={theme}>
           <div className="mb-2">
             <LegendChips config={chart.config} dark={dark} hidden={hidden} onToggle={toggle} countLabel={countLabel} />
           </div>

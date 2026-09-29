@@ -37,6 +37,7 @@ interface Props {
   layout: LayoutItem[];
   items: { id: string; node: React.ReactNode; className?: string; minW?: number; minH?: number }[];
   editable?: boolean;
+  /** @deprecated theming comes from the surrounding data-theme. */
   dark?: boolean;
   onLayoutChange?: (next: LayoutItem[]) => void;
   /** Rendered after the last widget (e.g. an "Add widget" tile), full-width row. */
@@ -45,7 +46,7 @@ interface Props {
 
 const MOBILE_BREAKPOINT = 720;
 
-export function DashboardGrid({ layout, items, editable = false, dark = false, onLayoutChange, footer }: Props) {
+export function DashboardGrid({ layout, items, editable = false, onLayoutChange, footer }: Props) {
   // Callback ref: the measured element changes when switching mobile ↔ grid.
   const [el, setEl] = useState<HTMLDivElement | null>(null);
   const [width, setWidth] = useState(0);
@@ -195,7 +196,7 @@ export function DashboardGrid({ layout, items, editable = false, dark = false, o
         {drag?.moved && (
           <div className="pointer-events-none absolute inset-0 animate-fade-in">
             {Array.from({ length: COLS }).map((_, i) => (
-              <div key={i} className={clsx("absolute inset-y-0 rounded-md", dark ? "bg-white/[0.025]" : "bg-brand/[0.035]")} style={{ left: i * stepX, width: colW }} />
+              <div key={i} className={clsx("absolute inset-y-0 rounded-md", "bg-brand/[0.035]")} style={{ left: i * stepX, width: colW }} />
             ))}
           </div>
         )}
@@ -203,7 +204,7 @@ export function DashboardGrid({ layout, items, editable = false, dark = false, o
         {/* Placeholder where the widget will land */}
         {drag?.moved && active && (
           <div
-            className={clsx("pointer-events-none absolute left-0 top-0 rounded-[18px] border-2 border-dashed transition-transform duration-150 ease-out", dark ? "border-white/30 bg-white/5" : "border-brand/50 bg-brand/[0.06]")}
+            className={clsx("pointer-events-none absolute left-0 top-0 rounded-[18px] border-2 border-dashed transition-transform duration-150 ease-out", "border-brand/50 bg-brand/[0.06]")}
             style={{ ...sizeStyle(rect(active)), transform: `translate(${rect(active).left}px, ${rect(active).top}px)` }}
           />
         )}
@@ -244,12 +245,12 @@ export function DashboardGrid({ layout, items, editable = false, dark = false, o
                       onPointerDown={(e) => start(e, it.id, "se")}
                       data-testid="resize-handle"
                     >
-                      <svg viewBox="0 0 10 10" className={clsx("h-2.5 w-2.5", dark ? "text-white/50" : "text-ink-3")} aria-hidden>
+                      <svg viewBox="0 0 10 10" className={clsx("h-2.5 w-2.5", "text-ink-3")} aria-hidden>
                         <path d="M9 1 1 9M9 5 5 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                       </svg>
                     </span>
                     {drag?.id === it.id && drag.moved && drag.mode !== "move" && (
-                      <span className="absolute bottom-3 right-3 z-30 rounded-md bg-ink px-1.5 py-0.5 text-[10px] font-medium text-white shadow">
+                      <span className="absolute bottom-3 right-3 z-30 rounded-md bg-inverse px-1.5 py-0.5 text-[10px] font-medium text-inverse-fg shadow">
                         {byId.get(it.id)?.w} × {byId.get(it.id)?.h}
                       </span>
                     )}

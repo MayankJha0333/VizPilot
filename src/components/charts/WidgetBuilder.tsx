@@ -272,7 +272,7 @@ function Studio({ open, mode, initialPrompt, initial, sources, theme, palette, r
           <button
             onClick={save}
             disabled={saving || (!dataset && draft.config.type !== "text") || (ask && (!hasChart || addedKey === draftKey))}
-            className="inline-flex h-9 items-center gap-2 rounded-lg bg-ink px-3.5 text-sm font-medium text-white shadow-[var(--shadow-sm)] transition-all hover:-translate-y-px hover:shadow-[var(--shadow-md)] disabled:opacity-50"
+            className="inline-flex h-9 items-center gap-2 rounded-lg bg-inverse px-3.5 text-sm font-medium text-inverse-fg shadow-[var(--shadow-sm)] transition-all hover:-translate-y-px hover:shadow-[var(--shadow-md)] disabled:opacity-50"
             data-testid="save-widget"
           >
             {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : ask && addedKey !== draftKey ? <Plus className="h-4 w-4" /> : <Check className="h-4 w-4" />}
@@ -307,7 +307,7 @@ function Studio({ open, mode, initialPrompt, initial, sources, theme, palette, r
           </div>
         </div>
       ) : (
-        <div className="relative flex min-h-0 flex-1 gap-3 bg-[#f1f2f6] p-2 sm:p-3">
+        <div className="relative flex min-h-0 flex-1 gap-3 bg-surface-3 p-2 sm:p-3">
           {/* ---------- left: Ask AI ---------- */}
           {chatOpen ? (
             <aside className="absolute inset-2 z-30 flex flex-col overflow-hidden rounded-[18px] border bg-surface shadow-[var(--shadow-lg)] animate-slide-in-left sm:inset-3 lg:static lg:w-[340px] lg:shrink-0 lg:shadow-none">
@@ -462,7 +462,6 @@ function Canvas({ loading, hasSource, box, onBox, theme, chart, dataset }: { loa
     window.addEventListener("pointerup", up);
   };
 
-  const dark = theme === "dark";
   const gripCls = (axis: "x" | "y") =>
     clsx(
       "absolute z-10 rounded-full bg-border-strong/80 transition-colors hover:bg-brand/70",
@@ -471,7 +470,7 @@ function Canvas({ loading, hasSource, box, onBox, theme, chart, dataset }: { loa
     );
 
   return (
-    <div ref={ref} className={clsx("relative flex flex-1 items-center justify-center overflow-hidden pr-[76px]", dark ? "bg-[#0f1122]" : "bg-dots")} data-testid="studio-canvas">
+    <div ref={ref} className="canvas-dots relative flex flex-1 items-center justify-center overflow-hidden pr-[76px]" data-testid="studio-canvas">
       {!hasSource ? (
         <p className="text-sm text-ink-3">Pick a data source in the Ask AI panel to start.</p>
       ) : loading || !dataset ? (
@@ -488,12 +487,12 @@ function Canvas({ loading, hasSource, box, onBox, theme, chart, dataset }: { loa
             className="studio-frame absolute left-0 top-0 origin-top-left rounded-[22px] p-[11px] transition-[width,height] duration-150"
             style={{ width: px.width + pad, height: px.height + pad, transform: `scale(${scale})` }}
           >
-            <div className="h-full" data-testid="widget-preview">
+            <div className="h-full" data-theme={theme} data-testid="widget-preview">
               <Widget chart={chart} rows={dataset.rows} columns={dataset.columns} theme={theme} readOnly fill hideActions />
             </div>
           </div>
 
-          <div className={clsx("absolute -bottom-12 left-1/2 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full border px-2.5 py-1 text-[11px] shadow-[var(--shadow-sm)] transition-opacity", dark ? "border-white/10 bg-[#1c2038] text-white/70" : "bg-surface text-ink-2", dragging ? "opacity-100" : "opacity-80")}>
+          <div className={clsx("absolute -bottom-12 left-1/2 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full border px-2.5 py-1 text-[11px] shadow-[var(--shadow-sm)] transition-opacity", "bg-popover text-ink-2", dragging ? "opacity-100" : "opacity-80")}>
             <Ruler className="h-3 w-3" />
             {box.w} × {box.h} on the dashboard · {box.w === 12 ? "full width" : box.w >= 8 ? "two-thirds" : box.w >= 6 ? "half width" : box.w >= 4 ? "third" : "narrow"}
           </div>
@@ -766,7 +765,7 @@ function StudioChat({
             className="max-h-28 min-h-[28px] flex-1 resize-none bg-transparent py-1 text-sm outline-none placeholder:text-ink-3"
             data-testid="studio-ai-input"
           />
-          <button type="submit" disabled={!input.trim() || busy || !datasetId} className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ink text-white transition-transform hover:scale-105 disabled:opacity-30" aria-label="Send">
+          <button type="submit" disabled={!input.trim() || busy || !datasetId} className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-inverse text-inverse-fg transition-transform hover:scale-105 disabled:opacity-30" aria-label="Send">
             <ArrowUp className="h-4 w-4" />
           </button>
         </div>
@@ -1159,7 +1158,7 @@ function SizePanel({ box, type, setBox }: { box: { w: number; h: number }; type:
 function EditData({ dataset, chart, theme, setType, onChange, onClose }: { dataset: DatasetRecord; chart: ChartRecord; theme: "light" | "dark"; setType: (t: ChartConfig["type"]) => void; onChange: (next: { columns: Column[]; rows: Row[] }) => void; onClose: () => void }) {
   const [full, setFull] = useState(false);
   return (
-    <div className="absolute inset-0 z-40 flex items-center justify-center bg-ink/35 p-2 backdrop-blur-[2px] animate-fade-in sm:p-4" onClick={onClose}>
+    <div className="absolute inset-0 z-40 flex items-center justify-center bg-[#0b0f1e]/35 p-2 backdrop-blur-[2px] animate-fade-in sm:p-4" onClick={onClose}>
       <div className={clsx("flex w-full flex-col overflow-hidden rounded-2xl border bg-surface shadow-[var(--shadow-lg)] animate-scale-in", full ? "h-full" : "h-[88%] max-w-6xl")} onClick={(e) => e.stopPropagation()} data-testid="edit-data">
         <div className="flex items-center justify-between border-b px-4 py-3">
           <div className="flex items-center gap-2 text-sm font-semibold">
@@ -1179,7 +1178,7 @@ function EditData({ dataset, chart, theme, setType, onChange, onClose }: { datas
             <DataTable columns={dataset.columns} rows={dataset.rows} editable onChange={onChange} maxHeight={9999} />
           </div>
           <div className="flex w-full shrink-0 flex-col gap-3 overflow-y-auto border-t bg-surface-2 p-3 lg:w-[320px] lg:border-l lg:border-t-0">
-            <div className="h-[200px] rounded-xl border bg-surface p-1">
+            <div className="h-[200px] rounded-xl border bg-surface p-1" data-theme={theme}>
               <Widget chart={chart} rows={dataset.rows} columns={dataset.columns} theme={theme} readOnly fill hideActions />
             </div>
             <TypeGrid value={chart.config.type} onPick={setType} />

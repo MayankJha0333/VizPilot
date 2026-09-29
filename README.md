@@ -1,65 +1,131 @@
+<div align="center">
+
 # VizPilot
 
-Turn a CSV, a pasted table or a sample dataset into a clean, shareable report with charts — inspired by the Graphy experience.
+**Ask your data a question. Watch the dashboard build itself.**
 
-**Flow:** Sign up → Log in → Dashboard → Create report → Add data → Generate charts (auto-suggest or Ask AI) → Edit / style → Save → Share a public link.
+Drop in a CSV, paste a table or pick a sample. VizPilot's AI analyst reads your rows, answers in plain English and builds interactive widgets you can drag, resize, restyle and share.
 
-## Stack
+<!-- LIVE_DEMO -->
+
+![Next.js 16](https://img.shields.io/badge/Next.js-16-000?logo=nextdotjs)
+![React 19](https://img.shields.io/badge/React-19-149eca?logo=react)
+![Tailwind v4](https://img.shields.io/badge/Tailwind-v4-38bdf8?logo=tailwindcss&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-13aa52?logo=mongodb&logoColor=white)
+![Firebase Auth](https://img.shields.io/badge/Firebase-Auth-ffca28?logo=firebase&logoColor=black)
+
+<img src="docs/media/landing.gif" alt="VizPilot landing page" width="900" />
+
+</div>
+
+---
+
+## See it in action
+
+### 1. A full dashboard in one click
+
+Pick a template (or upload your own file) and VizPilot lays out a starter dashboard: a KPI, a trend, and breakdowns.
+
+<img src="docs/media/create.gif" alt="Creating a report from a template" width="900" />
+
+### 2. Ask AI, get a chart
+
+Type a question into the bar at the bottom. The AI plans the analysis, computes the numbers from your real rows and shows **how it built the chart**. Follow up in plain words ("make it a bar chart", "top 5", "monthly") and add it to the dashboard.
+
+<img src="docs/media/ask.gif" alt="Ask AI building a chart and adding it to the dashboard" width="900" />
+
+### 3. Drag and resize anything
+
+Grab a widget by its title to move it. Pull the right edge, bottom edge or corner to resize. Neighbours move out of the way and the layout saves on its own.
+
+<img src="docs/media/drag.gif" alt="Dragging and resizing widgets" width="900" />
+
+### 4. Chart studio
+
+Every widget opens in a full-screen studio: switch the chart type, change the palette, set the size on the dashboard, edit the data, or ask AI to change it for you.
+
+<img src="docs/media/studio.gif" alt="Editing a chart in the chart studio" width="900" />
+
+### 5. Light, dark and present mode
+
+One switch themes the whole report. Present mode gives a clean full-screen view for meetings.
+
+<img src="docs/media/theme.gif" alt="Switching between light and dark, then present mode" width="900" />
+
+<table>
+  <tr>
+    <td><img src="docs/media/dashboard-light.png" alt="Dashboard in light mode" /></td>
+    <td><img src="docs/media/dashboard-dark.png" alt="Dashboard in dark mode" /></td>
+  </tr>
+  <tr>
+    <td align="center">Light</td>
+    <td align="center">Dark</td>
+  </tr>
+</table>
+
+---
+
+## Features
+
+| | |
+| --- | --- |
+| **Bring any data** | CSV, TSV and Excel upload, paste from Sheets/Excel, a manual table, or 6 realistic samples (e-commerce, SaaS, marketing, support, web traffic, expenses). Column types are detected for you. |
+| **Ask AI** | Plain-English questions become charts, direct answers or insights. It shows each step (grouping, sum/average, filters, sort) so you can trust the numbers. |
+| **12 widget types** | Column, bar, stacked, line, area, pie, donut, scatter, KPI (with period-over-period change and a sparkline), table and text. |
+| **Free-form dashboard** | 12-column grid with drag, resize, auto-reflow and per-widget saved layout. Phones get a simple stacked view. |
+| **Mix data sources** | Each widget can use a different dataset, so one report can combine several files. |
+| **Smart numbers** | Date roll-ups (day → year), count charts for text-only data, and averages (not sums) for things like scores, hours and rates. |
+| **Design** | Light and dark themes built on shared colour tokens. Chart palettes are checked for colour-blind separation and contrast (all text meets WCAG AA 4.5:1). |
+| **Share** | Public read-only link, present mode, PNG and CSV export. |
+| **Reliable AI** | 7 providers with automatic fallback. If every provider is down, a built-in rules engine still answers. |
+
+## Tech stack
 
 | Layer | Choice |
 | --- | --- |
-| Framework | Next.js 16 (App Router, TypeScript) + Tailwind CSS v4 |
-| Auth | Firebase Authentication (email/password + Google) — ID tokens verified server-side with `firebase-admin` |
-| Database | MongoDB via Mongoose (`users`, `datasets`, `reports`, `charts`) |
-| Dashboard | Free-form 12-column grid (`src/lib/layout/grid.ts` + `DashboardGrid.tsx`): drag widgets by their title, resize from the right edge, bottom edge or corner; neighbours reflow and everything compacts upward. Layout is saved per widget (`x, y, w, h`). Phones get a simple stacked view. |
-| Widgets | Recharts-based interactive widgets: column, bar, stacked, line, area, pie, donut, scatter, KPI (period-over-period delta on complete periods + sparkline), table, text blocks. Hover tooltips with totals, click-to-hide legend, expand with data table, PNG/CSV export, present mode. |
-| Multi-source | Every widget has its own data source. Add widgets from any dataset in your workspace – or upload / paste / pick a sample right inside the widget builder – and mix them in one report. Ask AI picks the source that best matches the question. |
-| Builder & Ask AI | Both open as large dialogs: live preview on the left, controls on the right; Ask AI has a data-source switcher. |
-| Colour | Brand indigo `#4c5fd5` with a coral accent. Chart palettes (VizPilot, Ocean, Sunset, Mono) are validated for colour-blind separation and contrast, with separate dark-mode steps. |
-| Data import | CSV/TSV (PapaParse), Excel (SheetJS), paste, manual table, 6 realistic sample datasets (e-commerce, SaaS, marketing, support tickets, web traffic, expenses) |
-| Chart engine | Sum/avg/min/max/count aggregation, filters, **count-based charts for text-only data**, non-additive measures (hours, scores, rates) averaged automatically, date roll-ups (day/week/month/quarter/year), rule-based suggestions that lay out a dashboard (KPI + trend + breakdowns) |
-| Ask AI | Graphy-style analyst: understands the question, plans the analysis with the model, computes the answer from your rows, and shows *how it built it* (grouping, aggregation, filters, sort). Returns a chart, a direct answer, or insights; supports follow-ups ("make it a bar", "top 5", "monthly", "only Europe"). Falls back to a rules engine, so it always answers. |
-| AI providers | Groq → Gemini → Mistral → GitHub Models → OpenRouter → Z.ai → Hugging Face. Automatic fallback with per-provider circuit breakers (auth / rate-limit / timeout cooldowns), JSON repair + retry, and a status page in Settings. |
+| App | Next.js 16 (App Router, TypeScript), React 19 |
+| Styling | Tailwind CSS v4 with theme tokens (`src/app/globals.css`) |
+| Charts | Recharts 3 |
+| Auth | Firebase Authentication (email/password + Google). ID tokens are checked on the server with `firebase-admin`. |
+| Database | MongoDB Atlas via Mongoose (`users`, `datasets`, `reports`, `charts`) |
+| AI | Groq → Gemini → Mistral → GitHub Models → OpenRouter → Z.ai → Hugging Face |
 
-## 1. Setup
+---
+
+## Run it locally
+
+**You need:** Node 20+, a MongoDB Atlas database and a Firebase project (or the local Firebase emulator, see below).
 
 ```bash
+git clone https://github.com/MayankJha0333/VizPilot.git
+cd VizPilot
 npm install
-cp .env.example .env      # then fill it in (see below)
+cp .env.example .env      # fill it in (table below)
 npm run dev               # http://localhost:3000
 ```
 
-### `.env`
+### Environment variables
 
-```
-# MongoDB (already added)
-MONGODB_URI=...
-MONGODB_USERNAME=...
-MONGODB_PASSWORD=...
-MONGODB_DB=vizpilot
+| Name | Required | Where to get it |
+| --- | --- | --- |
+| `MONGODB_URI` | Yes | Atlas → Connect → Drivers. It can keep the `<db_username>` / `<db_password>` placeholders. |
+| `MONGODB_USERNAME`, `MONGODB_PASSWORD` | If the URI has placeholders | Atlas → Database Access |
+| `MONGODB_DB` | No (default `vizpilot`) | Any name |
+| `NEXT_PUBLIC_FIREBASE_API_KEY`, `..._AUTH_DOMAIN`, `..._PROJECT_ID`, `..._APP_ID`, `..._STORAGE_BUCKET`, `..._MESSAGING_SENDER_ID` | Yes | Firebase console → Project settings → Your apps → Web app |
+| `GROQ_API_KEY`, `GEMINI_API_KEY`, `MISTRAL_API_KEY`, `GITHUB_MODELS_TOKEN`, `OPENROUTER_API_KEY`, `ZAI_API_KEY`, `HUGGINGFACE_API_KEY` | No, but add at least one for the best Ask AI | Each provider's dashboard |
+| `AI_PROVIDER_ORDER` | No | Change the fallback order, e.g. `gemini,groq,mistral` |
 
-# Firebase web app (Firebase console → Project settings → Your apps → Web)
-NEXT_PUBLIC_FIREBASE_API_KEY=
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project
-NEXT_PUBLIC_FIREBASE_APP_ID=
+In Firebase, turn on **Authentication → Sign-in method → Email/Password** and **Google**, then add `localhost` under **Authentication → Settings → Authorized domains**.
 
-# AI keys (optional)
-GROQ_API_KEY=...
-GEMINI_API_KEY=...
-```
-
-In the Firebase console, turn on **Authentication → Sign-in method → Email/Password** and **Google**. Add `localhost` (and your deployed domain) under **Authentication → Settings → Authorized domains**.
-
-`MONGODB_URI` can keep the `<db_username>` / `<db_password>` placeholders from Atlas — they're filled from `MONGODB_USERNAME` / `MONGODB_PASSWORD` automatically.
-
-### Running without a Firebase project (local emulator)
+<details>
+<summary><b>No Firebase project yet? Use the local emulator</b></summary>
 
 ```bash
-npm run emulators        # starts the Firebase Auth emulator on 127.0.0.1:9099
+npm i -g firebase-tools
+npm run emulators        # Auth emulator on 127.0.0.1:9099
 ```
 
-and in `.env`:
+Then in `.env`:
 
 ```
 NEXT_PUBLIC_FIREBASE_API_KEY=demo-key
@@ -70,74 +136,96 @@ NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099
 FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099
 ```
 
-### AI keys (optional but recommended)
+</details>
 
-Add any of these to `.env`: `GROQ_API_KEY`, `GEMINI_API_KEY`, `MISTRAL_API_KEY`, `GITHUB_MODELS_TOKEN`, `OPENROUTER_API_KEY`, `ZAI_API_KEY`, `HUGGINGFACE_API_KEY`. Without a key, Ask AI uses the built-in rules engine (`src/lib/charts/intent.ts`).
+---
 
-**How fallback works** (`src/lib/ai/`):
+## Deploy on Vercel
 
-- `providers.ts` – one adapter per provider (OpenAI-compatible chat endpoints + Gemini). Models and URLs live here.
-- `client.ts` – the orchestrator. Providers are tried in order (`AI_PROVIDER_ORDER=groq,gemini,…` overrides it). A failure is classified (`auth`, `rate_limit`, `server`, `timeout`, `network`, `bad_response`, `config`) and puts that provider on a cooldown (auth 30 min, rate-limit 90 s, timeout 45 s, … with exponential escalation), so the next request skips straight to a healthy provider. When every provider is cooling, the one closest to recovery is retried. `completeJSON()` extracts JSON from any reply and retries once with a stricter prompt.
-- `analyst.ts` – the Ask AI engine: builds a dataset brief (columns, stats, distinct values, samples), asks the model for a *plan* (chart config / answer / insights), validates and repairs it against the real columns, then computes the numbers deterministically from your rows.
-- **Settings → AI providers** shows live status per provider, lets you test each one or the whole chain, and clear cooldowns. `GET /api/ai/providers` returns the same data.
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FMayankJha0333%2FVizPilot&env=MONGODB_URI,NEXT_PUBLIC_FIREBASE_API_KEY,NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,NEXT_PUBLIC_FIREBASE_PROJECT_ID,NEXT_PUBLIC_FIREBASE_APP_ID&envDescription=See%20the%20README%20for%20where%20to%20find%20each%20value&project-name=vizpilot)
 
-## 2. Project layout
+1. **Import the repo** at [vercel.com/new](https://vercel.com/new). Vercel detects Next.js, so no build settings are needed.
+2. **Add the environment variables** from the table above. Tip: you can paste your whole `.env` into the first field and Vercel splits it into rows.
+3. **Deploy.**
+4. **Allow the new domain in Firebase:** Authentication → Settings → Authorized domains → add `your-app.vercel.app`. Without this, sign-in with Google fails.
+5. **Allow Vercel in MongoDB Atlas:** Network Access → add `0.0.0.0/0`. Vercel's servers don't have fixed IP addresses, so Atlas has to accept connections from anywhere (the database password still protects it).
+
+---
+
+<details>
+<summary><b>How the AI fallback works</b></summary>
+
+Code lives in `src/lib/ai/`.
+
+- `providers.ts`: one adapter per provider (OpenAI-compatible endpoints + Gemini). On start it reads each provider's live model list and picks the best available model, so retired model names don't break it.
+- `client.ts`: tries providers in order. Each failure is sorted into a type (`auth`, `quota`, `model_unavailable`, `rate_limit`, `server`, `timeout`, `network`, `bad_response`) and that provider rests for a while (a cooldown), so the next request skips straight to a healthy one. It also retries without settings a model rejects, and retries "thinking" models that return empty replies.
+- `analyst.ts`: the Ask AI engine. It gives the model a short brief of your dataset, asks it for a plan (chart / answer / insights), checks the plan against your real columns, then computes every number from your rows. The model never makes up numbers.
+- **Settings → AI providers** shows each provider's live status, lets you test them and clear cooldowns.
+
+</details>
+
+<details>
+<summary><b>Project layout</b></summary>
 
 ```
 src/
   app/
     (marketing)/page.tsx        Landing page
-    (auth)/login|signup|forgot-password
-    (app)/                      Signed-in area (AppShell + auth gate)
-      dashboard/                Home: start cards, recent reports, one-click templates, datasets
-      reports/                  All reports (search, sort, grid/list)
-      reports/new/              2-step wizard: add data → set up report (auto-charts); ?mode= & template deep links
-      reports/[id]/             Report editor: 12-col widget grid (drag to reorder, 4 widths), widget editor, Ask AI panel + ⌘K composer, present mode, data modal, share
-      datasets/, datasets/[id]/ Dataset list + editable table view
-      settings/                 Profile, AI provider status/tests, workspace status
-    share/[shareId]/            Public, read-only report
-    api/                        REST routes (all verify the Firebase ID token)
-  components/                   UI, auth, layout, charts, data, reports, ai
+    (auth)/                     Login, sign up, forgot password
+    (app)/                      Signed-in area
+      dashboard/                Home: start cards, recent reports, templates, datasets
+      reports/                  All reports
+      reports/new/              Add data → set up report
+      reports/[id]/             Report editor: grid, chart studio, Ask AI, present, share
+      datasets/                 Dataset list + editable table
+      settings/                 Profile, AI provider status
+    share/[shareId]/            Public read-only report
+    api/                        REST routes (all check the Firebase ID token)
+  components/                   UI, charts (grid, widget, studio), data, reports, layout
   lib/
-    db.ts                       Mongoose connection (cached)
-    models/                     User, Dataset, Report, Chart
-    firebase/                   client SDK + admin verification
-    auth-server.ts              requireUser() helper for API routes
-    data/                       parse.ts (CSV/Excel/paste + type inference), transform.ts (aggregation), samples.ts
-    charts/                     types + palettes, suggest.ts (dashboard suggestions), intent.ts (rules: natural language → chart, follow-ups)
-    data/dates.ts               date parsing + day/week/month/quarter/year bucketing
-    ai/                         providers.ts (adapters), client.ts (fallback + circuit breakers), analyst.ts (Ask AI engine)
-  proxy.ts                      Cookie-based redirects for protected/auth pages
+    ai/                         Providers, fallback client, analyst
+    charts/                     Types, palettes, suggestions, natural-language rules
+    data/                       Parsing, aggregation, dates, samples
+    layout/grid.ts              Dashboard grid maths (move, resize, compact)
+    models/                     Mongoose models
+    firebase/                   Client SDK + server verification
 ```
 
-## 3. API
+</details>
+
+<details>
+<summary><b>API routes</b></summary>
 
 | Method | Route | What it does |
 | --- | --- | --- |
-| PATCH | `/api/reports/:id` with `{ layouts: [{ id, x, y, w, h }] }` | Save the dashboard layout after a drag / resize |
-| POST / DELETE | `/api/auth/session` | Sync Firebase user into MongoDB, set/clear session cookie |
-| GET / POST | `/api/datasets` | List (no rows) / create dataset |
-| GET / PATCH / DELETE | `/api/datasets/:id` | Read (with rows) / edit / delete (blocked while a report uses it) |
-| GET / POST | `/api/reports` | List with chart counts + preview / create (optionally auto-build charts) |
-| GET / PATCH / DELETE | `/api/reports/:id` | Read with charts + dataset / update (title, theme, public, chart order…) / delete |
-| POST | `/api/reports/:id/duplicate` | Copy report and its charts |
-| POST | `/api/charts` | Create chart in a report |
-| PATCH / POST / DELETE | `/api/charts/:id` | Update / duplicate / delete |
-| POST | `/api/ai/ask` | Ask AI: `{datasetId, prompt, history, lastConfig}` → chart / answer / insights + "how I built this" steps |
-| GET / POST | `/api/ai/providers` | Provider status; `{action:"test", provider?}` pings one or the chain, `{action:"reset"}` clears cooldowns |
-| GET | `/api/share/:shareId` | Public report payload |
-| GET | `/api/health` | DB / Firebase / AI provider status |
+| POST / DELETE | `/api/auth/session` | Sync the Firebase user into MongoDB, set/clear the session cookie |
+| GET / POST | `/api/datasets` | List / create datasets |
+| GET / PATCH / DELETE | `/api/datasets/:id` | Read / edit / delete (blocked while a widget uses it) |
+| GET / POST | `/api/reports` | List with previews / create (optionally auto-build widgets) |
+| GET / PATCH / DELETE | `/api/reports/:id` | Read / update (title, theme, public, `layouts`) / delete |
+| POST | `/api/reports/:id/duplicate` | Copy a report and its widgets |
+| POST | `/api/charts` | Add a widget |
+| PATCH / POST / DELETE | `/api/charts/:id` | Update / duplicate / delete a widget |
+| POST | `/api/ai/ask` | Ask AI → chart, answer or insights, plus the steps it took |
+| GET / POST | `/api/ai/providers` | Provider status, test, reset cooldowns |
+| GET | `/api/share/:shareId` | Public report data |
+| GET | `/api/health` | Database, Firebase and AI status |
 
-## 4. Scripts
+</details>
+
+## Scripts
 
 ```bash
-npm run dev         # dev server
+npm run dev         # development server
 npm run build       # production build
-npm run start       # serve the build
-npm run lint        # eslint
-npm run emulators   # Firebase Auth emulator (needs firebase-tools: npm i -g firebase-tools)
+npm run start       # serve the production build
+npm run lint        # ESLint
+npm run typecheck   # TypeScript
+npm run emulators   # Firebase Auth emulator
 ```
 
-## 5. Deploying
+---
 
-Works on Vercel or any Node host. Set the same environment variables there, and add the deployed domain to Firebase's authorized domains. Mongo Atlas needs the host's IP range allowed (or `0.0.0.0/0` for testing).
+<div align="center">
+Built by <a href="https://github.com/MayankJha0333">Mayank Jha</a> · Inspired by <a href="https://graphy.app">Graphy</a>
+</div>

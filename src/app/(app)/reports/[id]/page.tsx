@@ -357,19 +357,19 @@ function ReportEditor({ id }: { id: string }) {
 
   if (present) {
     return (
-      <div className={clsx("fixed inset-0 z-[85] overflow-y-auto animate-fade-in", dark ? "bg-[#0b0d1a] text-white" : "bg-bg")}>
-        <div className={clsx("sticky top-0 z-40 flex items-center justify-between px-6 py-3", dark ? "bg-[#0b0d1a]/80 backdrop-blur" : "glass")}>
+      <div data-theme={theme} className="canvas-dots fixed inset-0 z-[85] overflow-y-auto text-ink animate-fade-in">
+        <div className="glass sticky top-0 z-40 flex items-center justify-between px-6 py-3">
           <Wordmark dark={dark} size={24} />
           <div className="flex items-center gap-2">
-            <span className={clsx("text-xs", dark ? "text-white/50" : "text-ink-3")}>Press Esc to exit</span>
-            <Button size="sm" variant={dark ? "outline" : "ghost"} onClick={() => setPresent(false)}>
+            <span className="text-xs text-ink-3">Press Esc to exit</span>
+            <Button size="sm" variant="ghost" onClick={() => setPresent(false)}>
               <X className="h-4 w-4" /> Exit
             </Button>
           </div>
         </div>
         <div className="mx-auto max-w-[1400px] px-6 py-8">
           <h1 className="text-3xl font-semibold tracking-tight">{report.title}</h1>
-          {report.description && <p className={clsx("mt-2 max-w-2xl", dark ? "text-white/60" : "text-ink-2")}>{report.description}</p>}
+          {report.description && <p className="mt-2 max-w-2xl text-ink-2">{report.description}</p>}
           <div className="mt-8">
             <DashboardGrid layout={layout} items={gridItems(true)} dark={dark} />
           </div>
@@ -379,7 +379,7 @@ function ReportEditor({ id }: { id: string }) {
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-56px)] flex-col lg:min-h-screen">
+    <div data-theme={theme} className="flex min-h-[calc(100vh-56px)] flex-col bg-bg text-ink transition-colors duration-300 lg:min-h-screen">
       {/* Top bar */}
       <div className="glass sticky top-14 z-40 flex flex-wrap items-center gap-2 px-3 py-2 sm:h-14 sm:flex-nowrap sm:px-5 sm:py-0 lg:top-0">
         <Tooltip label="Back to home" side="bottom">
@@ -414,10 +414,18 @@ function ReportEditor({ id }: { id: string }) {
           </div>
         </div>
         <div className="flex w-full items-center justify-end gap-1.5 sm:ml-auto sm:w-auto">
-          <Tooltip label={dark ? "Light theme" : "Dark theme"} side="bottom">
-            <Button size="sm" variant="ghost" onClick={() => patchReport({ theme: dark ? "light" : "dark" })} aria-label="Toggle theme">
-              {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-            </Button>
+          <Tooltip label={dark ? "Switch to light" : "Switch to dark"} side="bottom">
+            <button
+              role="switch"
+              aria-checked={dark}
+              aria-label="Toggle theme"
+              onClick={() => patchReport({ theme: dark ? "light" : "dark" })}
+              className="relative flex h-8 w-[62px] shrink-0 items-center justify-between rounded-full border bg-surface-3 px-2 text-ink-3 transition-colors hover:border-border-strong"
+            >
+              <span className={clsx("absolute top-[3px] h-6 w-6 rounded-full bg-surface shadow-[var(--shadow-sm)] ring-1 ring-border transition-transform duration-300 ease-[var(--ease-spring)]", dark ? "translate-x-[26px]" : "-translate-x-[3px]")} />
+              <Sun className={clsx("relative h-3.5 w-3.5 transition-colors", !dark && "text-warning")} />
+              <Moon className={clsx("relative h-3.5 w-3.5 transition-colors", dark && "text-brand")} />
+            </button>
           </Tooltip>
           <Tooltip label="Present" side="bottom">
             <Button size="sm" variant="ghost" onClick={() => setPresent(true)} aria-label="Present" disabled={charts.length === 0}>
@@ -466,8 +474,8 @@ function ReportEditor({ id }: { id: string }) {
       </div>
 
       {/* Canvas */}
-      <div className={clsx("relative min-w-0 flex-1 px-3 pb-32 pt-5 transition-colors duration-300 sm:px-6", dark ? "bg-[#0f1122]" : "bg-bg")}>
-        {report.description && <p className={clsx("mb-4 max-w-2xl text-sm animate-fade-up", dark ? "text-white/60" : "text-ink-2")}>{report.description}</p>}
+      <div className="canvas-dots relative min-w-0 flex-1 px-3 pb-32 pt-5 transition-colors duration-300 sm:px-6">
+        {report.description && <p className="mb-4 max-w-2xl text-sm text-ink-2 animate-fade-up">{report.description}</p>}
 
         {charts.length === 0 ? (
           <EmptyState

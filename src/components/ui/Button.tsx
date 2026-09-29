@@ -16,10 +16,10 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 const variants: Record<Variant, string> = {
   primary:
     "text-white gradient-brand shadow-[0_1px_0_rgba(255,255,255,0.2)_inset,var(--shadow-glow)] hover:brightness-110 hover:shadow-[0_1px_0_rgba(255,255,255,0.2)_inset,0_14px_34px_-10px_rgba(91,91,214,0.7)]",
-  secondary: "bg-ink text-white hover:bg-[#23274a]",
-  outline: "bg-surface text-ink border border-border-strong hover:bg-surface-2 hover:border-[#bfc4d8]",
+  secondary: "bg-inverse text-inverse-fg hover:opacity-90",
+  outline: "bg-surface text-ink border border-border-strong hover:bg-surface-2 hover:border-ink-3",
   ghost: "bg-transparent text-ink-2 hover:bg-surface-3 hover:text-ink",
-  soft: "bg-brand-soft text-brand-ink hover:bg-[#e2e5fb]",
+  soft: "bg-brand-soft text-brand-ink hover:brightness-95",
   danger: "bg-danger text-white hover:bg-red-700",
 };
 

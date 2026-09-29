@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/Button";
 import { Badge, EmptyState, Segmented, timeAgo } from "@/components/ui/misc";
 import { Modal } from "@/components/ui/Modal";
 import { useToast } from "@/components/ui/Toast";
-import { ReportCard, type ReportListItem } from "@/components/reports/ReportCard";
+import { previewSource, ReportCard, type ReportListItem } from "@/components/reports/ReportCard";
 import { useWorkspace } from "@/lib/hooks/useWorkspace";
 
 export default function ReportsPage() {
@@ -101,7 +101,7 @@ export default function ReportsPage() {
         ) : view === "grid" ? (
           <div className="stagger stagger-auto grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.map((r) => (
-              <ReportCard key={r._id} report={r} previewRows={r.datasetId ? previewData[r.datasetId]?.rows : undefined} previewColumns={r.datasetId ? previewData[r.datasetId]?.columns : undefined} onDuplicate={() => duplicate(r)} onDelete={() => setConfirm(r)} />
+              <ReportCard key={r._id} report={r} previewRows={previewData[previewSource(r)]?.rows} previewColumns={previewData[previewSource(r)]?.columns} onDuplicate={() => duplicate(r)} onDelete={() => setConfirm(r)} />
             ))}
           </div>
         ) : (

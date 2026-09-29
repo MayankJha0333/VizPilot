@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { api } from "@/lib/api";
-import type { ReportListItem } from "@/components/reports/ReportCard";
+import { previewSource, type ReportListItem } from "@/components/reports/ReportCard";
 import type { DatasetRecord, DatasetSummary } from "@/lib/charts/types";
 
 /** Loads reports + datasets (and the datasets needed for report previews). */
@@ -17,7 +17,7 @@ export function useWorkspace(sort: "recent" | "title" = "recent") {
     await Promise.resolve();
     setReports(r.reports);
     setDatasets(d.datasets);
-    const ids = [...new Set(r.reports.filter((x) => x.preview && x.datasetId).map((x) => x.datasetId as string))].slice(0, 12);
+    const ids = [...new Set(r.reports.filter((x) => x.preview).map(previewSource).filter(Boolean))].slice(0, 12);
     const entries = await Promise.all(
       ids.map(async (id) => {
         try {

@@ -15,6 +15,11 @@ export interface ReportListItem extends ReportRecord {
   preview: ChartRecord | null;
 }
 
+/** The dataset a card's preview chart reads from (widgets can use a different source than the report default). */
+export function previewSource(r: ReportListItem): string {
+  return r.preview?.datasetId || r.datasetId || "";
+}
+
 interface Props {
   report: ReportListItem;
   previewRows?: Row[];
@@ -31,16 +36,16 @@ export function ReportCard({ report, previewRows, previewColumns, onDuplicate, o
   const previewCfg = report.preview ? { ...report.preview.config, showLabels: false, showLegend: false } : null;
   return (
     <Link href={`/reports/${report._id}`} className="card card-hover group flex flex-col overflow-hidden" data-testid="report-card">
-      <div className={clsx("relative overflow-hidden border-b p-3", compact ? "h-32" : "h-44")} style={{ background: dark ? "#13162a" : `linear-gradient(135deg, ${colors[0]}22, ${colors[1]}1a 60%, ${colors[2]}12)` }}>
+      <div data-theme={report.theme} className={clsx("relative overflow-hidden border-b p-3", compact ? "h-32" : "h-44")} style={{ background: dark ? `linear-gradient(135deg, #1b2140, #0d1017 65%)` : `linear-gradient(135deg, ${colors[0]}22, ${colors[1]}1a 60%, ${colors[2]}12)` }}>
         {previewCfg && previewRows && previewColumns ? (
-          <div className={clsx("h-full rounded-xl p-2.5 transition-transform duration-300 group-hover:scale-[1.02]", dark ? "chart-dark bg-[#13162a]" : "bg-surface/95 shadow-[var(--shadow-sm)]")}>
-            <div className={clsx("mb-1 truncate text-[10px] font-semibold", dark ? "text-white" : "text-ink")}>{report.preview!.title}</div>
+          <div className="h-full rounded-xl border border-border bg-surface/95 p-2.5 shadow-[var(--card-shadow)] transition-transform duration-300 group-hover:scale-[1.02]">
+            <div className="mb-1 truncate text-[10px] font-semibold text-ink">{report.preview!.title}</div>
             <div className="pointer-events-none">
               <ChartRenderer config={previewCfg} rows={previewRows} columns={previewColumns} theme={report.theme} height={compact ? 80 : 118} compact animate={false} text={report.preview!.note} />
             </div>
           </div>
         ) : previewCfg ? (
-          <div className={clsx("h-full rounded-xl p-2.5", dark ? "bg-[#13162a]" : "bg-surface/95 shadow-[var(--shadow-sm)]")} aria-hidden>
+          <div className="h-full rounded-xl border border-border bg-surface/95 p-2.5 shadow-[var(--card-shadow)]" aria-hidden>
             <div className="skeleton mb-2 h-2.5 w-1/2" />
             <div className="flex h-[calc(100%-1.25rem)] items-end gap-1.5">
               {[35, 60, 45, 80, 55, 70, 40].map((h, i) => (
@@ -59,11 +64,11 @@ export function ReportCard({ report, previewRows, previewColumns, onDuplicate, o
           </div>
         )}
         {report.isPublic && (
-          <span className="absolute right-2 top-2 inline-flex items-center gap-1 rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-medium text-green-700 shadow-[var(--shadow-sm)]">
+          <span className="absolute right-2 top-2 inline-flex items-center gap-1 rounded-full bg-success-soft px-2 py-0.5 text-[10px] font-medium text-success-ink shadow-[var(--shadow-sm)]">
             <Globe className="h-3 w-3" /> Public
           </span>
         )}
-        <span className="absolute bottom-2 right-2 flex h-8 w-8 translate-y-2 items-center justify-center rounded-full bg-ink text-white opacity-0 shadow-[var(--shadow-md)] transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100">
+        <span className="absolute bottom-2 right-2 flex h-8 w-8 translate-y-2 items-center justify-center rounded-full bg-inverse text-inverse-fg opacity-0 shadow-[var(--shadow-md)] transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100">
           <ArrowUpRight className="h-4 w-4" />
         </span>
       </div>

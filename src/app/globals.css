@@ -2,16 +2,16 @@
 
 :root {
   /* canvas + surfaces */
-  --bg: #f4f5f8;
+  --bg: #f5f6f9;
   --surface: #ffffff;
-  --surface-2: #f7f8fb;
-  --surface-3: #eef0f5;
-  --border: #e6e8ee;
-  --border-strong: #d4d7e0;
-  /* text */
+  --surface-2: #f8f9fb;
+  --surface-3: #eff1f5;
+  --border: #e5e7ee;
+  --border-strong: #d3d7e1;
+  /* text (all ≥ 4.5:1 on surface) */
   --text: #0c1024;
   --text-2: #4f5468;
-  --text-3: #858a9d;
+  --text-3: #6a6f84;
   /* brand */
   --brand: #4c5fd5;
   --brand-2: #5b8def;
@@ -21,8 +21,18 @@
   --brand-ink: #2b3a9e;
   --accent: #1baf7a;
   --success: #16a34a;
+  --success-soft: #e7f6ee;
+  --success-ink: #0e7a3e;
   --danger: #e11d48;
+  --danger-soft: #fdecee;
+  --danger-ink: #c01f3c;
   --warning: #d97706;
+  --canvas-dot: rgba(12, 16, 36, 0.07);
+  --popover: #ffffff;
+  --inverse: #0c1024;
+  --inverse-fg: #ffffff;
+  --card-shadow: 0 1px 2px rgba(15, 18, 34, 0.04), 0 1px 1px rgba(15, 18, 34, 0.02);
+  --card-shadow-hover: 0 12px 28px -16px rgba(15, 18, 34, 0.22), 0 2px 6px -2px rgba(15, 18, 34, 0.05);
   /* navigation (dark) */
   --nav-bg: #0b0f1e;
   --nav-bg-2: #141a2e;
@@ -37,6 +47,51 @@
   --radius: 18px;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ============================================================
+   Dark theme – applied to a subtree with data-theme="dark"
+   (the report page, present mode, shared reports).
+   Elevation = lighter surfaces + hairline borders, not shadows.
+   ============================================================ */
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0d1017;
+  --surface: #151a26;
+  --surface-2: #1a2030;
+  --surface-3: #222939;
+  --border: #262d3e;
+  --border-strong: #343c50;
+  --text: #eef0f6;
+  --text-2: #b0b6c6;
+  --text-3: #8a92a6;
+  --brand: #6b7bf0;
+  --brand-2: #7ea2f5;
+  --brand-hover: #7d8cf4;
+  --brand-soft: rgba(107, 123, 240, 0.16);
+  --brand-ink: #b8c1ff;
+  --success: #3ccf85;
+  --success-soft: rgba(60, 207, 133, 0.14);
+  --success-ink: #6fe0a6;
+  --danger: #f47171;
+  --danger-soft: rgba(244, 113, 113, 0.14);
+  --danger-ink: #ff9b9b;
+  --ring: rgba(107, 123, 240, 0.45);
+  --canvas-dot: rgba(255, 255, 255, 0.05);
+  --popover: #1f2536;
+  --inverse: #eef0f6;
+  --inverse-fg: #0d1017;
+  --shadow-sm: 0 0 0 1px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 16px 36px -16px rgba(0, 0, 0, 0.75), 0 2px 6px -2px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 32px 80px -24px rgba(0, 0, 0, 0.85), 0 12px 28px -14px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 10px 30px -10px rgba(107, 123, 240, 0.55);
+  --card-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --card-shadow-hover: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 16px 36px -18px rgba(0, 0, 0, 0.8);
+  color: var(--text);
+}
+[data-theme="light"] {
+  color-scheme: light;
+  color: var(--text);
 }
 
 @theme inline {
@@ -57,6 +112,13 @@
   --color-brand-ink: var(--brand-ink);
   --color-accent: var(--accent);
   --color-success: var(--success);
+  --color-popover: var(--popover);
+  --color-inverse: var(--inverse);
+  --color-inverse-fg: var(--inverse-fg);
+  --color-success-soft: var(--success-soft);
+  --color-success-ink: var(--success-ink);
+  --color-danger-soft: var(--danger-soft);
+  --color-danger-ink: var(--danger-ink);
   --color-danger: var(--danger);
   --color-warning: var(--warning);
   --color-nav: var(--nav-bg);
@@ -134,10 +196,26 @@
     border-color: var(--border-strong);
   }
   .glass {
-    background: rgba(255, 255, 255, 0.78);
+    background: color-mix(in srgb, var(--surface) 82%, transparent);
     backdrop-filter: saturate(180%) blur(16px);
     -webkit-backdrop-filter: saturate(180%) blur(16px);
-    border-bottom: 1px solid rgba(15, 18, 34, 0.06);
+    border-bottom: 1px solid var(--border);
+  }
+  /* Dashboard canvas: a faint dot grid that reads in both themes. */
+  .canvas-dots {
+    background-color: var(--bg);
+    background-image: radial-gradient(circle at 1px 1px, var(--canvas-dot) 1px, transparent 0);
+    background-size: 24px 24px;
+  }
+  .widget-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--card-shadow);
+    transition: box-shadow 0.25s var(--ease-out), border-color 0.2s;
+  }
+  .widget-card:hover {
+    border-color: var(--border-strong);
+    box-shadow: var(--card-shadow-hover);
   }
   .bg-dots {
     background-image: radial-gradient(circle at 1px 1px, rgba(15, 18, 34, 0.08) 1px, transparent 0);
@@ -343,7 +421,7 @@
   }
 
   .skeleton {
-    background: linear-gradient(90deg, #eceef5 25%, #f6f7fb 37%, #eceef5 63%);
+    background: linear-gradient(90deg, var(--surface-3) 25%, var(--surface-2) 37%, var(--surface-3) 63%);
     background-size: 800px 100%;
     animation: shimmer 1.4s infinite linear;
     border-radius: 8px;
@@ -782,16 +860,13 @@
 
 /* Dark widget theme */
 .chart-dark {
-  --surface: #13162a;
-  --surface-2: #1a1e35;
-  --surface-3: #22263f;
-  --border: #272b47;
-  --border-strong: #353a5c;
-  --text: #f4f5fa;
-  --text-2: #b6bad0;
-  --text-3: #8b90a8;
+  --surface: #151a26;
+  --surface-2: #1a2030;
+  --surface-3: #222939;
+  --border: #262d3e;
+  --border-strong: #343c50;
+  --text: #eef0f6;
+  --text-2: #b0b6c6;
+  --text-3: #8a92a6;
   color: var(--text);
-}
-.chart-dark .recharts-cartesian-grid line {
-  stroke: #2b2f4a;
 }

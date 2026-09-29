@@ -101,7 +101,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
   let lastGroup = "";
   return (
     <div className="fixed inset-0 z-[95] flex items-start justify-center px-4 pt-[12vh]" role="dialog" aria-modal="true">
-      <div className="absolute inset-0 bg-ink/50 backdrop-blur-[3px] animate-fade-in" onClick={onClose} />
+      <div className="absolute inset-0 bg-[#0b0f1e]/50 backdrop-blur-[3px] animate-fade-in" onClick={onClose} />
       <div className="relative w-full max-w-xl overflow-hidden rounded-2xl border bg-surface shadow-[var(--shadow-lg)] animate-scale-in">
         <div className="flex items-center gap-3 border-b px-4">
           <Search className="h-4 w-4 text-ink-3" />
@@ -141,7 +141,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
                   onClick={it.run}
                   className={clsx("flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-colors", i === active ? "bg-brand-soft text-brand-ink" : "text-ink hover:bg-surface-2")}
                 >
-                  <span className={clsx("flex h-7 w-7 items-center justify-center rounded-lg", i === active ? "bg-white text-brand" : "bg-surface-3 text-ink-2")}>{it.icon}</span>
+                  <span className={clsx("flex h-7 w-7 items-center justify-center rounded-lg", i === active ? "bg-surface text-brand" : "bg-surface-3 text-ink-2")}>{it.icon}</span>
                   <span className="flex-1 truncate">{it.label}</span>
                   {it.hint && <span className="truncate text-xs text-ink-3">{it.hint}</span>}
                 </button>

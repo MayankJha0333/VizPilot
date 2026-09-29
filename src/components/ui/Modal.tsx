@@ -31,7 +31,7 @@ export function Modal({ open, onClose, title, description, children, footer, siz
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-[90] flex items-end justify-center sm:items-center" role="dialog" aria-modal="true">
-      <div className="absolute inset-0 bg-ink/45 backdrop-blur-[3px] animate-fade-in" onClick={onClose} />
+      <div className="absolute inset-0 bg-[#0b0f1e]/45 backdrop-blur-[3px] animate-fade-in" onClick={onClose} />
       <div
         className={clsx(
           "relative flex max-h-[92vh] w-full flex-col overflow-hidden rounded-t-3xl bg-surface shadow-[var(--shadow-lg)] animate-slide-up sm:m-4 sm:animate-scale-in sm:rounded-2xl",

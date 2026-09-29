@@ -176,7 +176,7 @@ export function AppShell({ children, wide = false, title }: { children: React.Re
 
       {open && (
         <div className="fixed inset-0 z-[80] lg:hidden">
-          <div className="absolute inset-0 bg-ink/50 animate-fade-in" onClick={() => setOpen(false)} />
+          <div className="absolute inset-0 bg-[#0b0f1e]/50 animate-fade-in" onClick={() => setOpen(false)} />
           <aside className="absolute inset-y-0 left-0 w-72 shadow-[var(--shadow-lg)] animate-slide-in-left">
             {renderSidebar(false)}
           </aside>
