@@ -40,6 +40,13 @@ export const ChartConfigSchema = z.object({
   filters: z.array(FilterSchema).max(10).optional(),
 });
 
+export const LayoutSchema = z.object({
+  x: z.number().int().min(0).max(11),
+  y: z.number().int().min(0).max(5000),
+  w: z.number().int().min(1).max(12),
+  h: z.number().int().min(2).max(60),
+});
+
 export const ChartInput = z.object({
   reportId: z.string().min(1),
   title: z.string().trim().max(160).default("Untitled chart"),
@@ -47,6 +54,9 @@ export const ChartInput = z.object({
   note: z.string().trim().max(2000).default(""),
   config: ChartConfigSchema,
   size: z.enum(["sm", "half", "wide", "full"]).default("half"),
+  /** Data source for this widget; defaults to the report's primary dataset. */
+  datasetId: z.string().min(1).optional(),
+  layout: LayoutSchema.nullable().optional(),
 });
 
 export const ChartPatch = z.object({
@@ -56,6 +66,8 @@ export const ChartPatch = z.object({
   config: ChartConfigSchema.optional(),
   size: z.enum(["sm", "half", "wide", "full"]).optional(),
   order: z.number().int().optional(),
+  datasetId: z.string().min(1).optional(),
+  layout: LayoutSchema.nullable().optional(),
 });
 
 export const ReportInput = z.object({
@@ -75,4 +87,6 @@ export const ReportPatch = z.object({
   layout: z.enum(["grid", "single"]).optional(),
   isPublic: z.boolean().optional(),
   chartOrder: z.array(z.string()).optional(),
+  /** Bulk layout update after a drag / resize. */
+  layouts: z.array(LayoutSchema.extend({ id: z.string().min(1) })).max(200).optional(),
 });

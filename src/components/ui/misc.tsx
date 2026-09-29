@@ -16,15 +16,15 @@ export function Logo({ className, dark = false }: { className?: string; dark?: b
 export function LogoMark({ size = 28 }: { size?: number }) {
   return (
     <span
-      className="relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-[30%] shadow-[0_6px_16px_-4px_rgba(109,92,255,0.6)]"
-      style={{ width: size, height: size, background: "linear-gradient(135deg,#6d5cff 0%,#8b5cf6 55%,#c06bff 100%)" }}
+      className="relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-[30%] shadow-[0_6px_16px_-4px_rgba(76, 95, 213,0.6)]"
+      style={{ width: size, height: size, background: "linear-gradient(135deg,#4c5fd5 0%,#3f6fe0 55%,#2a78d6 100%)" }}
       aria-hidden
     >
       <span className="absolute inset-0 bg-[radial-gradient(80%_60%_at_20%_0%,rgba(255,255,255,0.35),transparent_60%)]" />
       <svg width={size} height={size} viewBox="0 0 32 32" fill="none" className="relative">
         <path d="M8 10.5 L14.5 23.5 L25 9.5" stroke="#fff" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
         <path d="M18.5 9.5 H25 V16" stroke="#fff" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-        <circle cx="8" cy="6" r="2.2" fill="#ff6b8a" />
+        <circle cx="8" cy="6" r="2.2" fill="#eb6834" />
       </svg>
     </span>
   );

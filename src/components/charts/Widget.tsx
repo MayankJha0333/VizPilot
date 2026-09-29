@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { clsx } from "clsx";
 import { Copy, Download, FileDown, GripVertical, Maximize2, MoreHorizontal, Pencil, Trash2, Filter as FilterIcon } from "lucide-react";
 import { ChartRenderer, LegendChips } from "@/components/charts/ChartRenderer";
@@ -9,6 +9,7 @@ import { Modal } from "@/components/ui/Modal";
 import { Tooltip } from "@/components/ui/misc";
 import { Button } from "@/components/ui/Button";
 import type { ChartRecord, Column, Row, WidgetSize } from "@/lib/charts/types";
+import { Database } from "lucide-react";
 import { buildSeries, effectiveKeys, formatNumber, seriesLabel } from "@/lib/data/transform";
 import { entityWord } from "@/lib/charts/suggest";
 
@@ -24,7 +25,12 @@ interface Props {
   onSelect?: () => void;
   onDuplicate?: () => void;
   onDelete?: () => void;
+  /** @deprecated widths are set by dragging the resize handle now. */
   onResize?: (size: WidgetSize) => void;
+  /** Name of the data source, shown when a report mixes several. */
+  sourceName?: string;
+  /** Fill the parent's height (grid cell) instead of a fixed chart height. */
+  fill?: boolean;
 }
 
 export const SIZE_LABEL: Record<WidgetSize, string> = { sm: "Small", half: "Half", wide: "Wide", full: "Full" };
@@ -45,8 +51,36 @@ export function widgetHeight(chart: ChartRecord): number {
   return 270;
 }
 
-export function Widget({ chart, rows, columns, theme, selected, readOnly, index = 0, draggable, onSelect, onDuplicate, onDelete, onResize }: Props) {
+/** Measure an element's height (for charts that must fit their grid cell). */
+function useSize<T extends HTMLElement>() {
+  const ref = useRef<T>(null);
+  const [size, setSize] = useState({ w: 0, h: 0 });
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([e]) => setSize({ w: Math.round(e.contentRect.width), h: Math.round(e.contentRect.height) }));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  return [ref, size] as const;
+}
+
+export function Widget({ chart, rows, columns, theme, selected, readOnly, index = 0, draggable, onSelect, onDuplicate, onDelete, sourceName, fill }: Props) {
   const ref = useRef<HTMLDivElement>(null);
+  const [bodyRef, body] = useSize<HTMLDivElement>();
+  const [cardRef, card] = useSize<HTMLDivElement>();
+  const bodyH = body.h;
+  // Small widgets drop secondary text so the chart keeps its room. Decided from the
+  // card's outer size (stable), never from the body – hiding text changes the body.
+  const narrow = fill && card.w > 0 && card.w < 290;
+  const short = fill && card.h > 0 && card.h < 240;
+  // Small widgets: let the hover tooltip float beside the widget, toward the side with room.
+  const [floatTip, setFloatTip] = useState<"right" | "left" | null>(null);
+  const pickTooltipSide = (el: HTMLElement) => {
+    if (!fill || body.w >= 420) return setFloatTip(null);
+    const r = el.getBoundingClientRect();
+    setFloatTip(window.innerWidth - r.right >= 210 ? "right" : "left");
+  };
   const [downloading, setDownloading] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [hidden, setHidden] = useState<Set<string>>(new Set());
@@ -97,26 +131,32 @@ export function Widget({ chart, rows, columns, theme, selected, readOnly, index 
     <>
       <div
         className={clsx(
-          "group relative flex h-full flex-col rounded-[18px] border transition-[box-shadow,transform,border-color] duration-300 animate-fade-up",
+          "group relative flex h-full flex-col rounded-[18px] border transition-[box-shadow,border-color] duration-300 animate-fade-up",
           dark ? "chart-dark border-[#272b47] bg-[#13162a] text-white" : "border-border bg-surface",
-          selected ? "border-brand shadow-[0_0_0_3px_var(--ring),var(--shadow-md)]" : "shadow-[var(--shadow-sm)] hover:-translate-y-0.5 hover:shadow-[var(--shadow-md)]",
-          !readOnly && "cursor-pointer"
+          selected ? "border-brand shadow-[0_0_0_3px_var(--ring),var(--shadow-md)]" : "shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)]",
+          !readOnly && "hover:border-border-strong"
         )}
         style={{ animationDelay: `${Math.min(index, 8) * 60}ms` }}
-        onClick={onSelect}
+        onDoubleClick={readOnly ? undefined : onSelect}
+        ref={cardRef}
         data-chart-card
       >
-        <div ref={ref} className={clsx("flex flex-1 flex-col p-4 sm:p-5", dark ? "bg-[#13162a]" : "bg-surface")}>
-          <div className={clsx("flex items-start justify-between gap-3", !isText && "mb-3")}>
+        <div ref={ref} className={clsx("flex min-h-0 flex-1 flex-col rounded-[18px]", narrow || short ? "p-3" : "p-4 sm:p-5", dark ? "bg-[#13162a]" : "bg-surface")}>
+          <div data-drag-handle className={clsx("flex items-start justify-between gap-3", !isText && "mb-3", draggable && !readOnly && "cursor-grab active:cursor-grabbing")}>
             <div className="flex min-w-0 items-start gap-2">
               {draggable && !readOnly && (
-                <span data-export-ignore="1" className={clsx("mt-0.5 hidden cursor-grab opacity-0 transition-opacity group-hover:opacity-100 sm:block", dark ? "text-white/40" : "text-ink-3")} title="Drag to reorder">
+                <span data-export-ignore="1" className={clsx("mt-0.5 hidden cursor-grab opacity-0 transition-opacity group-hover:opacity-100 sm:block", dark ? "text-white/40" : "text-ink-3")} title="Drag to move">
                   <GripVertical className="h-4 w-4" />
                 </span>
               )}
               <div className="min-w-0">
                 <h3 className={clsx("line-clamp-2 font-semibold leading-snug", isText ? "text-base" : "text-[15px]", dark ? "text-white" : "text-ink")} title={chart.title}>{chart.title || (isText ? "" : "Untitled chart")}</h3>
-                {chart.subtitle && <p className={clsx("mt-0.5 truncate text-xs", dark ? "text-white/60" : "text-ink-2")}>{chart.subtitle}</p>}
+                {chart.subtitle && !narrow && !short && <p className={clsx("mt-0.5 truncate text-xs", dark ? "text-white/60" : "text-ink-2")}>{chart.subtitle}</p>}
+                {sourceName && !narrow && !short && (
+                  <span className={clsx("mt-1 inline-flex max-w-full items-center gap-1 truncate text-[10px] font-medium", dark ? "text-white/45" : "text-ink-3")} title={`Data: ${sourceName}`}>
+                    <Database className="h-2.5 w-2.5 shrink-0" /> {sourceName}
+                  </span>
+                )}
                 {filtered.length > 0 && (
                   <div className="mt-1.5 flex flex-wrap gap-1">
                     {filtered.map((f, i) => (
@@ -133,7 +173,11 @@ export function Widget({ chart, rows, columns, theme, selected, readOnly, index 
               <div
                 data-export-ignore="1"
                 onClick={(e) => e.stopPropagation()}
-                className={clsx("flex shrink-0 items-center gap-0.5 rounded-lg border p-0.5 transition-opacity duration-200 sm:opacity-0 sm:group-hover:opacity-100", selected && "sm:opacity-100", dark ? "border-white/10 bg-white/5" : "border-border bg-surface")}
+                className={clsx(
+                  "absolute right-2.5 top-2.5 z-20 flex items-center gap-0.5 rounded-lg border p-0.5 shadow-[var(--shadow-sm)] transition-opacity duration-200 sm:opacity-0 sm:group-hover:opacity-100",
+                  selected && "sm:opacity-100",
+                  dark ? "border-white/10 bg-[#1c2038]" : "border-border bg-surface"
+                )}
               >
                 <Tooltip label="Edit" side="bottom">
                   <button className={iconBtn} onClick={() => onSelect?.()} aria-label="Edit widget">
@@ -154,7 +198,6 @@ export function Widget({ chart, rows, columns, theme, selected, readOnly, index 
                     </button>
                   }
                   items={[
-                    ...(["sm", "half", "wide", "full"] as WidgetSize[]).map((s) => ({ label: `${SIZE_LABEL[s]} width${chart.size === s ? " ✓" : ""}`, onClick: () => onResize?.(s) })),
                     { label: "Duplicate", icon: <Copy className="h-4 w-4" />, onClick: () => onDuplicate?.() },
                     { label: "Download PNG", icon: <Download className="h-4 w-4" />, onClick: downloadPng },
                     { label: "Download CSV", icon: <FileDown className="h-4 w-4" />, onClick: downloadCsv, disabled: isText },
@@ -164,7 +207,7 @@ export function Widget({ chart, rows, columns, theme, selected, readOnly, index 
               </div>
             ) : (
               !isText && (
-                <div data-export-ignore="1" className="flex items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+                <div data-export-ignore="1" className={clsx("absolute right-2.5 top-2.5 z-20 flex items-center gap-0.5 rounded-lg border p-0.5 opacity-0 shadow-[var(--shadow-sm)] transition-opacity group-hover:opacity-100", dark ? "border-white/10 bg-[#1c2038]" : "border-border bg-surface")}>
                   <button onClick={() => setExpanded(true)} className={iconBtn} aria-label="Expand">
                     <Maximize2 className="h-4 w-4" />
                   </button>
@@ -175,15 +218,27 @@ export function Widget({ chart, rows, columns, theme, selected, readOnly, index 
               )
             )}
           </div>
-          {!isKpi && !isText && (
+          {!isKpi && !isText && !short && (
             <div className="mb-2" data-export-ignore="1">
               <LegendChips config={chart.config} dark={dark} hidden={hidden} onToggle={toggle} countLabel={countLabel} />
             </div>
           )}
-          <div className="flex-1">
-            <ChartRenderer config={chart.config} rows={rows} columns={columns} theme={theme} height={widgetHeight(chart)} hidden={hidden} text={chart.note} />
+          <div ref={bodyRef} onMouseEnter={(e) => pickTooltipSide(e.currentTarget)} className={clsx("relative min-h-0 flex-1", fill && (chart.config.type === "text" || chart.config.type === "table" ? "overflow-y-auto scrollbar-thin" : chart.config.type === "kpi" ? "overflow-hidden" : "overflow-y-clip"))}>
+            {(!fill || bodyH > 0) && (
+              <ChartRenderer
+                config={chart.config}
+                rows={rows}
+                columns={columns}
+                theme={theme}
+                height={fill ? Math.max(60, bodyH) : widgetHeight(chart)}
+                width={fill ? body.w : undefined}
+                floatTooltip={floatTip}
+                hidden={hidden}
+                text={chart.note}
+              />
+            )}
           </div>
-          {chart.note && !isText && <p className={clsx("mt-3 rounded-lg px-3 py-2 text-xs leading-relaxed", dark ? "bg-white/5 text-white/70" : "bg-surface-2 text-ink-2")}>{chart.note}</p>}
+          {chart.note && !isText && !short && !narrow && <p className={clsx("mt-3 line-clamp-3 shrink-0 rounded-lg px-3 py-2 text-xs leading-relaxed", dark ? "bg-white/5 text-white/70" : "bg-surface-2 text-ink-2")}>{chart.note}</p>}
         </div>
       </div>
 

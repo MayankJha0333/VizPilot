@@ -3,9 +3,8 @@
 import { useState } from "react";
 import { clsx } from "clsx";
 import { AreaChart, BarChart3, BarChartHorizontal, Check, CircleDot, Hash, Layers, LineChart, PieChart, Plus, ScatterChart, SlidersHorizontal, Table2, Type, X } from "lucide-react";
-import { CHART_TYPES, PALETTES, type ChartConfig, type ChartRecord, type ChartType, type Column, type Filter, type Row, type WidgetSize } from "@/lib/charts/types";
+import { CHART_TYPES, PALETTES, type ChartConfig, type ChartRecord, type ChartType, type Column, type Filter, type Row } from "@/lib/charts/types";
 import { Field, Segmented } from "@/components/ui/misc";
-import { SIZE_LABEL } from "@/components/charts/Widget";
 import { distinctCount } from "@/lib/data/transform";
 
 const ICONS: Record<ChartType, React.ComponentType<{ className?: string }>> = {
@@ -27,12 +26,14 @@ interface Props {
   columns: Column[];
   rows: Row[];
   onChange: (patch: Partial<ChartRecord>) => void;
-  onClose: () => void;
+  onClose?: () => void;
+  /** Inside the widget builder dialog: no header, the dialog provides one. */
+  embedded?: boolean;
 }
 
 type Tab = "chart" | "data" | "style";
 
-export function ChartEditor({ chart, columns, rows, onChange, onClose }: Props) {
+export function ChartEditor({ chart, columns, rows, onChange, onClose, embedded }: Props) {
   const [tab, setTab] = useState<Tab>("chart");
   const cfg = chart.config;
   const setCfg = (patch: Partial<ChartConfig>) => onChange({ config: { ...cfg, ...patch } });
@@ -55,6 +56,7 @@ export function ChartEditor({ chart, columns, rows, onChange, onClose }: Props) 
 
   return (
     <div className="flex h-full flex-col">
+      {!embedded && (
       <div className="flex items-center justify-between border-b px-4 py-3">
         <div className="flex items-center gap-2.5">
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-soft text-brand">
@@ -69,6 +71,7 @@ export function ChartEditor({ chart, columns, rows, onChange, onClose }: Props) 
           <X className="h-4 w-4" />
         </button>
       </div>
+      )}
       <div className="px-4 pt-3">
         <Segmented
           value={tab}
@@ -128,9 +131,6 @@ export function ChartEditor({ chart, columns, rows, onChange, onClose }: Props) 
             )}
             <Field label={isText ? "Text" : "Note"} hint={isText ? "Shown as the widget body." : "Shown under the chart. Great for a takeaway."}>
               <textarea className="input min-h-[96px] resize-y" value={chart.note} onChange={(e) => onChange({ note: e.target.value })} placeholder={isText ? "Write a summary, context or key takeaways…" : "e.g. Revenue grew 3x after the March launch."} />
-            </Field>
-            <Field label="Width">
-              <Segmented value={chart.size} onChange={(v) => onChange({ size: v as WidgetSize })} className="w-full [&>button]:flex-1" options={(["sm", "half", "wide", "full"] as WidgetSize[]).map((s) => ({ value: s, label: SIZE_LABEL[s] }))} />
             </Field>
           </>
         )}
@@ -227,11 +227,14 @@ export function ChartEditor({ chart, columns, rows, onChange, onClose }: Props) 
                   {PALETTES.map((p) => (
                     <button key={p.id} onClick={() => setCfg({ palette: p.id })} className={clsx("flex items-center gap-2 rounded-xl border px-2.5 py-2 text-xs font-medium", cfg.palette === p.id ? "border-brand bg-brand-soft text-brand-ink" : "text-ink-2 hover:bg-surface-2")}>
                       <span className="flex gap-0.5">
-                        {p.colors.slice(0, 4).map((c) => (
-                          <span key={c} className="h-3.5 w-3.5 rounded-full" style={{ background: c }} />
+                        {p.colors.slice(0, 5).map((c, i) => (
+                          <span key={c + i} className="h-3.5 w-2.5 first:rounded-l-full last:rounded-r-full" style={{ background: c }} />
                         ))}
                       </span>
-                      {p.label}
+                      <span className="flex flex-col items-start leading-tight">
+                        {p.label}
+                        {p.hint && <span className="text-[10px] font-normal text-ink-3">{p.hint}</span>}
+                      </span>
                     </button>
                   ))}
                 </div>
@@ -256,9 +259,6 @@ export function ChartEditor({ chart, columns, rows, onChange, onClose }: Props) 
                 {(cfg.type === "line" || cfg.type === "area") && <Toggle label="Smooth curves" value={cfg.smooth} onChange={(v) => setCfg({ smooth: v })} />}
               </div>
             )}
-            <Field label="Width">
-              <Segmented value={chart.size} onChange={(v) => onChange({ size: v as WidgetSize })} className="w-full [&>button]:flex-1" options={(["sm", "half", "wide", "full"] as WidgetSize[]).map((s) => ({ value: s, label: SIZE_LABEL[s] }))} />
-            </Field>
           </>
         )}
       </div>

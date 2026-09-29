@@ -27,9 +27,9 @@ export default function DashboardPage() {
 }
 
 const TEMPLATES = [
-  { id: "ecommerce-orders", title: "Sales overview", body: "Revenue trend, top categories, regions and channels.", tone: "from-[#6d5cff] to-[#b56bff]" },
+  { id: "ecommerce-orders", title: "Sales overview", body: "Revenue trend, top categories, regions and channels.", tone: "from-[#4c5fd5] to-[#2a78d6]" },
   { id: "saas-metrics", title: "SaaS growth", body: "MRR, customers, churn and NPS over time.", tone: "from-[#14b8a6] to-[#38bdf8]" },
-  { id: "support-tickets", title: "Support operations", body: "Ticket volume, priority mix, agents and CSAT.", tone: "from-[#ff6b8a] to-[#f5a524]" },
+  { id: "support-tickets", title: "Support operations", body: "Ticket volume, priority mix, agents and CSAT.", tone: "from-[#eb6834] to-[#f5a524]" },
   { id: "marketing-campaigns", title: "Marketing performance", body: "Spend, conversions and ROAS by platform.", tone: "from-[#f97316] to-[#facc15]" },
 ];
 

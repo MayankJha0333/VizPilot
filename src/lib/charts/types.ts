@@ -87,52 +87,65 @@ export const CHART_TYPES: { id: ChartType; label: string; hint: string }[] = [
 export interface Palette {
   id: string;
   label: string;
+  /** Categorical colors in fixed order (never cycled) for light surfaces. */
   colors: string[];
+  /** Same hues, stepped for dark surfaces. */
+  dark: string[];
+  hint?: string;
 }
 
+/**
+ * Categorical palettes validated for colour-blind separation (adjacent ΔE ≥ 8
+ * where possible, normal-vision ΔE ≥ 15) and lightness band, in light and dark.
+ * The slot ORDER is part of the safety – don't reorder casually.
+ */
 export const PALETTES: Palette[] = [
   {
     id: "aurora",
-    label: "Aurora",
-    colors: ["#6D5CFF", "#FF6B8A", "#14B8A6", "#F5A524", "#38BDF8", "#A78BFA", "#F97316", "#84CC16"],
+    label: "VizPilot",
+    hint: "Indigo-led, balanced",
+    colors: ["#4C5FD5", "#EB6834", "#1BAF7A", "#EDA100", "#E87BA4", "#008300", "#7C4DCC", "#E34948"],
+    dark: ["#6B7BF0", "#D95926", "#199E70", "#C98500", "#D55181", "#008300", "#9085E9", "#E66767"],
   },
   {
     id: "ocean",
     label: "Ocean",
-    colors: ["#0EA5E9", "#2563EB", "#14B8A6", "#6366F1", "#38BDF8", "#0F766E", "#818CF8", "#22D3EE"],
+    hint: "Blue-led, classic",
+    colors: ["#2A78D6", "#EB6834", "#1BAF7A", "#EDA100", "#E87BA4", "#008300", "#4A3AA7", "#E34948"],
+    dark: ["#3987E5", "#D95926", "#199E70", "#C98500", "#D55181", "#008300", "#9085E9", "#E66767"],
   },
   {
     id: "sunset",
     label: "Sunset",
-    colors: ["#F97316", "#EF4444", "#F59E0B", "#EC4899", "#FB7185", "#FBBF24", "#DC2626", "#F472B6"],
-  },
-  {
-    id: "forest",
-    label: "Forest",
-    colors: ["#16A34A", "#65A30D", "#0D9488", "#22C55E", "#84CC16", "#059669", "#4ADE80", "#A3E635"],
-  },
-  {
-    id: "pastel",
-    label: "Pastel",
-    colors: ["#A5B4FC", "#F9A8D4", "#86EFAC", "#FCD34D", "#67E8F9", "#D8B4FE", "#FCA5A5", "#BEF264"],
+    hint: "Warm-led",
+    colors: ["#E4572E", "#2A78D6", "#EDA100", "#7C4DCC", "#1BAF7A", "#4C5FD5", "#E87BA4", "#008300"],
+    dark: ["#E0592A", "#3987E5", "#C98500", "#9085E9", "#199E70", "#6B7BF0", "#D55181", "#2E9E3F"],
   },
   {
     id: "mono",
     label: "Mono",
-    colors: ["#111827", "#4B5563", "#9CA3AF", "#D1D5DB", "#374151", "#6B7280", "#E5E7EB", "#1F2937"],
-  },
-  {
-    id: "violet",
-    label: "Violet",
-    colors: ["#7C3AED", "#A78BFA", "#C4B5FD", "#5B21B6", "#8B5CF6", "#DDD6FE", "#4C1D95", "#9F7AEA"],
+    hint: "One hue – best for a single series",
+    colors: ["#4C5FD5", "#7B8CE6", "#2F3E9E", "#A5B1F0", "#1E2A75", "#C6CEF6", "#5A6BDC", "#3949B8"],
+    dark: ["#6B7BF0", "#95A2F4", "#4C5FD5", "#B7C0F7", "#3949B8", "#D2D8FA", "#7F8DF2", "#5A6BDC"],
   },
 ];
 
-export function getPalette(id: string): string[] {
-  return (PALETTES.find((p) => p.id === id) ?? PALETTES[0]).colors;
+/** Legacy palette ids from earlier versions map onto the new set. */
+const LEGACY: Record<string, string> = { forest: "aurora", pastel: "aurora", violet: "mono" };
+
+export function getPalette(id: string, dark = false): string[] {
+  const p = PALETTES.find((x) => x.id === (LEGACY[id] ?? id)) ?? PALETTES[0];
+  return dark ? p.dark : p.colors;
 }
 
 export type WidgetSize = "sm" | "half" | "wide" | "full";
+
+export interface WidgetLayout {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
 
 export interface ChartRecord {
   _id: string;
@@ -144,6 +157,8 @@ export interface ChartRecord {
   config: ChartConfig;
   size: WidgetSize;
   order: number;
+  /** Grid position in 12-column units. Missing = auto-placed. */
+  layout?: WidgetLayout | null;
   createdAt?: string;
   updatedAt?: string;
 }

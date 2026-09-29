@@ -11,7 +11,11 @@ Turn a CSV, a pasted table or a sample dataset into a clean, shareable report wi
 | Framework | Next.js 16 (App Router, TypeScript) + Tailwind CSS v4 |
 | Auth | Firebase Authentication (email/password + Google) — ID tokens verified server-side with `firebase-admin` |
 | Database | MongoDB via Mongoose (`users`, `datasets`, `reports`, `charts`) |
-| Widgets | Recharts-based interactive widgets: column, bar, stacked, line, area, pie, donut, scatter, KPI (with period delta + sparkline), table, text blocks. Hover tooltips with totals, click-to-hide legend, expand with data table, PNG/CSV export, drag-to-reorder, 4 widths, present mode. |
+| Dashboard | Free-form 12-column grid (`src/lib/layout/grid.ts` + `DashboardGrid.tsx`): drag widgets by their title, resize from the right edge, bottom edge or corner; neighbours reflow and everything compacts upward. Layout is saved per widget (`x, y, w, h`). Phones get a simple stacked view. |
+| Widgets | Recharts-based interactive widgets: column, bar, stacked, line, area, pie, donut, scatter, KPI (period-over-period delta on complete periods + sparkline), table, text blocks. Hover tooltips with totals, click-to-hide legend, expand with data table, PNG/CSV export, present mode. |
+| Multi-source | Every widget has its own data source. Add widgets from any dataset in your workspace – or upload / paste / pick a sample right inside the widget builder – and mix them in one report. Ask AI picks the source that best matches the question. |
+| Builder & Ask AI | Both open as large dialogs: live preview on the left, controls on the right; Ask AI has a data-source switcher. |
+| Colour | Brand indigo `#4c5fd5` with a coral accent. Chart palettes (VizPilot, Ocean, Sunset, Mono) are validated for colour-blind separation and contrast, with separate dark-mode steps. |
 | Data import | CSV/TSV (PapaParse), Excel (SheetJS), paste, manual table, 6 realistic sample datasets (e-commerce, SaaS, marketing, support tickets, web traffic, expenses) |
 | Chart engine | Sum/avg/min/max/count aggregation, filters, **count-based charts for text-only data**, non-additive measures (hours, scores, rates) averaged automatically, date roll-ups (day/week/month/quarter/year), rule-based suggestions that lay out a dashboard (KPI + trend + breakdowns) |
 | Ask AI | Graphy-style analyst: understands the question, plans the analysis with the model, computes the answer from your rows, and shows *how it built it* (grouping, aggregation, filters, sort). Returns a chart, a direct answer, or insights; supports follow-ups ("make it a bar", "top 5", "monthly", "only Europe"). Falls back to a rules engine, so it always answers. |
@@ -110,6 +114,7 @@ src/
 
 | Method | Route | What it does |
 | --- | --- | --- |
+| PATCH | `/api/reports/:id` with `{ layouts: [{ id, x, y, w, h }] }` | Save the dashboard layout after a drag / resize |
 | POST / DELETE | `/api/auth/session` | Sync Firebase user into MongoDB, set/clear session cookie |
 | GET / POST | `/api/datasets` | List (no rows) / create dataset |
 | GET / PATCH / DELETE | `/api/datasets/:id` | Read (with rows) / edit / delete (blocked while a report uses it) |

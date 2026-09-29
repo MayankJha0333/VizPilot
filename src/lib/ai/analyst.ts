@@ -178,6 +178,8 @@ function fromModelPlan(plan: ModelPlan, columns: Column[], rows: Row[], palette:
 
   if (!plan.config) return null;
   const merged = { ...DEFAULT_CONFIG, ...(last ?? {}), palette: last?.palette ?? palette, ...plan.config, filters: normalizeFilters(plan.config.filters, columns, rows) };
+  // "Which X has the most…" – the answer tile names the winner; the chart should show the whole ranking.
+  if (kind === "answer" && merged.limit === 1 && merged.type !== "kpi") merged.limit = 0;
   const parsed = ChartConfigSchema.safeParse(merged);
   if (!parsed.success) return null;
   const config = repairConfig(parsed.data, columns, rows);
@@ -194,7 +196,8 @@ function fromModelPlan(plan: ModelPlan, columns: Column[], rows: Row[], palette:
   };
   if (kind === "answer") {
     const answer = computeAnswer(config, rows, columns);
-    return { kind, message: plan.message || answer.detail || "Here's the answer.", answer, ...base };
+    // Numbers in the reply come from our own computation, never from the model's prose.
+    return { kind, message: answer.detail || plan.message || "Here's the answer.", answer, ...base };
   }
   return { kind: "chart", message: plan.message || `Here's ${titled.title.toLowerCase()}.`, ...base };
 }

@@ -1,6 +1,6 @@
 import type { Aggregate, ChartConfig, Column, Filter, Row } from "@/lib/charts/types";
 import { COUNT_KEY } from "@/lib/charts/types";
-import { autoBucket, bucketDate, parseDateValue } from "@/lib/data/dates";
+import { autoBucket, bucketDate, parseDateValue, periodCoverage } from "@/lib/data/dates";
 
 export interface SeriesPoint {
   label: string;
@@ -243,9 +243,20 @@ export function kpiStats(rows: Row[], config: ChartConfig, columns?: Column[]): 
   const xCol = columns?.find((c) => c.name === config.xKey);
   let delta: { pct: number; from: string; to: string } | null = null;
   if (xCol?.type === "date" && series.length >= 2) {
-    const a = series[series.length - 2];
-    const b = series[series.length - 1];
-    if (a) delta = { pct: ((b - a) / Math.abs(a)) * 100, from: labels[labels.length - 2], to: labels[labels.length - 1] };
+    // For totals (sum / count) a half-finished latest period would look like a
+    // crash – compare the last two *complete* periods instead.
+    let last = series.length - 1;
+    if ((agg === "sum" || agg === "count") && series.length >= 3) {
+      const dates = filtered.map((r) => parseDateValue(r[config.xKey])).filter((d): d is Date => !!d);
+      const bucket = config.timeBucket && config.timeBucket !== "auto" ? config.timeBucket : autoBucket(dates);
+      if (bucket !== "none" && dates.length) {
+        const maxDate = new Date(Math.max(...dates.map((d) => d.getTime())));
+        if (periodCoverage(maxDate, bucket) < 0.85) last -= 1;
+      }
+    }
+    const a = series[last - 1];
+    const b = series[last];
+    if (a) delta = { pct: ((b - a) / Math.abs(a)) * 100, from: labels[last - 1], to: labels[last] };
   }
   return { value, series: series.slice(-24), labels: labels.slice(-24), delta };
 }

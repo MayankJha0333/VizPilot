@@ -56,10 +56,15 @@ export async function DELETE(req: Request, { params }: Ctx) {
     const user = await requireUser(req);
     const { id } = await params;
     if (badId(id)) return NextResponse.json({ error: "Not found" }, { status: 404 });
-    const inUse = await Report.countDocuments({ userId: user._id, datasetId: id });
+    // A dataset is in use if it's a report's primary source or feeds any widget.
+    const [primary, widgetReports] = await Promise.all([
+      Report.find({ userId: user._id, datasetId: id }).distinct("_id"),
+      Chart.find({ userId: user._id, datasetId: id }).distinct("reportId"),
+    ]);
+    const inUse = new Set([...primary, ...widgetReports].map(String)).size;
     if (inUse > 0) {
       return NextResponse.json(
-        { error: `This dataset is used by ${inUse} report${inUse > 1 ? "s" : ""}. Delete those reports first.` },
+        { error: `This dataset is used by ${inUse} report${inUse > 1 ? "s" : ""}. Remove its widgets or delete those reports first.` },
         { status: 409 }
       );
     }

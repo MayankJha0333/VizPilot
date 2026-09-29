@@ -35,12 +35,16 @@ interface Props {
   onConsumePrompt?: () => void;
   onAddChart: (c: { title: string; subtitle: string; config: ChartConfig }) => Promise<void>;
   onClose: () => void;
+  /** Rendered under the title – e.g. a data-source picker. */
+  headerSlot?: React.ReactNode;
+  /** Wide layout (dialog): centre the conversation in a readable column. */
+  wide?: boolean;
 }
 
 let msgId = 0;
 const THINKING = ["Understanding your question", "Reading the columns", "Analysing the rows", "Building the visualization"];
 
-export function AskAI({ datasetId, datasetName, columns, rows, palette, initialPrompt, onConsumePrompt, onAddChart, onClose }: Props) {
+export function AskAI({ datasetId, datasetName, columns, rows, palette, initialPrompt, onConsumePrompt, onAddChart, onClose, headerSlot, wide }: Props) {
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
@@ -112,7 +116,7 @@ export function AskAI({ datasetId, datasetName, columns, rows, palette, initialP
             <div className="flex items-center gap-1.5 text-sm font-semibold">
               Ask AI <span className="rounded-md bg-brand-soft px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-brand-ink">Beta</span>
             </div>
-            <div className="max-w-[220px] truncate text-xs text-ink-3">Analysing {datasetName}</div>
+            {headerSlot ?? <div className="max-w-[220px] truncate text-xs text-ink-3">Analysing {datasetName}</div>}
           </div>
         </div>
         <div className="flex items-center gap-1">
@@ -135,7 +139,7 @@ export function AskAI({ datasetId, datasetName, columns, rows, palette, initialP
         </div>
       </div>
 
-      <div className="flex-1 space-y-5 overflow-y-auto px-4 py-4 scrollbar-thin">
+      <div className={clsx("flex-1 space-y-5 overflow-y-auto py-4 scrollbar-thin", wide ? "px-[max(1rem,calc((100%-46rem)/2))] py-6" : "px-4")}>
         {messages.length === 0 && (
           <div className="space-y-4 animate-fade-up">
             <div className="rounded-2xl border bg-gradient-to-br from-brand-soft/80 via-surface to-surface p-4">
@@ -198,7 +202,7 @@ export function AskAI({ datasetId, datasetName, columns, rows, palette, initialP
           e.preventDefault();
           send(input);
         }}
-        className="border-t p-3"
+        className={clsx("border-t py-3", wide ? "px-[max(0.75rem,calc((100%-46rem)/2))]" : "px-3")}
       >
         <div className="gradient-border flex items-end gap-2 rounded-2xl bg-surface px-3 py-2 shadow-[var(--shadow-sm)] transition-shadow focus-within:shadow-[0_0_0_3px_var(--ring)]">
           <textarea
@@ -314,7 +318,7 @@ function AssistantMessage({ msg, rows, columns, isLast, onAdd, onVote, onFollow 
                   </>
                 ) : (
                   <>
-                    <Plus className="h-3.5 w-3.5" /> Add to report
+                    <Plus className="h-3.5 w-3.5" /> Add to dashboard
                   </>
                 )}
               </Button>

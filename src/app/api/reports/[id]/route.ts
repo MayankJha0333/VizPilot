@@ -22,11 +22,12 @@ export async function GET(req: Request, { params }: Ctx) {
     ).lean();
     if (!report) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-    const [charts, dataset] = await Promise.all([
-      Chart.find({ reportId: report._id }).sort({ order: 1, createdAt: 1 }).lean(),
-      report.datasetId ? Dataset.findOne({ _id: report.datasetId, userId: user._id }).lean() : null,
-    ]);
-    return NextResponse.json({ report, charts, dataset });
+    const charts = await Chart.find({ reportId: report._id }).sort({ order: 1, createdAt: 1 }).lean();
+    // Every data source used by this report: the primary one + any widget's own.
+    const ids = [...new Set([report.datasetId, ...charts.map((c) => c.datasetId)].filter(Boolean).map(String))];
+    const datasets = await Dataset.find({ _id: { $in: ids }, userId: user._id }).lean();
+    const dataset = datasets.find((d) => String(d._id) === String(report.datasetId)) ?? null;
+    return NextResponse.json({ report, charts, dataset, datasets });
   } catch (err) {
     return jsonError(err);
   }
@@ -40,7 +41,7 @@ export async function PATCH(req: Request, { params }: Ctx) {
     const parsed = ReportPatch.safeParse(await req.json());
     if (!parsed.success) return NextResponse.json({ error: "Invalid update" }, { status: 400 });
 
-    const { chartOrder, ...rest } = parsed.data;
+    const { chartOrder, layouts, ...rest } = parsed.data;
     const update: Record<string, unknown> = { ...rest };
 
     if (rest.datasetId) {
@@ -63,6 +64,15 @@ export async function PATCH(req: Request, { params }: Ctx) {
             ? Chart.updateOne({ _id: chartId, reportId: report._id }, { $set: { order: index } })
             : Promise.resolve()
         )
+      );
+    }
+    if (layouts && layouts.length) {
+      await Chart.bulkWrite(
+        layouts
+          .filter((l) => mongoose.Types.ObjectId.isValid(l.id))
+          .map((l) => ({
+            updateOne: { filter: { _id: l.id, reportId: report._id }, update: { $set: { layout: { x: l.x, y: l.y, w: l.w, h: l.h } } } },
+          }))
       );
     }
     return NextResponse.json({ report });

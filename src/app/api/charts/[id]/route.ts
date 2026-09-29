@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import { jsonError, requireUser } from "@/lib/auth-server";
 import { Chart } from "@/lib/models/Chart";
 import { Report } from "@/lib/models/Report";
+import { Dataset } from "@/lib/models/Dataset";
 import { ChartPatch } from "@/lib/validation";
 
 type Ctx = { params: Promise<{ id: string }> };
@@ -14,6 +15,9 @@ export async function PATCH(req: Request, { params }: Ctx) {
     if (!mongoose.Types.ObjectId.isValid(id)) return NextResponse.json({ error: "Not found" }, { status: 404 });
     const parsed = ChartPatch.safeParse(await req.json());
     if (!parsed.success) return NextResponse.json({ error: "Invalid update" }, { status: 400 });
+    if (parsed.data.datasetId && !(mongoose.Types.ObjectId.isValid(parsed.data.datasetId) && (await Dataset.exists({ _id: parsed.data.datasetId, userId: user._id })))) {
+      return NextResponse.json({ error: "Dataset not found" }, { status: 404 });
+    }
     const chart = await Chart.findOneAndUpdate({ _id: id, userId: user._id }, { $set: parsed.data }, { returnDocument: "after" }).lean();
     if (!chart) return NextResponse.json({ error: "Not found" }, { status: 404 });
     await Report.updateOne({ _id: chart.reportId }, { $set: { updatedAt: new Date() } });
@@ -41,6 +45,8 @@ export async function POST(req: Request, { params }: Ctx) {
       note: source.note,
       config: source.config,
       size: source.size,
+      // Same footprint, placed below; the client grid compacts it into place.
+      layout: source.layout ? { ...(source.layout as object), y: 9999 } : null,
       order: (last?.order ?? -1) + 1,
     });
     return NextResponse.json({ chart }, { status: 201 });

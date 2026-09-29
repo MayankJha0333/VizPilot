@@ -13,11 +13,18 @@ const ChartSchema = new Schema(
     config: { type: Schema.Types.Mixed, required: true },
     size: { type: String, enum: ["sm", "half", "wide", "full"], default: "half" },
     order: { type: Number, default: 0 },
+    // Free-form grid position in 12-col units: { x, y, w, h }. Null = auto-place.
+    layout: { type: Schema.Types.Mixed, default: null },
   },
   { timestamps: true, minimize: false }
 );
 
 export type ChartDoc = InferSchemaType<typeof ChartSchema> & { _id: mongoose.Types.ObjectId };
+
+// Dev hot-reload keeps the old compiled model around; rebuild it if the schema gained fields.
+if (mongoose.models.Chart && (!mongoose.models.Chart.schema.path("layout") || !(mongoose.models.Chart.schema.path("size") as unknown as { enumValues?: string[] })?.enumValues?.includes("wide"))) {
+  mongoose.deleteModel("Chart");
+}
 
 export const Chart: Model<ChartDoc> =
   (mongoose.models.Chart as Model<ChartDoc>) || mongoose.model<ChartDoc>("Chart", ChartSchema);

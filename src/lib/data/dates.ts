@@ -90,3 +90,41 @@ export function autoBucket(dates: Date[]): Exclude<TimeBucket, "auto"> {
   if (days > 40) return "week";
   return "none";
 }
+
+/**
+ * How much of the period containing `d` has elapsed (0–1), measured to the
+ * end of that day. Used to avoid comparing a partial period to a full one.
+ */
+export function periodCoverage(d: Date, bucket: Exclude<TimeBucket, "auto" | "none">): number {
+  const y = d.getUTCFullYear();
+  const mo = d.getUTCMonth();
+  const day = d.getUTCDate();
+  const DAY = 86400000;
+  let start: number;
+  let end: number;
+  switch (bucket) {
+    case "year":
+      start = Date.UTC(y, 0, 1);
+      end = Date.UTC(y + 1, 0, 1);
+      break;
+    case "quarter": {
+      const q0 = Math.floor(mo / 3) * 3;
+      start = Date.UTC(y, q0, 1);
+      end = Date.UTC(y, q0 + 3, 1);
+      break;
+    }
+    case "month":
+      start = Date.UTC(y, mo, 1);
+      end = Date.UTC(y, mo + 1, 1);
+      break;
+    case "week": {
+      const dow = (new Date(Date.UTC(y, mo, day)).getUTCDay() + 6) % 7;
+      start = Date.UTC(y, mo, day - dow);
+      end = start + 7 * DAY;
+      break;
+    }
+    default:
+      return 1;
+  }
+  return Math.min(1, (Date.UTC(y, mo, day) + DAY - start) / (end - start));
+}

@@ -83,6 +83,45 @@ export async function POST(req: Request) {
       const kpis = raw.filter((s) => s.config.type === "kpi");
       const rest = raw.filter((s) => s.config.type !== "kpi");
       const suggestions = [...kpis, ...rest];
+      // Dashboard layout: KPI (4 cols) beside the headline chart (8 cols), then halves.
+      const boxes: { x: number; y: number; w: number; h: number }[] = [];
+      let y = 0;
+      let x = 0;
+      suggestions.forEach((s, i) => {
+        if (i < kpis.length && kpis.length === 1) {
+          boxes.push({ x: 0, y: 0, w: 4, h: 11 });
+          x = 4;
+          return;
+        }
+        if (i < kpis.length) {
+          // several KPIs: a row of small tiles
+          boxes.push({ x: (i % 3) * 4, y: Math.floor(i / 3) * 6, w: 4, h: 6 });
+          y = (Math.floor(i / 3) + 1) * 6;
+          return;
+        }
+        if (kpis.length === 0 && i === 0) {
+          boxes.push({ x: 0, y: 0, w: 12, h: 11 });
+          y = 11;
+          return;
+        }
+        if (x === 4) {
+          boxes.push({ x: 4, y: 0, w: 8, h: 11 });
+          x = 0;
+          y = 11;
+          return;
+        }
+        const w = s.config.type === "table" ? 12 : 6;
+        if (x + w > 12) {
+          x = 0;
+          y += 10;
+        }
+        boxes.push({ x, y, w, h: 10 });
+        x += w;
+        if (x >= 12) {
+          x = 0;
+          y += 10;
+        }
+      });
       await Chart.insertMany(
         suggestions.map((s, i) => ({
           userId: user._id,
@@ -92,7 +131,8 @@ export async function POST(req: Request) {
           subtitle: s.subtitle,
           note: "",
           config: s.config,
-          size: s.config.type === "kpi" ? "sm" : i === kpis.length && kpis.length === 1 ? "wide" : kpis.length === 0 && i === 0 ? "full" : "half",
+          size: s.config.type === "kpi" ? "sm" : "half",
+          layout: boxes[i],
           order: i,
         }))
       );

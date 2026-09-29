@@ -41,25 +41,44 @@ interface Props {
   hidden?: Set<string>;
   /** Text widgets render their note. */
   text?: string;
+  /** Measured width of the widget body (dashboard). Enables size-aware layout. */
+  width?: number;
+  /**
+   * Let the hover tooltip float outside a small widget instead of covering the
+   * data: "right"/"left" of the cursor. Chosen by the widget on hover.
+   */
+  floatTooltip?: "right" | "left" | null;
 }
 
-export function ChartRenderer({ config, rows, columns, theme = "light", height = 280, compact = false, animate = true, hidden, text }: Props) {
+export function ChartRenderer({ config, rows, columns, theme = "light", height = 280, compact = false, animate = true, hidden, text, width = 0, floatTooltip = null }: Props) {
   const uid = useId().replace(/:/g, "");
-  const colors = getPalette(config.palette);
+  const dark = theme === "dark";
+  const colors = getPalette(config.palette, dark);
   const data = useMemo(() => buildSeries(rows, config, columns), [rows, config, columns]);
   const allKeys = effectiveKeys(config);
   const keys = allKeys.filter((k) => !hidden?.has(k));
   const colorOf = (k: string) => colors[Math.max(0, allKeys.indexOf(k)) % colors.length];
-  const dark = theme === "dark";
-  const axisColor = "#8b90a8";
-  const gridColor = dark ? "#2b2f4a" : "#eceef4";
+  const axisColor = dark ? "#8b90a8" : "#6b7086";
+  const gridColor = dark ? "#242945" : "#eef0f4";
   const fmt = (v: number) => formatNumber(v, config.numberFormat);
   const anim = animate && !compact;
   const [activeIdx, setActiveIdx] = useState<number | null>(null);
   const ent = useMemo(() => entityWord(columns, rows).plural, [columns, rows]);
   const countLabel = ent.charAt(0).toUpperCase() + ent.slice(1);
   const lbl = (k: string) => seriesLabel(k, countLabel);
-  const tooltip = <Tooltip content={<ChartTooltip dark={dark} fmt={fmt} colorOf={colorOf} countLabel={countLabel} />} cursor={{ fill: dark ? "rgba(255,255,255,0.04)" : "rgba(109,92,255,0.06)" }} />;
+  const tight = width > 0 && width < 320;
+  const tooltip = (
+    <Tooltip
+      content={<ChartTooltip dark={dark} fmt={fmt} colorOf={colorOf} countLabel={countLabel} />}
+      cursor={{ fill: dark ? "rgba(255,255,255,0.04)" : "rgba(76, 95, 213,0.06)" }}
+      // In a small widget the tooltip floats beside it rather than on top of the bars.
+      allowEscapeViewBox={floatTooltip ? { x: true, y: false } : { x: false, y: false }}
+      reverseDirection={{ x: floatTooltip === "left", y: false }}
+      offset={floatTooltip ? 18 : 12}
+      wrapperStyle={{ zIndex: 60, pointerEvents: "none", outline: "none" }}
+      isAnimationActive={false}
+    />
+  );
 
   if (config.type === "text") {
     return (
@@ -93,7 +112,7 @@ export function ChartRenderer({ config, rows, columns, theme = "light", height =
         <div className="flex h-full flex-col" style={{ minHeight: compact ? 90 : 140 }}>
           <div>
             <div className={clsx("text-[11px] font-semibold uppercase tracking-wider", dark ? "text-white/50" : "text-ink-3")}>{label}</div>
-            <div className={clsx("mt-1 font-semibold tabular-nums tracking-tight", compact ? "text-3xl" : "text-[42px] leading-none")} style={{ color: colors[0] }}>
+            <div className={clsx("mt-1 font-semibold tabular-nums tracking-tight", compact || (width > 0 && width < 240) ? "text-3xl leading-tight" : "text-[42px] leading-none")} style={{ color: colors[0] }}>
               {anim ? <CountUp value={stats.value} format={fmt} /> : fmt(stats.value)}
             </div>
           </div>
@@ -169,7 +188,33 @@ export function ChartRenderer({ config, rows, columns, theme = "light", height =
     case "donut": {
       const key = keys[0];
       const total = data.reduce((a, p) => a + toNumber(p[key]), 0);
-      const legendH = config.showLegend && !compact ? 40 : 0;
+      // Legend: pack items into at most 2 rows by their estimated width; the rest
+      // collapse into a "+N more" chip that always has room on the last row.
+      const showLegend = config.showLegend && !compact && !(width > 0 && width < 230) && height > 170;
+      const avail = (width > 0 ? width : 560) - 8;
+      const itemW = (p: { label: string }) => Math.min(140, 34 + p.label.length * 6.2) + 8 + 22;
+      const MORE_W = 64;
+      const legendItems: typeof data = [];
+      let legendRows = 0;
+      if (showLegend && data.length) {
+        let row = 1;
+        let used = 0;
+        for (let i = 0; i < data.length; i++) {
+          const w = itemW(data[i]);
+          const reserve = row === 2 && i < data.length - 1 ? MORE_W : 0;
+          if (used + w + reserve <= avail || used === 0) {
+            legendItems.push(data[i]);
+            used += w;
+          } else if (row < 2) {
+            row += 1;
+            used = 0;
+            i -= 1;
+          } else break;
+        }
+        legendRows = row;
+      }
+      const legendMore = data.length - legendItems.length;
+      const legendH = legendRows ? legendRows * 22 + 8 : 0;
       const active = activeIdx !== null ? data[activeIdx] : null;
       return (
         <div>
@@ -204,10 +249,10 @@ export function ChartRenderer({ config, rows, columns, theme = "light", height =
               </Pie>
               {config.type === "donut" && (
                 <>
-                  <text x="50%" y="46%" textAnchor="middle" dominantBaseline="middle" fill={dark ? "#f4f5fa" : "#0f1222"} fontSize={compact ? 14 : 22} fontWeight={600}>
+                  <text x="50%" y="46%" textAnchor="middle" dominantBaseline="middle" fill={dark ? "#f4f5fa" : "#0f1222"} fontSize={compact || tight ? 15 : 22} fontWeight={600}>
                     {active ? fmt(toNumber(active[key])) : fmt(total)}
                   </text>
-                  {!compact && (
+                  {!compact && !tight && (
                     <text x="50%" y="59%" textAnchor="middle" dominantBaseline="middle" fill="#8b90a8" fontSize={11}>
                       {active ? `${active.label} · ${Math.round((toNumber(active[key]) / (total || 1)) * 100)}%` : lbl(key)}
                     </text>
@@ -217,19 +262,25 @@ export function ChartRenderer({ config, rows, columns, theme = "light", height =
             </PieChart>
           </ResponsiveContainer>
           {legendH > 0 && (
-            <div className="mt-1 flex flex-wrap justify-center gap-x-3 gap-y-1">
-              {data.slice(0, 8).map((p, i) => (
+            <div className="mt-1 flex flex-wrap justify-center gap-x-2 gap-y-0.5 overflow-hidden" style={{ maxHeight: legendH }}>
+              {legendItems.map((p, i) => (
                 <button
                   key={p.label}
                   onMouseEnter={() => setActiveIdx(i)}
                   onMouseLeave={() => setActiveIdx(null)}
-                  className={clsx("inline-flex items-center gap-1.5 rounded-md px-1.5 py-0.5 text-[11px] transition-colors", dark ? "text-white/70 hover:bg-white/10" : "text-ink-2 hover:bg-surface-3", activeIdx === i && (dark ? "bg-white/10" : "bg-surface-3"))}
+                  title={`${p.label} · ${Math.round((toNumber(p[key]) / (total || 1)) * 100)}%`}
+                  className={clsx("inline-flex max-w-[140px] items-center gap-1.5 rounded-md px-1.5 py-0.5 text-[11px] transition-colors", dark ? "text-white/70 hover:bg-white/10" : "text-ink-2 hover:bg-surface-3", activeIdx === i && (dark ? "bg-white/10" : "bg-surface-3"))}
                 >
-                  <span className="h-2 w-2 rounded-full" style={{ background: colors[i % colors.length] }} />
-                  {p.label}
-                  <span className={dark ? "text-white/40" : "text-ink-3"}>{Math.round((toNumber(p[key]) / (total || 1)) * 100)}%</span>
+                  <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: colors[i % colors.length] }} />
+                  <span className="truncate">{p.label}</span>
+                  <span className={clsx("shrink-0", dark ? "text-white/40" : "text-ink-3")}>{Math.round((toNumber(p[key]) / (total || 1)) * 100)}%</span>
                 </button>
               ))}
+              {legendMore > 0 && (
+                <span className={clsx("inline-flex items-center rounded-md px-1.5 py-0.5 text-[11px]", dark ? "text-white/45" : "text-ink-3")} title={data.slice(legendItems.length).map((p) => p.label).join(", ")}>
+                  +{legendMore} more
+                </span>
+              )}
             </div>
           )}
         </div>
@@ -242,7 +293,7 @@ export function ChartRenderer({ config, rows, columns, theme = "light", height =
       return (
         <ResponsiveContainer width="100%" height={height}>
           <ScatterChart margin={{ top: 10, right: 16, bottom: 4, left: 0 }}>
-            {config.showGrid && <CartesianGrid stroke={gridColor} strokeDasharray="3 3" />}
+            {config.showGrid && <CartesianGrid stroke={gridColor} />}
             <XAxis type="number" dataKey="x" name={xk} tick={{ fill: axisColor, fontSize: 11 }} tickFormatter={fmt} axisLine={false} tickLine={false} label={{ value: xk, position: "insideBottom", offset: -2, fill: axisColor, fontSize: 11 }} />
             <YAxis type="number" dataKey="y" name={yk} tick={{ fill: axisColor, fontSize: 11 }} tickFormatter={fmt} axisLine={false} tickLine={false} width={48} />
             <ZAxis range={[70, 70]} />
@@ -275,8 +326,8 @@ export function ChartRenderer({ config, rows, columns, theme = "light", height =
             <defs>
               {allKeys.map((k) => (
                 <linearGradient key={k} id={`${uid}-area-${allKeys.indexOf(k)}`} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor={colorOf(k)} stopOpacity={0.38} />
-                  <stop offset="100%" stopColor={colorOf(k)} stopOpacity={0.02} />
+                  <stop offset="0%" stopColor={colorOf(k)} stopOpacity={0.22} />
+                  <stop offset="100%" stopColor={colorOf(k)} stopOpacity={0.01} />
                 </linearGradient>
               ))}
             </defs>
@@ -292,8 +343,8 @@ export function ChartRenderer({ config, rows, columns, theme = "light", height =
                   dataKey={k}
                   name={lbl(k)}
                   stroke={colorOf(k)}
-                  strokeWidth={2.5}
-                  dot={data.length <= 24 ? { r: 3.5, strokeWidth: 2, stroke: dark ? "#13162a" : "#fff", fill: colorOf(k) } : false}
+                  strokeWidth={2}
+                  dot={data.length <= 24 ? { r: 4, strokeWidth: 2, stroke: dark ? "#13162a" : "#fff", fill: colorOf(k) } : false}
                   activeDot={{ r: 6, strokeWidth: 0 }}
                   isAnimationActive={anim}
                   animationDuration={900}
@@ -309,7 +360,7 @@ export function ChartRenderer({ config, rows, columns, theme = "light", height =
                   name={lbl(k)}
                   stroke={colorOf(k)}
                   fill={`url(#${uid}-area-${allKeys.indexOf(k)})`}
-                  strokeWidth={2.5}
+                  strokeWidth={2}
                   stackId={keys.length > 1 ? "a" : undefined}
                   activeDot={{ r: 5, strokeWidth: 0 }}
                   isAnimationActive={anim}
@@ -325,20 +376,24 @@ export function ChartRenderer({ config, rows, columns, theme = "light", height =
 
     case "bar": {
       const rowH = 30;
-      const h = Math.max(height, Math.min(data.length * rowH + 40, 640));
+      // In the dashboard the widget's height is fixed – bars get thinner instead of overflowing.
+      const h = width > 0 ? height : Math.max(height, Math.min(data.length * rowH + 40, 640));
+      const longest = Math.max(4, ...data.map((d) => d.label.length));
+      const yAxisW = Math.round(Math.min(150, 8 + longest * 6.5, width > 0 ? Math.max(56, width * 0.36) : 150));
+      const barLabels = config.showLabels || (!compact && data.length <= 12 && keys.length === 1 && (width === 0 || width >= 260) && h / Math.max(1, data.length) >= 16);
       return (
         <ResponsiveContainer width="100%" height={h}>
           <BarChart data={data} layout="vertical" margin={{ top: 4, right: 32, bottom: 0, left: 8 }} barCategoryGap="24%" onMouseMove={(s) => setActiveIdx(typeof s?.activeTooltipIndex === "number" ? s.activeTooltipIndex : null)} onMouseLeave={() => setActiveIdx(null)}>
             {config.showGrid && <CartesianGrid stroke={gridColor} horizontal={false} />}
             <XAxis type="number" tick={{ fill: axisColor, fontSize: 11 }} tickFormatter={fmt} axisLine={false} tickLine={false} />
-            <YAxis type="category" dataKey="label" tick={{ fill: axisColor, fontSize: 11 }} axisLine={false} tickLine={false} width={Math.min(150, 8 + Math.max(...data.map((d) => d.label.length)) * 6.5)} interval={0} />
+            <YAxis type="category" dataKey="label" tick={<SideTick fill={axisColor} maxWidth={yAxisW - 8} />} axisLine={false} tickLine={false} width={yAxisW} interval={h / Math.max(1, data.length) < 14 ? "preserveStartEnd" : 0} />
             {tooltip}
             {keys.map((k) => (
-              <Bar key={k} dataKey={k} name={lbl(k)} fill={colorOf(k)} radius={[0, 6, 6, 0]} isAnimationActive={anim} animationDuration={700} animationEasing="ease-out" maxBarSize={22}>
+              <Bar key={k} dataKey={k} name={lbl(k)} fill={colorOf(k)} radius={[0, 4, 4, 0]} isAnimationActive={anim} animationDuration={700} animationEasing="ease-out" maxBarSize={20}>
                 {data.map((_, i) => (
                   <Cell key={i} fill={colorOf(k)} opacity={activeIdx === null || activeIdx === i ? 1 : 0.4} />
                 ))}
-                {(config.showLabels || (!compact && data.length <= 12 && keys.length === 1)) && <LabelList dataKey={k} position="right" formatter={(v: unknown) => fmt(Number(v))} fill={axisColor} fontSize={10} />}
+                {barLabels && <LabelList dataKey={k} position="right" formatter={(v: unknown) => fmt(Number(v))} fill={axisColor} fontSize={10} />}
               </Bar>
             ))}
           </BarChart>
@@ -350,9 +405,11 @@ export function ChartRenderer({ config, rows, columns, theme = "light", height =
     case "column":
     default: {
       const stacked = config.type === "stackedColumn";
+      // Room per category on the x-axis (0 = unknown / plenty).
+      const slot = width > 0 ? (width - 56) / Math.max(1, data.length) : 0;
       return (
         <ResponsiveContainer width="100%" height={height}>
-          <BarChart data={data} margin={{ top: 14, right: 8, bottom: 0, left: 0 }} barCategoryGap={keys.length > 1 ? "20%" : "32%"} barGap={4} onMouseMove={(s) => setActiveIdx(typeof s?.activeTooltipIndex === "number" ? s.activeTooltipIndex : null)} onMouseLeave={() => setActiveIdx(null)}>
+          <BarChart data={data} margin={{ top: 14, right: 8, bottom: 0, left: 0 }} barCategoryGap={keys.length > 1 ? "22%" : "30%"} barGap={2} onMouseMove={(s) => setActiveIdx(typeof s?.activeTooltipIndex === "number" ? s.activeTooltipIndex : null)} onMouseLeave={() => setActiveIdx(null)}>
             <defs>
               {allKeys.map((k) => (
                 <linearGradient key={k} id={`${uid}-bar-${allKeys.indexOf(k)}`} x1="0" y1="0" x2="0" y2="1">
@@ -362,7 +419,7 @@ export function ChartRenderer({ config, rows, columns, theme = "light", height =
               ))}
             </defs>
             {config.showGrid && <CartesianGrid stroke={gridColor} vertical={false} />}
-            <XAxis dataKey="label" tick={{ fill: axisColor, fontSize: 11 }} axisLine={false} tickLine={false} interval={data.length > 14 ? "preserveStartEnd" : 0} minTickGap={8} />
+            <XAxis dataKey="label" tick={<CategoryTick fill={axisColor} />} axisLine={false} tickLine={false} interval={slot > 0 && slot < 26 ? "preserveStartEnd" : data.length > 14 ? "preserveStartEnd" : 0} minTickGap={6} height={22} />
             <YAxis tick={{ fill: axisColor, fontSize: 11 }} tickFormatter={fmt} axisLine={false} tickLine={false} width={48} />
             {tooltip}
             {keys.map((k, i) => (
@@ -370,18 +427,20 @@ export function ChartRenderer({ config, rows, columns, theme = "light", height =
                 key={k}
                 dataKey={k}
                 name={lbl(k)}
-                fill={`url(#${uid}-bar-${allKeys.indexOf(k)})`}
+                fill={colorOf(k)}
                 stackId={stacked ? "a" : undefined}
-                radius={stacked ? (i === keys.length - 1 ? [6, 6, 0, 0] : 0) : [6, 6, 0, 0]}
+                radius={stacked ? (i === keys.length - 1 ? [4, 4, 0, 0] : 0) : [4, 4, 0, 0]}
+                stroke={stacked ? (dark ? "#13162a" : "#fff") : undefined}
+                strokeWidth={stacked ? 2 : 0}
                 isAnimationActive={anim}
                 animationDuration={700}
                 animationEasing="ease-out"
-                maxBarSize={56}
+                maxBarSize={28}
               >
                 {data.map((_, j) => (
-                  <Cell key={j} fill={`url(#${uid}-bar-${allKeys.indexOf(k)})`} opacity={activeIdx === null || activeIdx === j ? 1 : 0.4} />
+                  <Cell key={j} fill={colorOf(k)} opacity={activeIdx === null || activeIdx === j ? 1 : 0.4} />
                 ))}
-                {(config.showLabels || (!compact && data.length <= 8 && keys.length === 1 && !stacked)) && <LabelList dataKey={k} position="top" formatter={(v: unknown) => fmt(Number(v))} fill={axisColor} fontSize={10} />}
+                {(config.showLabels || (!compact && data.length <= 8 && keys.length === 1 && !stacked && (slot === 0 || slot >= 34))) && <LabelList dataKey={k} position="top" formatter={(v: unknown) => fmt(Number(v))} fill={axisColor} fontSize={10} />}
               </Bar>
             ))}
           </BarChart>
@@ -393,7 +452,7 @@ export function ChartRenderer({ config, rows, columns, theme = "light", height =
 
 function TooltipBox({ dark, children }: { dark: boolean; children: React.ReactNode }) {
   return (
-    <div className={clsx("min-w-[150px] rounded-xl border px-3 py-2 text-xs shadow-[var(--shadow-md)] animate-scale-in", dark ? "border-[#2b2f4a] bg-[#1c2038] text-white" : "border-border bg-white/95 text-ink backdrop-blur")}>{children}</div>
+    <div className={clsx("min-w-[150px] max-w-[240px] rounded-xl border px-3 py-2 text-xs shadow-[0_12px_32px_-12px_rgba(11,15,30,0.35),0_2px_6px_-2px_rgba(11,15,30,0.08)]", dark ? "border-[#2b2f4a] bg-[#1c2038] text-white" : "border-border bg-white text-ink")}>{children}</div>
   );
 }
 
@@ -444,8 +503,9 @@ export function LegendChips({ config, dark = false, hidden, onToggle, countLabel
   const lbl = (k: string) => seriesLabel(k, countLabel);
   if (!config.showLegend) return null;
   const keys = effectiveKeys(config);
-  if (["kpi", "table", "pie", "donut", "scatter", "text"].includes(config.type) || keys.length === 0) return null;
-  const colors = getPalette(config.palette);
+  // A single series needs no legend – the title already names it.
+  if (["kpi", "table", "pie", "donut", "scatter", "text"].includes(config.type) || keys.length < 2) return null;
+  const colors = getPalette(config.palette, dark);
   return (
     <div className="flex flex-wrap gap-1.5">
       {keys.map((k, i) => {
@@ -471,5 +531,36 @@ export function LegendChips({ config, dark = false, hidden, onToggle, countLabel
         );
       })}
     </div>
+  );
+}
+
+/** X-axis label that shortens itself (with …) to the space each category has. */
+function CategoryTick(props: { x?: number; y?: number; payload?: { value: string }; width?: number; visibleTicksCount?: number; fill?: string }) {
+  const { x = 0, y = 0, payload, width = 0, visibleTicksCount = 1, fill } = props;
+  const full = String(payload?.value ?? "");
+  const slot = width / Math.max(1, visibleTicksCount);
+  const max = Math.max(3, Math.floor((slot - 6) / 6.2));
+  const label = full.length > max ? `${full.slice(0, Math.max(1, max - 1)).trimEnd()}…` : full;
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <text dy={12} textAnchor="middle" fill={fill} fontSize={11}>
+        <title>{full}</title>
+        {label}
+      </text>
+    </g>
+  );
+}
+
+/** Y-axis category label for horizontal bars, shortened to the axis width. */
+function SideTick(props: { x?: number; y?: number; payload?: { value: string }; fill?: string; maxWidth?: number }) {
+  const { x = 0, y = 0, payload, fill, maxWidth = 120 } = props;
+  const full = String(payload?.value ?? "");
+  const max = Math.max(3, Math.floor(maxWidth / 6.2));
+  const label = full.length > max ? `${full.slice(0, Math.max(1, max - 1)).trimEnd()}…` : full;
+  return (
+    <text x={x} y={y} dy={4} textAnchor="end" fill={fill} fontSize={11}>
+      <title>{full}</title>
+      {label}
+    </text>
   );
 }
