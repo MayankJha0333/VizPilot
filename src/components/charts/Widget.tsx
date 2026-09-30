@@ -105,7 +105,7 @@ export function Widget({ chart, rows, columns, theme, selected, readOnly, index 
     setDownloading(true);
     try {
       const { toPng } = await import("html-to-image");
-      const dataUrl = await toPng(ref.current, { pixelRatio: 2, backgroundColor: dark ? "#151a26" : "#ffffff", filter: (n) => !(n instanceof HTMLElement && n.dataset.exportIgnore === "1") });
+      const dataUrl = await toPng(ref.current, { pixelRatio: 2, backgroundColor: dark ? "#1c2032" : "#fbfbff", filter: (n) => !(n instanceof HTMLElement && n.dataset.exportIgnore === "1") });
       const a = document.createElement("a");
       a.href = dataUrl;
       a.download = `${chart.title || "chart"}.png`.replace(/[^\w.-]+/g, "_");
@@ -127,21 +127,21 @@ export function Widget({ chart, rows, columns, theme, selected, readOnly, index 
     a.click();
   };
 
-  const iconBtn = clsx("flex h-7 w-7 items-center justify-center rounded-md transition-colors", "text-ink-2 hover:bg-surface-3 hover:text-ink");
+  const iconBtn = clsx("flex h-7 w-7 items-center justify-center rounded-full transition-colors", "text-ink-2 hover:bg-surface-3 hover:text-ink");
 
   return (
     <>
       <div
         className={clsx(
-          "widget-card group relative flex h-full flex-col rounded-2xl text-ink animate-fade-up",
-          selected && "!border-brand !shadow-[0_0_0_3px_var(--ring)]"
+          "widget-card group relative flex h-full flex-col text-ink animate-fade-up",
+          selected && "!shadow-[0_0_0_3px_var(--ring),var(--card-shadow)]"
         )}
         style={{ animationDelay: `${Math.min(index, 8) * 60}ms` }}
         onDoubleClick={readOnly ? undefined : onSelect}
         ref={cardRef}
         data-chart-card
       >
-        <div ref={ref} className={clsx("flex min-h-0 flex-1 flex-col rounded-2xl bg-surface", narrow || short ? "p-3" : "px-[18px] pb-4 pt-4")}>
+        <div ref={ref} className={clsx("flex min-h-0 flex-1 flex-col rounded-[24px]", narrow || short ? "p-3" : "px-[18px] pb-4 pt-4")}>
           <div data-drag-handle className={clsx("flex items-start justify-between gap-3", !isText && "mb-3", draggable && !readOnly && "cursor-grab active:cursor-grabbing")}>
             <div className="flex min-w-0 items-start gap-2">
               {/* Drag hint floats in the corner so it never pushes the title. */}
@@ -161,7 +161,7 @@ export function Widget({ chart, rows, columns, theme, selected, readOnly, index 
                 {filtered.length > 0 && (
                   <div className="mt-1.5 flex flex-wrap gap-1">
                     {filtered.map((f, i) => (
-                      <span key={i} className={clsx("inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-medium", "bg-brand-soft text-brand-ink")}>
+                      <span key={i} className={clsx("inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold", "bg-brand-soft text-brand-ink")}>
                         <FilterIcon className="h-2.5 w-2.5" />
                         {f.column} {f.op === "in" ? "in" : f.op === "eq" ? "=" : f.op === "neq" ? "≠" : f.op === "contains" ? "∋" : f.op.replace("gte", "≥").replace("lte", "≤").replace("gt", ">").replace("lt", "<")} {Array.isArray(f.value) ? f.value.join(", ") : String(f.value)}
                       </span>
@@ -175,9 +175,9 @@ export function Widget({ chart, rows, columns, theme, selected, readOnly, index 
                 data-export-ignore="1"
                 onClick={(e) => e.stopPropagation()}
                 className={clsx(
-                  "absolute right-2.5 top-2.5 z-20 flex items-center gap-0.5 rounded-lg border p-0.5 shadow-[var(--shadow-sm)] transition-opacity duration-200 sm:opacity-0 sm:group-hover:opacity-100",
+                  "absolute right-3 top-3 z-20 flex items-center gap-0.5 rounded-full p-1 shadow-[var(--shadow-sm)] transition-opacity duration-200 sm:opacity-0 sm:group-hover:opacity-100",
                   selected && "sm:opacity-100",
-                  "border-border bg-surface"
+                  "bg-surface"
                 )}
               >
                 <Tooltip label="Edit" side="bottom">
@@ -209,7 +209,7 @@ export function Widget({ chart, rows, columns, theme, selected, readOnly, index 
             ) : (
               !isText &&
               !hideActions && (
-                <div data-export-ignore="1" className={clsx("absolute right-2.5 top-2.5 z-20 flex items-center gap-0.5 rounded-lg border p-0.5 opacity-0 shadow-[var(--shadow-sm)] transition-opacity group-hover:opacity-100", "border-border bg-surface")}>
+                <div data-export-ignore="1" className={clsx("absolute right-3 top-3 z-20 flex items-center gap-0.5 rounded-full p-1 opacity-0 shadow-[var(--shadow-sm)] transition-opacity group-hover:opacity-100", "bg-surface")}>
                   <button onClick={() => setExpanded(true)} className={iconBtn} aria-label="Expand">
                     <Maximize2 className="h-4 w-4" />
                   </button>
@@ -241,12 +241,12 @@ export function Widget({ chart, rows, columns, theme, selected, readOnly, index 
               />
             )}
           </div>
-          {chart.note && !isText && !short && !narrow && <p className={clsx("mt-3 line-clamp-3 shrink-0 rounded-lg px-3 py-2 text-xs leading-relaxed", "bg-surface-2 text-ink-2")}>{chart.note}</p>}
+          {chart.note && !isText && !short && !narrow && <p className={clsx("mt-3 line-clamp-3 shrink-0 rounded-2xl px-3 py-2 text-xs leading-relaxed", "clay-inset text-ink-2")}>{chart.note}</p>}
         </div>
       </div>
 
       <Modal open={expanded} onClose={() => setExpanded(false)} title={chart.title} description={chart.subtitle || undefined} size="xl">
-        <div className="rounded-2xl border bg-surface p-4" data-theme={theme}>
+        <div className="clay rounded-[24px] p-4" data-theme={theme}>
           <div className="mb-2">
             <LegendChips config={chart.config} dark={dark} hidden={hidden} onToggle={toggle} countLabel={countLabel} />
           </div>
@@ -279,7 +279,7 @@ function SeriesTable({ chart, rows, columns }: { chart: ChartRecord; rows: Row[]
   const pts = useMemo(() => buildSeries(rows, chart.config, columns), [rows, chart.config, columns]);
   if (!pts.length) return null;
   return (
-    <div className="mt-4 overflow-auto rounded-xl border scrollbar-thin" style={{ maxHeight: 260 }}>
+    <div className="clay-inset mt-4 overflow-auto rounded-2xl scrollbar-thin" style={{ maxHeight: 260 }}>
       <table className="w-full text-left text-xs">
         <thead className="sticky top-0 bg-surface-2 text-ink-2">
           <tr>

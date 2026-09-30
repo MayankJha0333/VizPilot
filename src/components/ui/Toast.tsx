@@ -48,11 +48,8 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
             key={t.id}
             role="status"
             className={clsx(
-              "pointer-events-auto relative flex w-full max-w-sm items-start gap-3 overflow-hidden rounded-xl border bg-popover/95 px-4 py-3 text-sm shadow-[var(--shadow-lg)] backdrop-blur animate-scale-in",
-              t.kind === "success" && "border-green-200",
-              t.kind === "error" && "border-red-200",
-              t.kind === "info" && "border-border"
-            )}
+              "pointer-events-auto relative flex w-full max-w-sm items-start gap-3 overflow-hidden rounded-[18px] bg-popover px-4 py-3 text-sm font-semibold shadow-[var(--shadow-md)] animate-scale-in",
+                    )}
           >
             {t.kind === "success" && <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" />}
             {t.kind === "error" && <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-danger" />}

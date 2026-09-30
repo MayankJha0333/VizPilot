@@ -28,10 +28,10 @@ export function Dialog({ open, onClose, children, className, label }: { open: bo
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-[88] flex items-end justify-center sm:items-center sm:p-6" role="dialog" aria-modal="true" aria-label={label}>
-      <div className="absolute inset-0 bg-[#0b0f1e]/55 backdrop-blur-[6px] animate-fade-in" onClick={onClose} />
+      <div className="absolute inset-0 bg-[#262b58]/40 backdrop-blur-[6px] animate-fade-in" onClick={onClose} />
       <div
         className={clsx(
-          "relative flex h-[94vh] w-full flex-col overflow-hidden rounded-t-3xl border border-white/10 bg-surface shadow-[0_40px_120px_-30px_rgba(11,15,30,0.6)] animate-slide-up sm:h-[88vh] sm:rounded-3xl sm:animate-dialog-in",
+          "relative flex h-[94vh] w-full flex-col overflow-hidden rounded-t-[30px] bg-surface shadow-[var(--shadow-lg)] animate-slide-up sm:h-[88vh] sm:rounded-[30px] sm:animate-dialog-in",
           className
         )}
       >

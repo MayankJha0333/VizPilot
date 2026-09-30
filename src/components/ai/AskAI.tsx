@@ -109,12 +109,12 @@ export function AskAI({ datasetId, datasetName, columns, rows, palette, initialP
     <div className="flex h-full flex-col bg-surface">
       <div className="flex items-center justify-between border-b px-4 py-3">
         <div className="flex items-center gap-2.5">
-          <span className="gradient-brand flex h-8 w-8 items-center justify-center rounded-lg text-white shadow-[var(--shadow-glow)]">
+          <span className="clay-brand flex h-9 w-9 items-center justify-center rounded-2xl">
             <Sparkles className="h-4 w-4" />
           </span>
           <div>
             <div className="flex items-center gap-1.5 text-sm font-semibold">
-              Ask AI <span className="rounded-md bg-brand-soft px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-brand-ink">Beta</span>
+              Ask AI <span className="rounded-lg bg-brand-soft px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-brand-ink">Beta</span>
             </div>
             {headerSlot ?? <div className="max-w-[220px] truncate text-xs text-ink-3">Analysing {datasetName}</div>}
           </div>
@@ -126,14 +126,14 @@ export function AskAI({ datasetId, datasetName, columns, rows, palette, initialP
                 setMessages([]);
                 setLastConfig(null);
               }}
-              className="rounded-lg p-1.5 text-ink-3 hover:bg-surface-3 hover:text-ink"
+              className="clay-sm clay-press rounded-[14px] p-2 text-ink-3 hover:text-ink"
               aria-label="New conversation"
               title="Start over"
             >
               <RotateCcw className="h-4 w-4" />
             </button>
           )}
-          <button onClick={onClose} className="rounded-lg p-1.5 text-ink-3 hover:bg-surface-3 hover:text-ink" aria-label="Close">
+          <button onClick={onClose} className="clay-sm clay-press rounded-[14px] p-2 text-ink-3 hover:text-ink" aria-label="Close">
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -152,7 +152,7 @@ export function AskAI({ datasetId, datasetName, columns, rows, palette, initialP
               <div className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-ink-3">Suggested questions</div>
               <div className="stagger stagger-auto flex flex-col gap-1.5">
                 {chips.map((c) => (
-                  <button key={c} onClick={() => send(c)} className="flex items-center gap-2 rounded-xl border bg-surface px-3 py-2 text-left text-xs text-ink-2 transition-all duration-200 hover:border-brand hover:text-brand hover:shadow-[var(--shadow-sm)]">
+                  <button key={c} onClick={() => send(c)} className="flex items-center gap-2 rounded-2xl border bg-surface px-3 py-2 text-left text-xs text-ink-2 transition-all duration-200 hover:text-brand-ink hover:shadow-[var(--shadow-sm)]">
                     <Sparkles className="h-3 w-3 shrink-0 text-brand" />
                     {c}
                   </button>
@@ -165,7 +165,7 @@ export function AskAI({ datasetId, datasetName, columns, rows, palette, initialP
         {messages.map((m) =>
           m.role === "user" ? (
             <div key={m.id} className="flex justify-end animate-fade-up">
-              <div className="gradient-brand max-w-[85%] rounded-2xl rounded-br-md px-3.5 py-2 text-sm text-white shadow-[var(--shadow-sm)]">{m.text}</div>
+              <div className="clay-tile block max-w-[85%] rounded-[20px] rounded-br-md bg-clay-lavender px-3.5 py-2 text-sm font-semibold text-clay-lavender-ink">{m.text}</div>
             </div>
           ) : (
             <AssistantMessage key={m.id} msg={m} rows={rows} columns={columns} isLast={m.id === lastId && !busy} onAdd={(c) => add(m.id, c)} onVote={(v) => vote(m.id, v)} onFollow={send} />
@@ -204,7 +204,7 @@ export function AskAI({ datasetId, datasetName, columns, rows, palette, initialP
         }}
         className={clsx("border-t py-3", wide ? "px-[max(0.75rem,calc((100%-46rem)/2))]" : "px-3")}
       >
-        <div className="gradient-border flex items-end gap-2 rounded-2xl bg-surface px-3 py-2 shadow-[var(--shadow-sm)] transition-shadow focus-within:shadow-[0_0_0_3px_var(--ring)]">
+        <div className="clay-inset flex items-end gap-2 rounded-[22px] border-[1.5px] border-[var(--input-border)] px-3 py-2 transition-shadow focus-within:shadow-[var(--clay-inset),0_0_0_4px_var(--ring)]">
           <textarea
             ref={inputRef}
             rows={1}
@@ -220,7 +220,7 @@ export function AskAI({ datasetId, datasetName, columns, rows, palette, initialP
             }}
             data-testid="ai-input"
           />
-          <button type="submit" disabled={!input.trim() || busy} className="gradient-brand flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-white shadow-[var(--shadow-glow)] transition-transform hover:scale-105 disabled:opacity-40 disabled:hover:scale-100" aria-label="Send">
+          <button type="submit" disabled={!input.trim() || busy} className="clay-brand clay-press flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-transform hover:scale-105 disabled:opacity-40 disabled:hover:scale-100" aria-label="Send">
             <ArrowUp className="h-4 w-4" />
           </button>
         </div>
@@ -236,7 +236,7 @@ function AssistantMessage({ msg, rows, columns, isLast, onAdd, onVote, onFollow 
   if (msg.error) {
     return (
       <div className="flex items-start gap-2.5 animate-fade-up">
-        <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-50 text-danger">!</span>
+        <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-danger-soft text-danger-ink">!</span>
         <p className="text-sm text-danger">Sorry — {msg.error}</p>
       </div>
     );
@@ -261,8 +261,8 @@ function AssistantMessage({ msg, rows, columns, isLast, onAdd, onVote, onFollow 
       {res.insights && (
         <ul className="ml-8 space-y-1.5 stagger stagger-auto">
           {res.insights.map((ins, j) => (
-            <li key={j} data-testid="ai-insight" className="flex items-start gap-2 rounded-xl border bg-surface-2 px-3 py-2 text-xs leading-relaxed text-ink">
-              <Lightbulb className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-500" />
+            <li key={j} data-testid="ai-insight" className="flex items-start gap-2 rounded-2xl border bg-surface-2 px-3 py-2 text-xs leading-relaxed text-ink">
+              <Lightbulb className="mt-0.5 h-3.5 w-3.5 shrink-0 text-warning" />
               {ins}
             </li>
           ))}
@@ -279,7 +279,7 @@ function AssistantMessage({ msg, rows, columns, isLast, onAdd, onVote, onFollow 
             <ol className="mt-1.5 space-y-1 stagger stagger-auto">
               {res.steps.map((s, i) => (
                 <li key={i} className="flex items-start gap-2 text-xs text-ink-2">
-                  <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-green-50 text-success">
+                  <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-success-soft text-success-ink">
                     <Check className="h-2.5 w-2.5" />
                   </span>
                   <StepText text={s} columns={columns} />
@@ -303,10 +303,10 @@ function AssistantMessage({ msg, rows, columns, isLast, onAdd, onVote, onFollow 
             {res.facts && <div className="px-3.5 pt-1 text-[11px] text-ink-3">{res.facts}</div>}
             <div className="mt-2 flex items-center justify-between gap-2 border-t bg-surface-2 px-3 py-2">
               <div className="flex items-center gap-1">
-                <button onClick={() => onVote(1)} className={clsx("rounded-md p-1 transition-colors", msg.vote === 1 ? "text-success" : "text-ink-3 hover:text-ink")} aria-label="Good answer">
+                <button onClick={() => onVote(1)} className={clsx("rounded-lg p-1 transition-colors", msg.vote === 1 ? "text-success" : "text-ink-3 hover:text-ink")} aria-label="Good answer">
                   <ThumbsUp className="h-3.5 w-3.5" />
                 </button>
-                <button onClick={() => onVote(-1)} className={clsx("rounded-md p-1 transition-colors", msg.vote === -1 ? "text-danger" : "text-ink-3 hover:text-ink")} aria-label="Bad answer">
+                <button onClick={() => onVote(-1)} className={clsx("rounded-lg p-1 transition-colors", msg.vote === -1 ? "text-danger" : "text-ink-3 hover:text-ink")} aria-label="Bad answer">
                   <ThumbsDown className="h-3.5 w-3.5" />
                 </button>
                 <span className="ml-1 text-[10px] uppercase tracking-wide text-ink-3">{res.provider === "rules" ? "rules engine" : `${res.provider}${res.latencyMs ? ` · ${(res.latencyMs / 1000).toFixed(1)}s` : ""}`}</span>
@@ -330,7 +330,7 @@ function AssistantMessage({ msg, rows, columns, isLast, onAdd, onVote, onFollow 
       {isLast && res.followUps.length > 0 && (
         <div className="ml-8 flex flex-wrap gap-1.5">
           {res.followUps.map((c) => (
-            <button key={c} onClick={() => onFollow(c)} className="inline-flex items-center gap-1 rounded-full border border-dashed px-2.5 py-1 text-[11px] text-ink-2 transition-colors hover:border-brand hover:text-brand">
+            <button key={c} onClick={() => onFollow(c)} className="inline-flex items-center gap-1 clay-sm clay-press rounded-full px-2.5 py-1 text-[11px] text-ink-2 transition-colors hover:text-brand-ink">
               <Wand2 className="h-3 w-3" /> {c}
             </button>
           ))}
@@ -358,7 +358,7 @@ function StepText({ text, columns }: { text: string; columns: Column[] }) {
     }
     if (best.i > 0) parts.push(rest.slice(0, best.i));
     parts.push(
-      <span key={parts.length} className="mx-0.5 inline-flex rounded-md border bg-surface px-1.5 py-px font-medium text-ink">
+      <span key={parts.length} className="mx-0.5 inline-flex rounded-lg border bg-surface px-1.5 py-px font-semibold text-ink">
         {best.name}
       </span>
     );

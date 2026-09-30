@@ -101,9 +101,9 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
   let lastGroup = "";
   return (
     <div className="fixed inset-0 z-[95] flex items-start justify-center px-4 pt-[12vh]" role="dialog" aria-modal="true">
-      <div className="absolute inset-0 bg-[#0b0f1e]/50 backdrop-blur-[3px] animate-fade-in" onClick={onClose} />
-      <div className="relative w-full max-w-xl overflow-hidden rounded-2xl border bg-surface shadow-[var(--shadow-lg)] animate-scale-in">
-        <div className="flex items-center gap-3 border-b px-4">
+      <div className="absolute inset-0 bg-[#262b58]/35 backdrop-blur-[4px] animate-fade-in" onClick={onClose} />
+      <div className="relative w-full max-w-xl overflow-hidden rounded-[26px] bg-surface shadow-[var(--shadow-lg)] animate-scale-in">
+        <div className="m-2 flex items-center gap-3 rounded-[18px] border-[1.5px] border-[var(--input-border)] px-4 clay-inset">
           <Search className="h-4 w-4 text-ink-3" />
           <input
             ref={inputRef}
@@ -139,9 +139,9 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
                 <button
                   onMouseEnter={() => setActive(i)}
                   onClick={it.run}
-                  className={clsx("flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-colors", i === active ? "bg-brand-soft text-brand-ink" : "text-ink hover:bg-surface-2")}
+                  className={clsx("flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-left text-sm font-semibold transition-colors", i === active ? "bg-brand-soft text-brand-ink" : "text-ink hover:bg-surface-2")}
                 >
-                  <span className={clsx("flex h-7 w-7 items-center justify-center rounded-lg", i === active ? "bg-surface text-brand" : "bg-surface-3 text-ink-2")}>{it.icon}</span>
+                  <span className={clsx("flex h-8 w-8 items-center justify-center", i === active ? "clay-tile bg-surface text-brand" : "clay-tile bg-surface-2 text-ink-2")}>{it.icon}</span>
                   <span className="flex-1 truncate">{it.label}</span>
                   {it.hint && <span className="truncate text-xs text-ink-3">{it.hint}</span>}
                 </button>
@@ -149,7 +149,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
             );
           })}
         </div>
-        <div className="flex items-center gap-3 border-t bg-surface-2 px-4 py-2 text-[11px] text-ink-3">
+        <div className="flex items-center gap-3 px-4 pb-3 pt-1 text-[11px] font-semibold text-ink-3">
           <span>
             <span className="kbd">↑</span> <span className="kbd">↓</span> navigate
           </span>

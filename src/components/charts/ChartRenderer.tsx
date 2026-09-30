@@ -30,8 +30,9 @@ import { entityWord } from "@/lib/charts/suggest";
 import { CountUp } from "@/components/ui/misc";
 
 /** Chart chrome colours, matched to the surface tokens in globals.css. */
-const CHART_LIGHT = { axis: "#6b7086", grid: "#edeff4", surface: "#ffffff", text: "#0c1024", cursor: "rgba(76, 95, 213, 0.06)" };
-const CHART_DARK = { axis: "#7f879b", grid: "#232a3a", surface: "#151a26", text: "#eef0f6", cursor: "rgba(255, 255, 255, 0.045)" };
+// Chart chrome stays flat inside the clay card (data is never puffed up): hairline grid, quiet axes.
+const CHART_LIGHT = { axis: "#5f6584", grid: "#e8eaf5", surface: "#fbfbff", text: "#21253f", cursor: "rgba(76, 95, 213, 0.07)" };
+const CHART_DARK = { axis: "#9097b2", grid: "#2a2f45", surface: "#1c2032", text: "#eef0fa", cursor: "rgba(255, 255, 255, 0.05)" };
 
 interface Props {
   config: ChartConfig;
@@ -130,7 +131,7 @@ export function ChartRenderer({ config, rows, columns, theme = "light", height =
             <div className="mt-2.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
               {stats.delta ? (
                 <>
-                  <span className={clsx("inline-flex items-center gap-0.5 rounded-md px-1.5 py-0.5 font-semibold tabular-nums", flat ? "bg-surface-3 text-ink-2" : up ? "bg-success-soft text-success-ink" : "bg-danger-soft text-danger-ink")}>
+                  <span className={clsx("inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 font-bold tabular-nums", flat ? "bg-surface-3 text-ink-2" : up ? "bg-success-soft text-success-ink" : "bg-danger-soft text-danger-ink")}>
                     {flat ? <Minus className="h-3 w-3" /> : up ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
                     {Math.abs(stats.delta.pct).toFixed(1)}%
                   </span>
@@ -175,7 +176,7 @@ export function ChartRenderer({ config, rows, columns, theme = "light", height =
       const cols = config.yKeys.length ? [config.xKey, ...config.yKeys].filter(Boolean) : columns.map((c) => c.name);
       const shown = (config.limit ? rows.slice(0, config.limit) : rows).slice(0, compact ? 8 : 200);
       return (
-        <div className="overflow-auto rounded-xl border scrollbar-thin" style={{ maxHeight: height }}>
+        <div className="clay-inset overflow-auto rounded-2xl scrollbar-thin" style={{ maxHeight: height }}>
           <table className="w-full text-left text-xs">
             <thead className={clsx("sticky top-0", "bg-surface-2 text-ink-2")}>
               <tr>
@@ -288,7 +289,7 @@ export function ChartRenderer({ config, rows, columns, theme = "light", height =
                   onMouseEnter={() => setActiveIdx(i)}
                   onMouseLeave={() => setActiveIdx(null)}
                   title={`${p.label} · ${Math.round((toNumber(p[key]) / (total || 1)) * 100)}%`}
-                  className={clsx("inline-flex max-w-[140px] items-center gap-1.5 rounded-md px-1.5 py-0.5 text-[11px] transition-colors", "text-ink-2 hover:bg-surface-3", activeIdx === i && ("bg-surface-3"))}
+                  className={clsx("inline-flex max-w-[140px] items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-semibold transition-colors", "text-ink-2 hover:bg-surface-3", activeIdx === i && ("bg-surface-3"))}
                 >
                   <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: colors[i % colors.length] }} />
                   <span className="truncate">{p.label}</span>
@@ -296,7 +297,7 @@ export function ChartRenderer({ config, rows, columns, theme = "light", height =
                 </button>
               ))}
               {legendMore > 0 && (
-                <span className={clsx("inline-flex items-center rounded-md px-1.5 py-0.5 text-[11px]", "text-ink-3")} title={data.slice(legendItems.length).map((p) => p.label).join(", ")}>
+                <span className={clsx("inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold", "text-ink-3")} title={data.slice(legendItems.length).map((p) => p.label).join(", ")}>
                   +{legendMore} more
                 </span>
               )}
@@ -471,7 +472,7 @@ export function ChartRenderer({ config, rows, columns, theme = "light", height =
 
 function TooltipBox({ children }: { dark?: boolean; children: React.ReactNode }) {
   return (
-    <div className="min-w-[150px] max-w-[240px] rounded-xl border border-border-strong bg-popover px-3 py-2 text-xs text-ink shadow-[var(--shadow-md)]">{children}</div>
+    <div className="min-w-[150px] max-w-[240px] rounded-2xl bg-popover px-3.5 py-2.5 text-xs font-semibold text-ink shadow-[var(--shadow-md)]">{children}</div>
   );
 }
 
@@ -511,7 +512,7 @@ function ChartTooltip({ active, payload, label, dark, fmt, colorOf, countLabel }
 
 function Placeholder({ text }: { text: string }) {
   return (
-    <div className="bg-dots flex h-full min-h-[180px] items-center justify-center rounded-xl border border-dashed text-center text-sm text-ink-3">
+    <div className="clay-inset flex h-full min-h-[180px] items-center justify-center rounded-2xl text-center text-sm font-semibold text-ink-3">
       <span className="max-w-[240px] px-4">{text}</span>
     </div>
   );
@@ -539,7 +540,7 @@ export function LegendChips({ config, dark = false, hidden, onToggle, countLabel
             }}
             title={off ? "Show series" : "Hide series"}
             className={clsx(
-              "inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-[11px] font-medium transition-all",
+              "inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-bold transition-all",
               "bg-surface-3 text-ink-2 hover:bg-border",
               off && "opacity-45 line-through"
             )}

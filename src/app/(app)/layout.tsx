@@ -31,7 +31,7 @@ function SetupNotice() {
   return (
     <div className="mx-auto mt-24 max-w-lg px-6">
       <div className="card p-6">
-        <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
+        <div className="mb-3 flex h-10 w-10 items-center justify-center clay-tile bg-clay-lemon text-clay-lemon-ink">
           <AlertTriangle className="h-5 w-5" />
         </div>
         <h1 className="text-lg font-semibold">Firebase isn&apos;t configured yet</h1>

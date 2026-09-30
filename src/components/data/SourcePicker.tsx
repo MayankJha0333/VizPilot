@@ -55,14 +55,14 @@ export function SourcePicker({ value, options, onChange, onAddNew, compact }: { 
         setOpen(false);
         setQ("");
       }}
-      className={clsx("flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left transition-colors", o.id === value ? "bg-brand-soft" : "hover:bg-surface-2")}
+      className={clsx("flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left transition-colors", o.id === value ? "clay-inset" : "hover:bg-surface-2")}
       data-testid="source-option"
     >
-      <span className={clsx("flex h-7 w-7 shrink-0 items-center justify-center rounded-lg", o.id === value ? "bg-brand text-white" : "bg-surface-3 text-ink-2")}>
+      <span className={clsx("flex h-7 w-7 shrink-0 items-center justify-center rounded-xl", o.id === value ? "clay-brand" : "clay-tile bg-surface-3 text-ink-2")}>
         <Database className="h-3.5 w-3.5" />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block truncate text-[13px] font-medium text-ink">{o.name}</span>
+        <span className="block truncate text-[13px] font-semibold text-ink">{o.name}</span>
         <span className="block text-[11px] text-ink-3">
           {o.rowCount.toLocaleString()} rows · {o.columnCount} columns
         </span>
@@ -77,7 +77,7 @@ export function SourcePicker({ value, options, onChange, onAddNew, compact }: { 
         type="button"
         onClick={() => setOpen((v) => !v)}
         className={clsx(
-          "flex max-w-full items-center gap-2 rounded-xl border bg-surface text-left transition-all hover:border-border-strong hover:shadow-[var(--shadow-sm)]",
+          "flex max-w-full items-center gap-2 rounded-2xl border bg-surface text-left transition-all hover:border-border-strong hover:shadow-[var(--shadow-sm)]",
           compact ? "px-2 py-1" : "px-3 py-2",
           open && "border-brand ring-2 ring-[var(--ring)]"
         )}
@@ -86,13 +86,13 @@ export function SourcePicker({ value, options, onChange, onAddNew, compact }: { 
         <Database className={clsx("shrink-0 text-brand", compact ? "h-3 w-3" : "h-4 w-4")} />
         <span className="min-w-0">
           {!compact && <span className="block text-[10px] font-semibold uppercase tracking-wider text-ink-3">Data source</span>}
-          <span className={clsx("block truncate font-medium text-ink", compact ? "text-xs" : "text-sm")}>{current ? current.name : "Choose data…"}</span>
+          <span className={clsx("block truncate font-semibold text-ink", compact ? "text-xs" : "text-sm")}>{current ? current.name : "Choose data…"}</span>
         </span>
         <ChevronDown className={clsx("h-3.5 w-3.5 shrink-0 text-ink-3 transition-transform", open && "rotate-180")} />
       </button>
 
       {open && (
-        <div className="absolute left-0 top-full z-50 mt-2 w-80 overflow-hidden rounded-2xl border bg-surface shadow-[var(--shadow-lg)] animate-scale-in">
+        <div className="absolute left-0 top-full z-50 mt-2 w-80 overflow-hidden rounded-[22px] bg-popover shadow-[var(--shadow-md)] animate-scale-in">
           {options.length > 5 && (
             <div className="flex items-center gap-2 border-b px-3">
               <Search className="h-3.5 w-3.5 text-ink-3" />
@@ -113,7 +113,7 @@ export function SourcePicker({ value, options, onChange, onAddNew, compact }: { 
                 setOpen(false);
                 onAddNew();
               }}
-              className="flex w-full items-center gap-2 border-t bg-surface-2 px-4 py-2.5 text-sm font-medium text-brand transition-colors hover:bg-brand-soft"
+              className="flex w-full items-center gap-2 px-4 py-3 text-sm font-bold text-brand-ink transition-colors hover:bg-brand-soft"
               data-testid="source-add-new"
             >
               <Plus className="h-4 w-4" /> Add new data (upload, paste, sample)

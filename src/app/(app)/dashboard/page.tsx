@@ -27,10 +27,10 @@ export default function DashboardPage() {
 }
 
 const TEMPLATES = [
-  { id: "ecommerce-orders", title: "Sales overview", body: "Revenue trend, top categories, regions and channels.", tone: "from-[#4c5fd5] to-[#2a78d6]" },
-  { id: "saas-metrics", title: "SaaS growth", body: "MRR, customers, churn and NPS over time.", tone: "from-[#14b8a6] to-[#38bdf8]" },
-  { id: "support-tickets", title: "Support operations", body: "Ticket volume, priority mix, agents and CSAT.", tone: "from-[#eb6834] to-[#f5a524]" },
-  { id: "marketing-campaigns", title: "Marketing performance", body: "Spend, conversions and ROAS by platform.", tone: "from-[#f97316] to-[#facc15]" },
+  { id: "ecommerce-orders", title: "Sales overview", body: "Revenue trend, top categories, regions and channels.", tone: "bg-clay-lavender" },
+  { id: "saas-metrics", title: "SaaS growth", body: "MRR, customers, churn and NPS over time.", tone: "bg-clay-mint" },
+  { id: "support-tickets", title: "Support operations", body: "Ticket volume, priority mix, agents and CSAT.", tone: "bg-clay-peach" },
+  { id: "marketing-campaigns", title: "Marketing performance", body: "Spend, conversions and ROAS by platform.", tone: "bg-clay-sky" },
 ];
 
 function Home() {
@@ -72,8 +72,8 @@ function Home() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between animate-fade-up">
         <div>
-          <p className="text-sm text-ink-3">{new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })}</p>
-          <h1 className="mt-0.5 text-3xl font-semibold tracking-tight">
+          <p className="text-sm font-bold text-ink-3">{new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })}</p>
+          <h1 className="mt-0.5 text-[32px] font-extrabold tracking-tight">
             {greeting()}, {firstName}
           </h1>
         </div>
@@ -85,25 +85,25 @@ function Home() {
       </div>
 
       {welcome && (
-        <div className="noise relative overflow-hidden rounded-3xl bg-nav px-6 py-6 text-white animate-scale-in">
-          <div className="orb -right-10 -top-16 h-56 w-56 bg-brand" />
-          <div className="orb -bottom-20 left-1/3 h-48 w-48 bg-brand-3 [animation-delay:-6s]" />
-          <button onClick={() => setWelcome(false)} className="absolute right-3 top-3 rounded-lg p-1 text-white/60 hover:bg-white/10 hover:text-white" aria-label="Dismiss">
+        <div className="clay-tile relative block overflow-hidden rounded-[28px] bg-clay-lavender px-7 py-6 text-clay-lavender-ink animate-scale-in">
+          <div className="orb -right-10 -top-16 h-56 w-56 bg-clay-sky" />
+          <div className="orb -bottom-20 left-1/3 h-48 w-48 bg-clay-peach [animation-delay:-6s]" />
+          <button onClick={() => setWelcome(false)} className="clay-sm clay-press absolute right-4 top-4 rounded-full p-1.5 text-ink-3 hover:text-ink" aria-label="Dismiss">
             <X className="h-4 w-4" />
           </button>
-          <h2 className="relative text-xl font-semibold">Welcome to VizPilot 👋</h2>
-          <p className="relative mt-1 max-w-lg text-sm text-white/70">Bring a CSV, paste a table, or pick a template below. Then ask AI questions about your data and it builds the widgets for you.</p>
+          <h2 className="relative text-2xl font-extrabold">Welcome to VizPilot 👋</h2>
+          <p className="relative mt-1 max-w-lg text-sm font-semibold">Bring a CSV, paste a table, or pick a template below. Then ask AI questions about your data and it builds the widgets for you.</p>
         </div>
       )}
 
       {/* Start */}
       <section>
         <SectionTitle title="Start" />
-        <div className="stagger stagger-auto grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <StartCard href="/reports/new?mode=upload" icon={<Upload className="h-5 w-5" />} title="Upload a file" body="CSV, TSV or Excel — we detect the columns." />
-          <StartCard href="/reports/new?mode=paste" icon={<ClipboardPaste className="h-5 w-5" />} title="Paste a table" body="Copy cells from Sheets or Excel." />
-          <StartCard href="/reports/new?mode=sample" icon={<Sparkles className="h-5 w-5" />} title="Try a sample" body="Six realistic datasets to explore." />
-          <StartCard href="/datasets" icon={<Database className="h-5 w-5" />} title="Reuse a dataset" body={datasets ? `${datasets.length} dataset${datasets.length === 1 ? "" : "s"} in your workspace` : "Your saved data"} />
+        <div className="stagger stagger-auto grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <StartCard href="/reports/new?mode=upload" tone="lavender" icon={<Upload className="h-5 w-5" />} title="Upload a file" body="CSV, TSV or Excel — we detect the columns." />
+          <StartCard href="/reports/new?mode=paste" tone="sky" icon={<ClipboardPaste className="h-5 w-5" />} title="Paste a table" body="Copy cells from Sheets or Excel." />
+          <StartCard href="/reports/new?mode=sample" tone="peach" icon={<Sparkles className="h-5 w-5" />} title="Try a sample" body="Six realistic datasets to explore." />
+          <StartCard href="/datasets" tone="mint" icon={<Database className="h-5 w-5" />} title="Reuse a dataset" body={datasets ? `${datasets.length} dataset${datasets.length === 1 ? "" : "s"} in your workspace` : "Your saved data"} />
         </div>
       </section>
 
@@ -114,7 +114,7 @@ function Home() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 3 }).map((_, i) => (
               <div key={i} className="card overflow-hidden">
-                <div className="skeleton h-44 rounded-none" />
+                <div className="skeleton m-2 h-40 rounded-[20px]" />
                 <div className="space-y-2 p-4">
                   <div className="skeleton h-4 w-2/3" />
                   <div className="skeleton h-3 w-1/2" />
@@ -147,22 +147,21 @@ function Home() {
       {/* Templates */}
       <section>
         <SectionTitle title="Templates" subtitle="A full report in one click, built from a sample dataset. Swap in your own data any time." />
-        <div className="stagger stagger-auto grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="stagger stagger-auto grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {TEMPLATES.map((t) => {
             const sample = SAMPLE_DATASETS.find((s) => s.id === t.id);
             return (
               <Link key={t.id} href={`/reports/new?mode=sample&sample=${t.id}&title=${encodeURIComponent(t.title)}&auto=1`} className="card card-hover group overflow-hidden">
-                <div className={clsx("relative h-24 bg-gradient-to-br p-3", t.tone)}>
-                  <div className="absolute inset-0 opacity-20 [background-image:radial-gradient(circle_at_1px_1px,#fff_1px,transparent_0)] [background-size:14px_14px]" />
-                  <div className="relative flex h-full items-end gap-1">
+                <div className={clsx("relative m-2 mb-0 h-24 rounded-[20px] px-4 pb-3 pt-4 shadow-[var(--clay-inset)]", t.tone)}>
+                  <div className="relative flex h-full items-end gap-1.5">
                     {[35, 60, 45, 80, 55, 90, 70].map((h, i) => (
-                      <span key={i} className="w-2.5 rounded-t-sm bg-white/80 transition-transform duration-300 group-hover:scale-y-110" style={{ height: `${h}%`, transformOrigin: "bottom" }} />
+                      <span key={i} className="w-3 rounded-full bg-surface shadow-[var(--shadow-sm)] transition-transform duration-300 group-hover:scale-y-110" style={{ height: `${h}%`, transformOrigin: "bottom", transitionDelay: `${i * 30}ms` }} />
                     ))}
                   </div>
                 </div>
-                <div className="p-4">
+                <div className="p-4 pt-3.5">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-semibold">{t.title}</h3>
+                    <h3 className="text-[15px] font-extrabold">{t.title}</h3>
                     <ArrowRight className="h-4 w-4 text-ink-3 transition-transform group-hover:translate-x-1 group-hover:text-brand" />
                   </div>
                   <p className="mt-1 text-xs text-ink-2">{t.body}</p>
@@ -190,20 +189,20 @@ function Home() {
             ))}
           </div>
         ) : datasets.length === 0 ? (
-          <div className="card bg-dots flex flex-col items-center gap-2 px-6 py-10 text-center">
-            <Database className="h-6 w-6 text-brand" />
+          <div className="card flex flex-col items-center gap-3 px-6 py-10 text-center">
+            <span className="clay-tile h-12 w-12 bg-clay-mint text-clay-mint-ink"><Database className="h-5 w-5" /></span>
             <p className="text-sm text-ink-2">No datasets yet. Creating a report adds one automatically.</p>
           </div>
         ) : (
           <div className="card overflow-hidden">
             <table className="w-full text-left text-sm">
-              <thead className="bg-surface-2 text-[11px] uppercase tracking-wider text-ink-3">
+              <thead className="text-[11px] uppercase tracking-wider text-ink-3">
                 <tr>
-                  <th className="px-4 py-2.5 font-semibold">Dataset</th>
-                  <th className="hidden px-4 py-2.5 font-semibold md:table-cell">Columns</th>
-                  <th className="px-4 py-2.5 text-right font-semibold">Rows</th>
-                  <th className="hidden px-4 py-2.5 font-semibold sm:table-cell">Used in</th>
-                  <th className="hidden px-4 py-2.5 font-semibold lg:table-cell">Updated</th>
+                  <th className="px-5 pb-2 pt-4 font-bold">Dataset</th>
+                  <th className="hidden px-4 pb-2 pt-4 font-bold md:table-cell">Columns</th>
+                  <th className="px-4 pb-2 pt-4 text-right font-bold">Rows</th>
+                  <th className="hidden px-4 pb-2 pt-4 font-bold sm:table-cell">Used in</th>
+                  <th className="hidden px-4 pb-2 pt-4 font-bold lg:table-cell">Updated</th>
                   <th className="px-4 py-2.5" />
                 </tr>
               </thead>
@@ -215,7 +214,7 @@ function Home() {
                     <tr key={d._id} className="border-t transition-colors hover:bg-surface-2/70">
                       <td className="px-4 py-3">
                         <Link href={`/datasets/${d._id}`} className="flex items-center gap-3">
-                          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-soft text-brand">
+                          <span className="clay-tile h-10 w-10 shrink-0 bg-clay-sky text-clay-sky-ink">
                             <Database className="h-4 w-4" />
                           </span>
                           <div className="min-w-0">
@@ -235,7 +234,7 @@ function Home() {
                       <td className="hidden px-4 py-3 text-ink-2 sm:table-cell">{usedBy(d._id)} report{usedBy(d._id) === 1 ? "" : "s"}</td>
                       <td className="hidden px-4 py-3 text-ink-3 lg:table-cell">{timeAgo(d.updatedAt)}</td>
                       <td className="px-4 py-3 text-right">
-                        <Link href={`/reports/new?dataset=${d._id}`} className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium text-brand hover:bg-brand-soft">
+                        <Link href={`/reports/new?dataset=${d._id}`} className="clay-sm clay-press inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-bold text-brand-ink">
                           <BarChart3 className="h-3.5 w-3.5" /> New report
                         </Link>
                       </td>
@@ -275,11 +274,11 @@ function SectionTitle({ title, subtitle, action }: { title: string; subtitle?: s
   return (
     <div className="mb-3 flex items-end justify-between gap-3">
       <div>
-        <h2 className="text-lg font-semibold tracking-tight">{title}</h2>
+        <h2 className="text-xl font-extrabold tracking-tight">{title}</h2>
         {subtitle && <p className="text-xs text-ink-3">{subtitle}</p>}
       </div>
       {action && (
-        <Link href={action.href} className="text-sm font-medium text-brand hover:underline">
+        <Link href={action.href} className="clay-sm clay-press rounded-full px-3.5 py-1.5 text-sm font-bold text-brand-ink">
           {action.label} →
         </Link>
       )}
@@ -287,12 +286,19 @@ function SectionTitle({ title, subtitle, action }: { title: string; subtitle?: s
   );
 }
 
-function StartCard({ href, icon, title, body }: { href: string; icon: React.ReactNode; title: string; body: string }) {
+const TONES = {
+  lavender: "bg-clay-lavender text-clay-lavender-ink",
+  sky: "bg-clay-sky text-clay-sky-ink",
+  mint: "bg-clay-mint text-clay-mint-ink",
+  peach: "bg-clay-peach text-clay-peach-ink",
+} as const;
+
+function StartCard({ href, icon, title, body, tone }: { href: string; icon: React.ReactNode; title: string; body: string; tone: keyof typeof TONES }) {
   return (
-    <Link href={href} className="card card-hover group flex items-start gap-3.5 p-4">
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-soft text-brand transition-transform duration-200 group-hover:scale-110 group-hover:-rotate-3">{icon}</span>
+    <Link href={href} className="card card-hover group flex items-start gap-4 p-5">
+      <span className={clsx("clay-tile h-12 w-12 shrink-0 rounded-[16px] transition-transform duration-300 ease-[var(--ease-spring)] group-hover:-translate-y-0.5 group-hover:-rotate-6", TONES[tone])}>{icon}</span>
       <div className="min-w-0">
-        <div className="text-sm font-semibold text-ink">{title}</div>
+        <div className="text-[15px] font-extrabold text-ink">{title}</div>
         <div className="mt-0.5 text-xs leading-relaxed text-ink-2">{body}</div>
       </div>
     </Link>

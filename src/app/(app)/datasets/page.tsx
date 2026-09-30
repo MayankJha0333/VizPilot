@@ -94,7 +94,7 @@ export default function DatasetsPage() {
             {datasets.map((d) => (
               <div key={d._id} className="flex items-center gap-4 p-4 transition-colors hover:bg-surface-2/60">
                 <Link href={`/datasets/${d._id}`} className="flex min-w-0 flex-1 items-center gap-4">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-soft text-brand">
+                  <span className="clay-tile h-11 w-11 shrink-0 bg-clay-sky text-clay-sky-ink">
                     <Database className="h-5 w-5" />
                   </span>
                   <div className="min-w-0">
@@ -112,7 +112,7 @@ export default function DatasetsPage() {
                 <Badge>{d.source}</Badge>
                 <Menu
                   trigger={
-                    <button className="rounded-lg p-1.5 text-ink-3 hover:bg-surface hover:text-ink" aria-label="Dataset options">
+                    <button className="rounded-full p-1.5 text-ink-3 hover:bg-surface-3 hover:text-ink" aria-label="Dataset options">
                       <MoreVertical className="h-4 w-4" />
                     </button>
                   }

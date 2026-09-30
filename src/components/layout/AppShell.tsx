@@ -73,13 +73,12 @@ export function AppShell({ children, wide = false, title }: { children: React.Re
         href={item.href}
         aria-current={active ? "page" : undefined}
         className={clsx(
-          "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13.5px] font-medium transition-all duration-200",
+          "group relative flex items-center gap-3 rounded-2xl px-3 py-2.5 text-[14px] font-bold transition-[background,color,box-shadow] duration-200",
           compact && "justify-center px-0",
-          active ? "bg-[var(--nav-active)] text-white" : "text-nav-text hover:bg-white/5 hover:text-white"
+          active ? "clay-inset text-brand-ink" : "text-ink-2 hover:bg-surface-2 hover:text-ink"
         )}
       >
-        {active && <span className="absolute -left-3 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r-full bg-brand-2" />}
-        <Icon className={clsx("h-[18px] w-[18px] shrink-0 transition-transform duration-200 group-hover:scale-110", active ? "text-brand-2" : "text-nav-muted group-hover:text-white")} />
+        <Icon className={clsx("h-[18px] w-[18px] shrink-0 transition-transform duration-200 group-hover:scale-110", active ? "text-brand" : "text-ink-3 group-hover:text-ink")} />
         {!compact && <span>{item.label}</span>}
       </Link>
     );
@@ -93,12 +92,12 @@ export function AppShell({ children, wide = false, title }: { children: React.Re
   };
 
   const renderSidebar = (compact: boolean) => (
-    <div className="flex h-full flex-col bg-nav text-nav-text">
+    <div className="clay flex h-full flex-col overflow-y-auto rounded-[28px] text-ink-2 scrollbar-thin">
       <div className={clsx("flex h-16 items-center", compact ? "justify-center" : "justify-between px-4")}>
         <Link href="/dashboard" aria-label="VizPilot home" className="transition-transform duration-200 hover:scale-[1.03]">
-          {compact ? <LogoMark size={30} /> : <Wordmark dark />}
+          {compact ? <LogoMark size={32} /> : <Wordmark />}
         </Link>
-        <button className="rounded-lg p-1.5 text-nav-muted hover:bg-white/5 hover:text-white lg:hidden" onClick={() => setOpen(false)} aria-label="Close menu">
+        <button className="clay-sm clay-press rounded-xl p-1.5 text-ink-3 hover:text-ink lg:hidden" onClick={() => setOpen(false)} aria-label="Close menu">
           <X className="h-5 w-5" />
         </button>
       </div>
@@ -106,41 +105,41 @@ export function AppShell({ children, wide = false, title }: { children: React.Re
       <div className={clsx("px-3", compact && "flex justify-center")}>
         {compact ? (
           <Tooltip label="New report">
-            <Link href="/reports/new" className="gradient-brand shine flex h-10 w-10 items-center justify-center rounded-xl text-white shadow-[var(--shadow-glow)] transition-transform hover:scale-105 active:scale-95" aria-label="New report">
+            <Link href="/reports/new" className="clay-tile clay-press h-11 w-11 rounded-[16px] bg-clay-lavender text-clay-lavender-ink transition-transform hover:-translate-y-0.5" aria-label="New report">
               <Plus className="h-5 w-5" />
             </Link>
           </Tooltip>
         ) : (
-          <Link href="/reports/new" className="gradient-brand shine flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-semibold text-white shadow-[var(--shadow-glow)] transition-transform hover:scale-[1.02] active:scale-[0.98]">
+          <Link href="/reports/new" className="clay-tile clay-press flex w-full gap-2 rounded-[16px] bg-clay-lavender py-3 text-sm font-extrabold text-clay-lavender-ink transition-transform hover:-translate-y-0.5">
             <Plus className="h-4 w-4" /> New report
           </Link>
         )}
       </div>
 
       {!compact && (
-        <button onClick={() => setPalette(true)} className="mx-3 mt-3 flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-left text-xs text-nav-muted transition-colors hover:border-white/20 hover:text-nav-text" data-testid="open-palette">
+        <button onClick={() => setPalette(true)} className="clay-inset mx-3 mt-3 flex items-center gap-2 rounded-2xl px-3 py-2.5 text-left text-xs font-semibold text-ink-3 transition-colors hover:text-ink" data-testid="open-palette">
           <Search className="h-3.5 w-3.5" />
           <span className="flex-1">Search…</span>
-          <span className="rounded-md border border-white/15 px-1.5 py-0.5 text-[10px]">⌘K</span>
+          <span className="kbd">⌘K</span>
         </button>
       )}
 
       <nav className={clsx("mt-4 flex flex-col gap-1 px-3", compact && "items-center")}>
-        {!compact && <div className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-nav-muted">Workspace</div>}
+        {!compact && <div className="px-3 pb-1 text-[10px] font-extrabold uppercase tracking-[0.14em] text-ink-3">Workspace</div>}
         {NAV.map((item) => navLink(item, compact))}
       </nav>
 
       {!compact && (
-        <div className="mx-3 mt-6 rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.06] to-transparent p-3.5">
-          <div className="flex items-center gap-2 text-xs font-semibold text-white">
-            <Sparkles className="h-3.5 w-3.5 text-brand-2" /> Ask AI
+        <div className="clay-tile mx-3 mt-6 block rounded-[20px] bg-clay-lavender p-3.5 text-left">
+          <div className="flex items-center gap-2 text-xs font-extrabold text-clay-lavender-ink">
+            <Sparkles className="h-3.5 w-3.5" /> Ask AI
           </div>
-          <p className="mt-1 text-[11px] leading-relaxed text-nav-muted">Open any report and ask in plain English — “revenue by region, top 5”.</p>
+          <p className="mt-1 text-[11px] font-semibold leading-relaxed text-clay-lavender-ink">Open any report and ask in plain English — “revenue by region, top 5”.</p>
         </div>
       )}
 
       <div className={clsx("mt-auto flex flex-col gap-1 px-3 pb-3", compact && "items-center")}>
-        <button onClick={toggleCollapsed} className={clsx("hidden items-center gap-3 rounded-xl px-3 py-2 text-xs text-nav-muted transition-colors hover:bg-white/5 hover:text-white lg:flex", compact && "justify-center px-0")} aria-label={compact ? "Expand sidebar" : "Collapse sidebar"}>
+        <button onClick={toggleCollapsed} className={clsx("hidden items-center gap-3 rounded-2xl px-3 py-2 text-xs font-bold text-ink-3 transition-colors hover:bg-surface-2 hover:text-ink lg:flex", compact && "justify-center px-0")} aria-label={compact ? "Expand sidebar" : "Collapse sidebar"}>
           {compact ? <ChevronsRight className="h-4 w-4" /> : <ChevronsLeft className="h-4 w-4" />}
           {!compact && "Collapse"}
         </button>
@@ -149,12 +148,12 @@ export function AppShell({ children, wide = false, title }: { children: React.Re
           side="top"
           className={clsx(!compact && "w-full")}
           trigger={
-            <button className={clsx("flex w-full items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-white/5", compact && "justify-center px-0")} aria-label="Account menu">
+            <button className={clsx("flex w-full items-center gap-3 rounded-2xl px-2 py-2 transition-colors hover:bg-surface-2", compact && "justify-center px-0")} aria-label="Account menu">
               <Avatar initial={initial} photo={profile?.photoURL || user?.photoURL || ""} />
               {!compact && (
                 <div className="min-w-0 flex-1 text-left">
-                  <div className="truncate text-[13px] font-medium text-white">{name}</div>
-                  <div className="truncate text-[11px] text-nav-muted">{email}</div>
+                  <div className="truncate text-[13px] font-extrabold text-ink">{name}</div>
+                  <div className="truncate text-[11px] font-semibold text-ink-3">{email}</div>
                 </div>
               )}
             </button>
@@ -170,16 +169,16 @@ export function AppShell({ children, wide = false, title }: { children: React.Re
 
   return (
     <div className="flex min-h-screen bg-bg">
-      <aside className={clsx("hidden shrink-0 transition-[width] duration-300 lg:block", collapsed ? "w-[76px]" : "w-[248px]")}>
-        <div className="sticky top-0 h-screen">
+      <aside className={clsx("hidden shrink-0 transition-[width] duration-300 lg:block", collapsed ? "w-[92px]" : "w-[264px]")}>
+        <div className="sticky top-0 h-screen p-3 pr-1">
           {renderSidebar(collapsed)}
         </div>
       </aside>
 
       {open && (
         <div className="fixed inset-0 z-[80] lg:hidden">
-          <div className="absolute inset-0 bg-[#0b0f1e]/50 animate-fade-in" onClick={() => setOpen(false)} />
-          <aside className="absolute inset-y-0 left-0 w-72 shadow-[var(--shadow-lg)] animate-slide-in-left">
+          <div className="absolute inset-0 bg-[#262b58]/35 animate-fade-in" onClick={() => setOpen(false)} />
+          <aside className="absolute inset-y-0 left-0 w-72 p-3 animate-slide-in-left">
             {renderSidebar(false)}
           </aside>
         </div>
@@ -187,15 +186,15 @@ export function AppShell({ children, wide = false, title }: { children: React.Re
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="glass sticky top-0 z-30 flex h-14 items-center gap-3 px-4 lg:hidden">
-          <button className="rounded-lg p-1.5 text-ink-2 hover:bg-surface-3" onClick={() => setOpen(true)} aria-label="Open menu">
+          <button className="clay-sm clay-press rounded-xl p-1.5 text-ink-2" onClick={() => setOpen(true)} aria-label="Open menu">
             <MenuIcon className="h-5 w-5" />
           </button>
           <Wordmark size={26} />
           <span className="ml-auto flex items-center gap-1">
-            <button onClick={() => setPalette(true)} className="rounded-lg p-2 text-ink-2 hover:bg-surface-3" aria-label="Search">
+            <button onClick={() => setPalette(true)} className="clay-sm clay-press rounded-xl p-2 text-ink-2" aria-label="Search">
               <Search className="h-4 w-4" />
             </button>
-            <Link href="/reports/new" className="gradient-brand rounded-lg p-2 text-white shadow-[var(--shadow-glow)]" aria-label="New report">
+            <Link href="/reports/new" className="clay-brand clay-press rounded-xl p-2" aria-label="New report">
               <Plus className="h-4 w-4" />
             </Link>
           </span>
@@ -213,10 +212,10 @@ export function AppShell({ children, wide = false, title }: { children: React.Re
 export function Avatar({ initial, photo, size = 32 }: { initial: string; photo?: string; size?: number }) {
   if (photo) {
     // eslint-disable-next-line @next/next/no-img-element
-    return <img src={photo} alt="" width={size} height={size} className="shrink-0 rounded-full object-cover ring-2 ring-white/10" style={{ width: size, height: size }} referrerPolicy="no-referrer" />;
+    return <img src={photo} alt="" width={size} height={size} className="shrink-0 rounded-full object-cover ring-2 ring-surface shadow-[var(--shadow-sm)]" style={{ width: size, height: size }} referrerPolicy="no-referrer" />;
   }
   return (
-    <span className="inline-flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand via-brand-2 to-brand-3 text-xs font-semibold text-white ring-2 ring-white/10" style={{ width: size, height: size }}>
+    <span className="inline-flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand via-brand-2 to-brand-3 text-xs font-extrabold text-white ring-2 ring-surface shadow-[var(--shadow-sm)]" style={{ width: size, height: size }}>
       {initial}
     </span>
   );

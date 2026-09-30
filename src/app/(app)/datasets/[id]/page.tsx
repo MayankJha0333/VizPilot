@@ -65,11 +65,11 @@ function DatasetView({ id }: { id: string }) {
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center gap-3">
-        <Link href="/datasets" className="rounded-lg p-1.5 text-ink-3 hover:bg-surface-2 hover:text-ink" aria-label="Back">
+        <Link href="/datasets" className="clay-sm clay-press rounded-[14px] p-2 text-ink-3 hover:text-ink" aria-label="Back">
           <ArrowLeft className="h-5 w-5" />
         </Link>
         <input
-          className="min-w-0 flex-1 rounded-lg bg-transparent px-2 py-1 text-xl font-semibold outline-none hover:bg-surface-2 focus:bg-surface-2 focus:ring-2 focus:ring-brand/30"
+          className="min-w-0 flex-1 rounded-xl bg-transparent px-2 py-1 text-xl font-semibold outline-none hover:bg-surface-2 focus:bg-surface-2 focus:ring-2 focus:ring-brand/30"
           defaultValue={dataset.name}
           onBlur={(e) => rename(e.target.value.trim())}
           aria-label="Dataset name"

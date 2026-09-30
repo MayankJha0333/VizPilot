@@ -92,9 +92,9 @@ export default function SettingsPage() {
 
         {/* AI providers */}
         <section className="card overflow-hidden animate-fade-up">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b bg-surface-2 px-5 py-4">
+          <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
             <div className="flex items-center gap-3">
-              <span className="gradient-brand flex h-9 w-9 items-center justify-center rounded-xl text-white">
+              <span className="clay-tile h-10 w-10 bg-clay-lavender text-clay-lavender-ink">
                 <Sparkles className="h-4 w-4" />
               </span>
               <div>
@@ -112,7 +112,7 @@ export default function SettingsPage() {
             </div>
           </div>
           {testResult.all && (
-            <div className={clsx("border-b px-5 py-2.5 text-xs", testResult.all.ok ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700")}>
+            <div className={clsx("mx-4 mb-2 rounded-2xl px-4 py-2.5 text-xs font-bold", testResult.all.ok ? "bg-success-soft text-success-ink" : "bg-danger-soft text-danger-ink")}>
               {testResult.all.ok ? `Answered by ${testResult.all.text}` : testResult.all.text}
             </div>
           )}
@@ -123,7 +123,7 @@ export default function SettingsPage() {
                 <span className={clsx("flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-semibold", p.configured ? "bg-brand-soft text-brand-ink" : "bg-surface-3 text-ink-3")}>{i + 1}</span>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium">{p.label}</span>
+                    <span className="text-sm font-semibold">{p.label}</span>
                     <span className="truncate text-xs text-ink-3">{p.model}</span>
                   </div>
                   <div className="mt-0.5 flex items-center gap-2 text-[11px] text-ink-3">
@@ -133,7 +133,7 @@ export default function SettingsPage() {
                       </span>
                     )}
                     {p.state === "cooling" && (
-                      <span className="inline-flex items-center gap-1 text-amber-600" title={p.reason}>
+                      <span className="inline-flex items-center gap-1 text-clay-lemon-ink" title={p.reason}>
                         <Clock className="h-3 w-3" /> Cooling down{p.cooldownEndsAt ? ` (${Math.max(1, Math.round((p.cooldownEndsAt - (now || p.cooldownEndsAt)) / 60000))} min)` : ""}
                       </span>
                     )}
@@ -155,8 +155,8 @@ export default function SettingsPage() {
               </li>
             ))}
           </ul>
-          <div className="border-t bg-surface-2 px-5 py-3 text-xs text-ink-3">
-            {configured.length} of {providers?.length ?? 0} providers configured. Order can be changed with <code className="rounded bg-surface-3 px-1">AI_PROVIDER_ORDER=groq,gemini,…</code> in .env. Without any key, the built-in rules engine answers.
+          <div className="clay-inset m-3 rounded-2xl px-4 py-3 text-xs font-semibold text-ink-3">
+            {configured.length} of {providers?.length ?? 0} providers configured. Order can be changed with <code className="rounded-lg bg-surface px-1">AI_PROVIDER_ORDER=groq,gemini,…</code> in .env. Without any key, the built-in rules engine answers.
           </div>
         </section>
 
@@ -165,11 +165,11 @@ export default function SettingsPage() {
           <div className="mt-4 flex items-center gap-4">
             <Avatar initial={(name || user?.email || "U").charAt(0).toUpperCase()} photo={user?.photoURL || ""} size={56} />
             <div className="flex-1 space-y-3">
-              <Field label="Display name">
-                <input className="input" value={name} onChange={(e) => setName(e.target.value)} />
+              <Field label="Display name" htmlFor="profile-name">
+                <input id="profile-name" className="input" value={name} onChange={(e) => setName(e.target.value)} />
               </Field>
-              <Field label="Email">
-                <input className="input" value={user?.email || ""} disabled />
+              <Field label="Email" htmlFor="profile-email">
+                <input id="profile-email" className="input" value={user?.email || ""} disabled />
               </Field>
             </div>
           </div>
@@ -192,7 +192,7 @@ export default function SettingsPage() {
               <Badge>{user?.providerData?.[0]?.providerId === "google.com" ? "Google" : "Email & password"}</Badge>
             </li>
           </ul>
-          {health && health.db !== "ok" && <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-700">{health.db}</p>}
+          {health && health.db !== "ok" && <p className="mt-3 rounded-2xl bg-clay-lemon px-3 py-2 text-xs font-bold text-clay-lemon-ink">{health.db}</p>}
         </section>
 
         <section className="card p-5 animate-fade-up">

@@ -243,7 +243,7 @@ function Studio({ open, mode, initialPrompt, initial, sources, theme, palette, r
   return (
     <Dialog open={open} onClose={onDialogClose} label={ask ? "Ask AI" : mode === "add" ? "Add widget" : "Edit widget"} className="sm:h-[calc(100vh-2rem)] sm:max-w-[calc(100vw-2rem)] sm:rounded-[22px]">
       {/* ---------- top bar ---------- */}
-      <div className="flex h-14 shrink-0 items-center gap-3 border-b bg-surface px-3 sm:px-4">
+      <div className="flex h-16 shrink-0 items-center gap-3 bg-surface px-3 sm:px-5">
         <nav className="flex min-w-0 flex-1 items-center gap-1.5 text-sm">
           <span className="hidden items-center gap-1.5 text-ink-3 sm:inline-flex">
             <LayoutGrid className="h-4 w-4" />
@@ -257,12 +257,12 @@ function Studio({ open, mode, initialPrompt, initial, sources, theme, palette, r
           <input
             value={draft.title}
             onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))}
-            className="min-w-0 flex-1 truncate rounded-md bg-transparent px-1.5 py-1 font-medium text-ink outline-none hover:bg-surface-2 focus:bg-surface-2 focus:ring-2 focus:ring-brand/25"
+            className="min-w-0 flex-1 truncate rounded-xl bg-transparent px-2 py-1 font-extrabold text-ink outline-none hover:bg-surface-2 focus:bg-surface-2 focus:shadow-[var(--clay-inset)]"
             aria-label="Widget title"
             data-testid="studio-title"
           />
           )}
-          <span className="hidden shrink-0 rounded-md bg-surface-3 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-ink-3 md:inline">{ask ? (addedCount ? `${addedCount} added` : "Ask AI") : mode === "add" ? "New widget" : "Editing"}</span>
+          <span className="hidden shrink-0 rounded-full bg-clay-lavender px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-clay-lavender-ink md:inline">{ask ? (addedCount ? `${addedCount} added` : "Ask AI") : mode === "add" ? "New widget" : "Editing"}</span>
         </nav>
         <div className="flex items-center gap-2">
           {error && <span className="hidden max-w-[240px] truncate text-xs text-danger md:inline">{error}</span>}
@@ -272,13 +272,13 @@ function Studio({ open, mode, initialPrompt, initial, sources, theme, palette, r
           <button
             onClick={save}
             disabled={saving || (!dataset && draft.config.type !== "text") || (ask && (!hasChart || addedKey === draftKey))}
-            className="inline-flex h-9 items-center gap-2 rounded-lg bg-inverse px-3.5 text-sm font-medium text-inverse-fg shadow-[var(--shadow-sm)] transition-all hover:-translate-y-px hover:shadow-[var(--shadow-md)] disabled:opacity-50"
+            className="clay-brand clay-press inline-flex h-10 items-center gap-2 rounded-full px-4 text-sm font-extrabold transition-all hover:-translate-y-px disabled:opacity-50"
             data-testid="save-widget"
           >
             {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : ask && addedKey !== draftKey ? <Plus className="h-4 w-4" /> : <Check className="h-4 w-4" />}
             {ask ? (addedKey === draftKey ? "Added to dashboard" : "Add to dashboard") : mode === "add" ? "Add to dashboard" : "Save changes"}
           </button>
-          <button onClick={onClose} className="hidden rounded-lg p-1.5 text-ink-3 hover:bg-surface-2 hover:text-ink sm:block" aria-label="Close">
+          <button onClick={onClose} className="clay-sm clay-press hidden rounded-full p-2 text-ink-3 hover:text-ink sm:block" aria-label="Close">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -293,7 +293,7 @@ function Studio({ open, mode, initialPrompt, initial, sources, theme, palette, r
               <DataUploader draft={newData} onReady={setNewData} />
             </div>
           </div>
-          <div className="flex items-center justify-between gap-2 border-t bg-surface px-5 py-3">
+          <div className="flex items-center justify-between gap-2 bg-surface px-5 py-3">
             {sources.length > 0 ? (
               <Button variant="ghost" onClick={() => setView("studio")}>
                 <ArrowLeft className="h-4 w-4" /> Back to the chart
@@ -307,10 +307,10 @@ function Studio({ open, mode, initialPrompt, initial, sources, theme, palette, r
           </div>
         </div>
       ) : (
-        <div className="relative flex min-h-0 flex-1 gap-3 bg-surface-3 p-2 sm:p-3">
+        <div className="relative flex min-h-0 flex-1 gap-3 bg-bg p-2 sm:p-3">
           {/* ---------- left: Ask AI ---------- */}
           {chatOpen ? (
-            <aside className="absolute inset-2 z-30 flex flex-col overflow-hidden rounded-[18px] border bg-surface shadow-[var(--shadow-lg)] animate-slide-in-left sm:inset-3 lg:static lg:w-[340px] lg:shrink-0 lg:shadow-none">
+            <aside className="absolute inset-2 z-30 flex flex-col overflow-hidden rounded-[24px] bg-surface shadow-[var(--shadow-lg)] animate-slide-in-left sm:inset-3 lg:static lg:w-[340px] lg:shrink-0 lg:shadow-[var(--card-shadow)]">
               <StudioChat
                 dataset={dataset}
                 sources={sources}
@@ -337,7 +337,7 @@ function Studio({ open, mode, initialPrompt, initial, sources, theme, palette, r
           ) : (
             <button
               onClick={() => setChatOpen(true)}
-              className="absolute left-4 top-4 z-20 inline-flex items-center gap-2 rounded-xl border bg-surface px-3 py-2 text-sm font-medium shadow-[var(--shadow-sm)] transition-all hover:shadow-[var(--shadow-md)] sm:left-5 sm:top-5"
+              className="clay-sm clay-press absolute left-4 top-4 z-20 inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-sm font-bold sm:left-5 sm:top-5"
               data-testid="open-studio-chat"
             >
               <PanelLeftOpen className="h-4 w-4 text-ink-3" />
@@ -346,7 +346,7 @@ function Studio({ open, mode, initialPrompt, initial, sources, theme, palette, r
           )}
 
           {/* ---------- centre: canvas ---------- */}
-          <div className="relative flex min-w-0 flex-1 overflow-hidden rounded-[18px] border bg-surface" onClick={() => tool && tool !== "data" && setTool(null)}>
+          <div className="relative flex min-w-0 flex-1 overflow-hidden rounded-[24px] bg-surface shadow-[var(--card-shadow)]" onClick={() => tool && tool !== "data" && setTool(null)}>
             {ask && !hasChart ? (
               <AskEmpty dataset={dataset} />
             ) : (
@@ -364,7 +364,7 @@ function Studio({ open, mode, initialPrompt, initial, sources, theme, palette, r
             {/* ---------- tool popover ---------- */}
             {tool && tool !== "data" && dataset && (
               <div
-                className="absolute right-[84px] top-4 z-20 flex max-h-[calc(100%-2rem)] w-[340px] max-w-[calc(100%-100px)] flex-col overflow-hidden rounded-2xl border bg-surface shadow-[0_24px_60px_-24px_rgba(11,15,30,0.4),0_4px_12px_-4px_rgba(11,15,30,0.08)] animate-scale-in"
+                className="absolute right-[84px] top-4 z-20 flex max-h-[calc(100%-2rem)] w-[340px] max-w-[calc(100%-100px)] flex-col overflow-hidden rounded-[24px] bg-popover shadow-[var(--shadow-md)] animate-scale-in"
                 onClick={(e) => e.stopPropagation()}
                 data-testid={`tool-${tool}`}
               >
@@ -492,7 +492,7 @@ function Canvas({ loading, hasSource, box, onBox, theme, chart, dataset }: { loa
             </div>
           </div>
 
-          <div className={clsx("absolute -bottom-12 left-1/2 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full border px-2.5 py-1 text-[11px] shadow-[var(--shadow-sm)] transition-opacity", "bg-popover text-ink-2", dragging ? "opacity-100" : "opacity-80")}>
+          <div className={clsx("absolute -bottom-12 left-1/2 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full px-3 py-1 text-[11px] font-bold shadow-[var(--shadow-sm)] transition-opacity", "bg-popover text-ink-2", dragging ? "opacity-100" : "opacity-80")}>
             <Ruler className="h-3 w-3" />
             {box.w} × {box.h} on the dashboard · {box.w === 12 ? "full width" : box.w >= 8 ? "two-thirds" : box.w >= 6 ? "half width" : box.w >= 4 ? "third" : "narrow"}
           </div>
@@ -505,16 +505,16 @@ function Canvas({ loading, hasSource, box, onBox, theme, chart, dataset }: { loa
 /** Ask mode, before the first answer: an inviting empty canvas. */
 function AskEmpty({ dataset }: { dataset: DatasetRecord | null }) {
   return (
-    <div className="relative flex flex-1 items-center justify-center overflow-hidden bg-dots pr-[76px]" data-testid="ask-empty">
+    <div className="canvas-dots relative flex flex-1 items-center justify-center overflow-hidden pr-[76px]" data-testid="ask-empty">
       <div className="max-w-sm px-6 text-center animate-fade-up">
         <div className="relative mx-auto mb-5 h-28 w-44">
-          <div className="absolute inset-0 rounded-2xl border-2 border-dashed border-brand/25 bg-surface/70" />
+          <div className="absolute inset-0 rounded-[24px] bg-surface-2 shadow-[var(--clay-inset)]" />
           <div className="absolute inset-x-5 bottom-4 flex h-14 items-end gap-2">
             {[40, 70, 55, 90, 65].map((h, i) => (
               <span key={i} className="flex-1 animate-pulse-soft rounded-t-[4px] bg-brand/20" style={{ height: `${h}%`, animationDelay: `${i * 0.15}s` }} />
             ))}
           </div>
-          <span className="gradient-brand absolute -right-3 -top-3 flex h-9 w-9 items-center justify-center rounded-xl text-white shadow-[var(--shadow-glow)]">
+          <span className="clay-brand absolute -right-3 -top-3 flex h-10 w-10 items-center justify-center rounded-full">
             <Sparkles className="h-4 w-4" />
           </span>
         </div>
@@ -613,11 +613,11 @@ function StudioChat({
     <div className="flex h-full flex-col">
       <div className="flex items-center justify-between gap-2 px-4 pb-2 pt-4">
         <div className="flex items-center gap-2">
-          <button onClick={onCollapse} className="rounded-md p-1 text-ink-3 hover:bg-surface-2 hover:text-ink" aria-label="Hide Ask AI" title="Hide">
+          <button onClick={onCollapse} className="rounded-full p-1.5 text-ink-3 hover:bg-surface-2 hover:text-ink" aria-label="Hide Ask AI" title="Hide">
             <PanelLeftClose className="h-4 w-4" />
           </button>
           <span className="text-[15px] font-semibold">Ask AI</span>
-          <span className="rounded-md border bg-surface-2 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-ink-3">Beta</span>
+          <span className="rounded-full bg-clay-lemon px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-clay-lemon-ink">Beta</span>
         </div>
         {messages.length > 0 && (
           <button onClick={() => setMessages([])} className="text-xs text-ink-3 hover:text-ink">
@@ -633,7 +633,7 @@ function StudioChat({
       <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-3 scrollbar-thin">
         {/* the data chip, like Graphy's "Imported data" */}
         {dataset && (
-          <div className="w-fit rounded-2xl bg-surface-3 px-3.5 py-2 text-sm text-ink-2">
+          <div className="clay-inset w-fit rounded-[18px] px-3.5 py-2 text-sm font-semibold text-ink-2">
             <span className="font-medium text-ink">{dataset.name}</span> · {dataset.rowCount.toLocaleString()} rows
           </div>
         )}
@@ -654,7 +654,7 @@ function StudioChat({
             </p>
             <div className="flex flex-col items-start gap-1.5">
               {(mode === "edit" ? refine : mode === "ask" ? [...new Set([...chips, "What are the key insights?"])] : chips).map((c) => (
-                <button key={c} onClick={() => send(c)} className="rounded-xl border bg-surface px-3 py-1.5 text-left text-xs text-ink-2 transition-all hover:border-brand hover:text-brand" data-testid="studio-chip">
+                <button key={c} onClick={() => send(c)} className="clay-sm clay-press rounded-full px-3.5 py-1.5 text-left text-xs font-bold text-ink-2 transition-all hover:text-brand-ink" data-testid="studio-chip">
                   {c}
                 </button>
               ))}
@@ -664,17 +664,17 @@ function StudioChat({
 
         {messages.map((m) =>
           m.role === "user" ? (
-            <div key={m.id} className="ml-auto w-fit max-w-[88%] rounded-2xl rounded-br-md bg-surface-3 px-3.5 py-2 text-sm text-ink animate-fade-up">
+            <div key={m.id} className="clay-tile ml-auto block w-fit max-w-[88%] rounded-[20px] rounded-br-md bg-clay-lavender px-3.5 py-2 text-left text-sm font-semibold text-clay-lavender-ink animate-fade-up">
               {m.text}
             </div>
           ) : (
             <div key={m.id} className="space-y-2 animate-fade-up" data-testid="studio-ai-msg">
               {m.error ? (
-                <p className="rounded-xl bg-red-50 px-3 py-2 text-sm text-danger">{m.error}</p>
+                <p className="rounded-2xl bg-danger-soft px-4 py-2.5 text-sm font-bold text-danger-ink">{m.error}</p>
               ) : m.res ? (
                 <>
                   {m.res.answer && (
-                    <div className="rounded-xl border bg-gradient-to-br from-brand-soft/70 to-surface px-3 py-2.5" data-testid="ai-answer">
+                    <div className="rounded-[18px] bg-brand-soft px-3.5 py-2.5 shadow-[var(--shadow-sm)]" data-testid="ai-answer">
                       <div className="text-[10px] font-semibold uppercase tracking-wider text-ink-3">{m.res.answer.label}</div>
                       <div className="text-xl font-semibold text-brand-ink">{m.res.answer.value}</div>
                     </div>
@@ -684,7 +684,7 @@ function StudioChat({
                     <ul className="space-y-1.5">
                       {m.res.steps.map((s, i) => (
                         <li key={i} className="flex items-start gap-2 text-[13px] text-ink-2">
-                          <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-surface-3">
+                          <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-clay-mint text-clay-mint-ink">
                             <Check className="h-2.5 w-2.5 text-ink-2" />
                           </span>
                           <StepChips text={s} columns={colNames} />
@@ -695,7 +695,7 @@ function StudioChat({
                   {m.res.insights && (
                     <ul className="space-y-1.5">
                       {m.res.insights.map((t, i) => (
-                        <li key={i} className="rounded-lg bg-surface-2 px-2.5 py-1.5 text-[13px] text-ink-2" data-testid="ai-insight">
+                        <li key={i} className="clay-inset rounded-2xl px-3 py-1.5 text-[13px] text-ink-2" data-testid="ai-insight">
                           {t}
                         </li>
                       ))}
@@ -705,13 +705,13 @@ function StudioChat({
                     {([1, -1] as const).map((v) => {
                       const I = v === 1 ? ThumbsUp : ThumbsDown;
                       return (
-                        <button key={v} onClick={() => setMessages((ms) => ms.map((x) => (x.id === m.id && x.role === "ai" ? { ...x, vote: x.vote === v ? undefined : v } : x)))} className={clsx("rounded-md p-1 transition-colors", m.vote === v ? "text-brand" : "text-ink-3 hover:bg-surface-2 hover:text-ink")} aria-label={v === 1 ? "Helpful" : "Not helpful"}>
+                        <button key={v} onClick={() => setMessages((ms) => ms.map((x) => (x.id === m.id && x.role === "ai" ? { ...x, vote: x.vote === v ? undefined : v } : x)))} className={clsx("rounded-full p-1 transition-colors", m.vote === v ? "text-brand" : "text-ink-3 hover:bg-surface-2 hover:text-ink")} aria-label={v === 1 ? "Helpful" : "Not helpful"}>
                           <I className="h-3.5 w-3.5" />
                         </button>
                       );
                     })}
                     {m.prev && (
-                      <button onClick={() => m.prev && onApply(m.prev)} className="ml-1 inline-flex items-center gap-1 rounded-md px-1.5 py-1 text-[11px] text-ink-3 hover:bg-surface-2 hover:text-ink" title="Put the chart back as it was">
+                      <button onClick={() => m.prev && onApply(m.prev)} className="ml-1 inline-flex items-center gap-1 rounded-full px-2 py-1 text-[11px] font-bold text-ink-3 hover:bg-surface-2 hover:text-ink" title="Put the chart back as it was">
                         <Undo2 className="h-3 w-3" /> Undo
                       </button>
                     )}
@@ -720,7 +720,7 @@ function StudioChat({
                   {m.res.followUps?.length > 0 && (
                     <div className="flex flex-wrap gap-1.5">
                       {m.res.followUps.slice(0, 3).map((f) => (
-                        <button key={f} onClick={() => send(f)} className="rounded-full border border-dashed px-2.5 py-1 text-[11px] text-ink-2 hover:border-brand hover:text-brand">
+                        <button key={f} onClick={() => send(f)} className="clay-sm clay-press rounded-full px-3 py-1 text-[11px] font-bold text-ink-2 hover:text-brand-ink">
                           {f}
                         </button>
                       ))}
@@ -749,7 +749,7 @@ function StudioChat({
         }}
         className="p-3"
       >
-        <div className="flex items-end gap-2 rounded-2xl border bg-surface px-3 py-2 transition-shadow focus-within:border-brand/50 focus-within:shadow-[0_0_0_3px_var(--ring)]">
+        <div className="clay-inset flex items-end gap-2 rounded-[22px] border-[1.5px] border-[var(--input-border)] px-3 py-2 transition-shadow focus-within:shadow-[var(--clay-inset),0_0_0_4px_var(--ring)]">
           <textarea
             ref={inputRef}
             rows={1}
@@ -792,7 +792,7 @@ function StepChips({ text, columns }: { text: string; columns: string[] }) {
     }
     if (best.i > 0) parts.push(rest.slice(0, best.i));
     parts.push(
-      <span key={k++} className="mx-0.5 inline-flex items-center gap-1 rounded-md border bg-surface px-1.5 py-px text-[12px] font-medium text-ink">
+      <span key={k++} className="mx-0.5 inline-flex items-center gap-1 rounded-full bg-surface px-2 py-px text-[12px] font-bold text-ink shadow-[var(--shadow-sm)]">
         <Table2 className="h-3 w-3 text-ink-3" />
         {best.n}
       </span>
@@ -833,7 +833,7 @@ function TypeGrid({ value, onPick }: { value: ChartConfig["type"]; onPick: (t: C
             key={t.id}
             onClick={() => onPick(t.id)}
             title={t.hint}
-            className={clsx("flex flex-col items-center gap-1 rounded-xl border px-1 py-2 text-[11px] transition-all", on ? "border-ink/60 bg-surface font-semibold text-ink shadow-[var(--shadow-sm)]" : "border-border text-ink-2 hover:bg-surface-2 hover:text-ink")}
+            className={clsx("clay-press flex flex-col items-center gap-1 rounded-2xl px-1 py-2.5 text-[11px] font-bold transition-all", on ? "clay-inset text-brand-ink" : "bg-surface text-ink-2 shadow-[var(--shadow-sm)] hover:text-ink")}
             data-testid={`type-${t.id}`}
           >
             <Icon className="h-[18px] w-[18px]" />
@@ -895,14 +895,14 @@ function GraphPanel({ config: cfg, columns, rows, setCfg }: { config: ChartConfi
                 <span className="mb-1 block text-xs text-ink-3">{cfg.type === "scatter" ? "Measures (two)" : cfg.type === "table" ? "Columns" : "Y-axis"}</span>
                 <div className="flex flex-wrap gap-1.5">
                   {cfg.type !== "scatter" && cfg.type !== "table" && (
-                    <button onClick={() => setCfg({ yKeys: [], aggregate: "count" })} className={clsx("rounded-full border px-2.5 py-1 text-xs", cfg.yKeys.length === 0 && cfg.aggregate === "count" ? "border-brand bg-brand-soft text-brand-ink" : "text-ink-2 hover:bg-surface-2")}>
+                    <button onClick={() => setCfg({ yKeys: [], aggregate: "count" })} className={clsx("rounded-full px-3 py-1 text-xs font-bold", cfg.yKeys.length === 0 && cfg.aggregate === "count" ? "clay-inset text-brand-ink" : "clay-sm clay-press text-ink-2")}>
                       # Count rows
                     </button>
                   )}
                   {(cfg.type === "table" ? columns : numeric).map((c) => {
                     const on = cfg.yKeys.includes(c.name);
                     return (
-                      <button key={c.name} onClick={() => toggleY(c.name)} className={clsx("inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs", on ? "border-brand bg-brand-soft text-brand-ink" : "text-ink-2 hover:bg-surface-2")}>
+                      <button key={c.name} onClick={() => toggleY(c.name)} className={clsx("inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold", on ? "clay-inset text-brand-ink" : "clay-sm clay-press text-ink-2")}>
                         {on && <Check className="h-3 w-3" />}
                         {c.name}
                       </button>
@@ -980,14 +980,14 @@ function TunePanel({ config: cfg, setCfg }: { config: ChartConfig; setCfg: (p: P
           {(cfg.type === "line" || cfg.type === "area") && <Toggle label="Smooth curves" value={cfg.smooth} onChange={(v) => setCfg({ smooth: v })} />}
         </div>
       )}
-      <div className="flex items-center justify-between border-b py-3 text-[13px] font-medium">
+      <div className="flex items-center justify-between border-b py-3 text-[13px] font-bold">
         Legend
-        <div className="flex rounded-lg bg-surface-3 p-0.5 text-xs">
+        <div className="clay-inset flex rounded-full p-1 text-xs">
           {[
             [true, "Show"],
             [false, "None"],
           ].map(([v, l]) => (
-            <button key={String(v)} onClick={() => setCfg({ showLegend: v as boolean })} className={clsx("rounded-md px-3 py-1 font-medium transition-all", cfg.showLegend === v ? "bg-surface text-ink shadow-[var(--shadow-sm)]" : "text-ink-3")}>
+            <button key={String(v)} onClick={() => setCfg({ showLegend: v as boolean })} className={clsx("rounded-full px-3 py-1 font-bold transition-all", cfg.showLegend === v ? "bg-surface text-ink shadow-[var(--shadow-sm)]" : "text-ink-3")}>
               {l as string}
             </button>
           ))}
@@ -1007,7 +1007,7 @@ function TunePanel({ config: cfg, setCfg }: { config: ChartConfig; setCfg: (p: P
               ["percent", "12%"],
             ] as const
           ).map(([v, l]) => (
-            <button key={v} onClick={() => setCfg({ numberFormat: v })} className={clsx("rounded-lg border px-2 py-1.5 text-xs", cfg.numberFormat === v ? "border-brand bg-brand-soft font-medium text-brand-ink" : "text-ink-2 hover:bg-surface-2")}>
+            <button key={v} onClick={() => setCfg({ numberFormat: v })} className={clsx("rounded-full px-2 py-1.5 text-xs font-bold", cfg.numberFormat === v ? "clay-inset text-brand-ink" : "clay-sm clay-press text-ink-2")}>
               {l}
             </button>
           ))}
@@ -1026,7 +1026,7 @@ function TunePanel({ config: cfg, setCfg }: { config: ChartConfig; setCfg: (p: P
               ["label", "A → Z"],
             ] as const
           ).map(([v, l]) => (
-            <button key={v} onClick={() => setCfg({ sort: v })} className={clsx("rounded-lg border px-2 py-1.5 text-xs", cfg.sort === v ? "border-brand bg-brand-soft font-medium text-brand-ink" : "text-ink-2 hover:bg-surface-2")}>
+            <button key={v} onClick={() => setCfg({ sort: v })} className={clsx("rounded-full px-2 py-1.5 text-xs font-bold", cfg.sort === v ? "clay-inset text-brand-ink" : "clay-sm clay-press text-ink-2")}>
               {l}
             </button>
           ))}
@@ -1044,9 +1044,9 @@ function DesignPanel({ config: cfg, setCfg, previewTheme, setPreviewTheme }: { c
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <span className="text-[13px] font-semibold">Preview theme</span>
-        <div className="flex rounded-lg bg-surface-3 p-0.5 text-xs">
+        <div className="clay-inset flex rounded-full p-1 text-xs">
           {(["light", "dark"] as const).map((t) => (
-            <button key={t} onClick={() => setPreviewTheme(t)} className={clsx("inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 font-medium capitalize transition-all", previewTheme === t ? "bg-surface text-ink shadow-[var(--shadow-sm)]" : "text-ink-3")}>
+            <button key={t} onClick={() => setPreviewTheme(t)} className={clsx("inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-bold capitalize transition-all", previewTheme === t ? "bg-surface text-ink shadow-[var(--shadow-sm)]" : "text-ink-3")}>
               {t === "light" ? <Sun className="h-3 w-3" /> : <Moon className="h-3 w-3" />}
               {t}
             </button>
@@ -1057,7 +1057,7 @@ function DesignPanel({ config: cfg, setCfg, previewTheme, setPreviewTheme }: { c
         <PanelTitle>Palette</PanelTitle>
         <div className="grid grid-cols-2 gap-1.5">
           {PALETTES.map((p) => (
-            <button key={p.id} onClick={() => setCfg({ palette: p.id })} className={clsx("rounded-xl border p-2 text-left transition-all", cfg.palette === p.id ? "border-ink/50 shadow-[var(--shadow-sm)]" : "hover:bg-surface-2")} data-testid={`palette-${p.id}`}>
+            <button key={p.id} onClick={() => setCfg({ palette: p.id })} className={clsx("clay-press rounded-[18px] p-2.5 text-left transition-all", cfg.palette === p.id ? "clay-inset ring-2 ring-brand/40" : "bg-surface shadow-[var(--shadow-sm)]")} data-testid={`palette-${p.id}`}>
               <span className="flex -space-x-1">
                 {(previewTheme === "dark" ? p.dark : p.colors).slice(0, 4).map((c, i) => (
                   <span key={c + i} className="h-4 w-4 rounded-full ring-2 ring-surface" style={{ background: c }} />
@@ -1081,7 +1081,7 @@ function DesignPanel({ config: cfg, setCfg, previewTheme, setPreviewTheme }: { c
           {!series.length && !multiColor && <p className="text-xs text-ink-3">No series yet – pick a value in Graph.</p>}
         </div>
       </div>
-      <p className="rounded-lg bg-surface-2 px-2.5 py-2 text-[11px] text-ink-3">
+      <p className="clay-inset rounded-2xl px-3 py-2 text-[11px] font-semibold text-ink-3">
         Palettes are checked for colour-blind separation. The dashboard&apos;s light/dark theme is set from the report toolbar.
       </p>
     </div>
@@ -1120,7 +1120,7 @@ function SizePanel({ box, type, setBox }: { box: { w: number; h: number }; type:
         {SIZE_PRESETS.filter((p) => p.w >= m.w && p.h >= m.h).map((p) => {
           const on = p.w === box.w && p.h === box.h;
           return (
-            <button key={p.label} onClick={() => setBox(p)} className={clsx("flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left text-[13px] transition-colors", on ? "bg-brand-soft text-brand-ink" : "hover:bg-surface-2")} data-testid="size-preset">
+            <button key={p.label} onClick={() => setBox(p)} className={clsx("flex w-full items-center gap-3 rounded-2xl px-2.5 py-2 text-left text-[13px] font-bold transition-colors", on ? "clay-inset text-brand-ink" : "hover:bg-surface-2")} data-testid="size-preset">
               <span className="flex h-6 w-8 items-center justify-center">
                 <span className={clsx("rounded-[3px] border-2", on ? "border-brand" : "border-ink-3")} style={{ width: Math.max(6, p.w * 2.4), height: Math.max(6, Math.min(22, p.h * 1.3)) }} />
               </span>
@@ -1139,7 +1139,7 @@ function SizePanel({ box, type, setBox }: { box: { w: number; h: number }; type:
               ["h", "Rows", 40, m.h],
             ] as const
           ).map(([k, label, max, min]) => (
-            <label key={k} className="flex items-center rounded-lg border bg-surface-2 pr-2">
+            <label key={k} className="clay-inset flex items-center rounded-2xl pr-2">
               <input type="number" min={min} max={max} value={box[k]} onChange={(e) => setBox({ ...box, [k]: Number(e.target.value) || min })} className="w-full bg-transparent px-2.5 py-2 text-sm outline-none" aria-label={label} />
               <span className="text-[11px] text-ink-3">{k === "w" ? "cols" : "rows"}</span>
             </label>
@@ -1159,16 +1159,16 @@ function EditData({ dataset, chart, theme, setType, onChange, onClose }: { datas
   const [full, setFull] = useState(false);
   return (
     <div className="absolute inset-0 z-40 flex items-center justify-center bg-[#0b0f1e]/35 p-2 backdrop-blur-[2px] animate-fade-in sm:p-4" onClick={onClose}>
-      <div className={clsx("flex w-full flex-col overflow-hidden rounded-2xl border bg-surface shadow-[var(--shadow-lg)] animate-scale-in", full ? "h-full" : "h-[88%] max-w-6xl")} onClick={(e) => e.stopPropagation()} data-testid="edit-data">
-        <div className="flex items-center justify-between border-b px-4 py-3">
+      <div className={clsx("flex w-full flex-col overflow-hidden rounded-[28px] bg-surface shadow-[var(--shadow-lg)] animate-scale-in", full ? "h-full" : "h-[88%] max-w-6xl")} onClick={(e) => e.stopPropagation()} data-testid="edit-data">
+        <div className="flex items-center justify-between px-5 py-3.5">
           <div className="flex items-center gap-2 text-sm font-semibold">
             <Database className="h-4 w-4 text-brand" /> Edit data <span className="font-normal text-ink-3">· {dataset.name} · {dataset.rowCount.toLocaleString()} rows</span>
           </div>
           <div className="flex items-center gap-1">
-            <button onClick={() => setFull((v) => !v)} className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-sm text-ink-2 hover:bg-surface-2">
+            <button onClick={() => setFull((v) => !v)} className="clay-sm clay-press inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-bold text-ink-2">
               {full ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />} {full ? "Collapse" : "Expand"}
             </button>
-            <button onClick={onClose} className="rounded-lg p-1.5 text-ink-3 hover:bg-surface-2 hover:text-ink" aria-label="Close data">
+            <button onClick={onClose} className="clay-sm clay-press rounded-full p-2 text-ink-3 hover:text-ink" aria-label="Close data">
               <X className="h-4 w-4" />
             </button>
           </div>
@@ -1177,8 +1177,8 @@ function EditData({ dataset, chart, theme, setType, onChange, onClose }: { datas
           <div className="min-h-0 min-w-0 flex-1 overflow-auto p-3 scrollbar-thin">
             <DataTable columns={dataset.columns} rows={dataset.rows} editable onChange={onChange} maxHeight={9999} />
           </div>
-          <div className="flex w-full shrink-0 flex-col gap-3 overflow-y-auto border-t bg-surface-2 p-3 lg:w-[320px] lg:border-l lg:border-t-0">
-            <div className="h-[200px] rounded-xl border bg-surface p-1" data-theme={theme}>
+          <div className="flex w-full shrink-0 flex-col gap-3 overflow-y-auto bg-surface-2 p-3 lg:w-[320px]">
+            <div className="h-[200px] rounded-[24px] p-1" data-theme={theme}>
               <Widget chart={chart} rows={dataset.rows} columns={dataset.columns} theme={theme} readOnly fill hideActions />
             </div>
             <TypeGrid value={chart.config.type} onPick={setType} />

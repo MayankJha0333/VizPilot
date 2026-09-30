@@ -16,7 +16,7 @@ export function Logo({ className, dark = false }: { className?: string; dark?: b
 export function LogoMark({ size = 28 }: { size?: number }) {
   return (
     <span
-      className="relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-[30%] shadow-[0_6px_16px_-4px_rgba(76, 95, 213,0.6)]"
+      className="relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-[32%] shadow-[0_6px_14px_-5px_rgba(60,74,205,0.6),inset_0_-2px_4px_rgba(20,28,120,0.4),inset_0_2px_3px_rgba(255,255,255,0.45)]"
       style={{ width: size, height: size, background: "linear-gradient(135deg,#4c5fd5 0%,#3f6fe0 55%,#2a78d6 100%)" }}
       aria-hidden
     >
@@ -35,7 +35,7 @@ export function Wordmark({ dark = false, size = 28 }: { dark?: boolean; size?: n
   return (
     <span className="inline-flex items-center gap-2.5">
       <LogoMark size={size} />
-      <span className={clsx("text-[17px] font-semibold tracking-tight", dark ? "text-white" : "text-ink")}>
+      <span className={clsx("text-[18px] font-extrabold tracking-tight", dark ? "text-white" : "text-ink")}>
         Viz<span className={dark ? "text-brand-2" : "text-brand"}>Pilot</span>
       </span>
     </span>
@@ -77,15 +77,15 @@ export function EmptyState({
   className?: string;
 }) {
   return (
-    <div className={clsx("card bg-dots relative flex flex-col items-center justify-center overflow-hidden px-6 py-16 text-center animate-fade-up", className)}>
-      <div className="orb -left-10 -top-10 h-40 w-40 bg-brand/30" />
-      <div className="orb -bottom-16 -right-10 h-44 w-44 bg-brand-3/25 [animation-delay:-5s]" />
+    <div className={clsx("card relative flex flex-col items-center justify-center overflow-hidden px-6 py-16 text-center animate-fade-up", className)}>
+      <div className="orb -left-10 -top-10 h-40 w-40 bg-clay-lavender" />
+      <div className="orb -bottom-16 -right-10 h-44 w-44 bg-clay-peach [animation-delay:-5s]" />
       {icon && (
-        <div className="relative mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-soft text-brand shadow-[var(--shadow-sm)] animate-pop">
+        <div className="clay-tile relative mb-4 h-16 w-16 rounded-[22px] bg-clay-lavender text-clay-lavender-ink animate-pop">
           {icon}
         </div>
       )}
-      <h3 className="relative text-lg font-semibold text-ink">{title}</h3>
+      <h3 className="relative text-xl font-extrabold text-ink">{title}</h3>
       {description && <p className="relative mt-1.5 max-w-md text-sm text-ink-2">{description}</p>}
       {action && <div className="relative mt-6">{action}</div>}
     </div>
@@ -104,12 +104,12 @@ export function Badge({
   const tones = {
     neutral: "bg-surface-3 text-ink-2 border-transparent",
     brand: "bg-brand-soft text-brand-ink border-transparent",
-    success: "bg-green-50 text-green-700 border-green-100",
-    warning: "bg-amber-50 text-amber-700 border-amber-100",
-    danger: "bg-red-50 text-red-700 border-red-100",
+    success: "bg-success-soft text-success-ink border-transparent",
+    warning: "bg-clay-lemon text-clay-lemon-ink border-transparent",
+    danger: "bg-danger-soft text-danger-ink border-transparent",
   };
   return (
-    <span className={clsx("inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium", tones[tone], className)}>
+    <span className={clsx("inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[11px] font-bold", tones[tone], className)}>
       {children}
     </span>
   );
@@ -149,7 +149,7 @@ export function Segmented<T extends string>({
   className?: string;
 }) {
   return (
-    <div className={clsx("inline-flex rounded-xl border bg-surface-3 p-0.5", className)} role="tablist">
+    <div className={clsx("clay-inset inline-flex rounded-full p-1", className)} role="tablist">
       {options.map((o) => (
         <button
           key={o.value}
@@ -157,7 +157,7 @@ export function Segmented<T extends string>({
           aria-selected={o.value === value}
           onClick={() => onChange(o.value)}
           className={clsx(
-            "rounded-[10px] px-3 py-1.5 text-[13px] font-medium transition-all duration-200",
+            "rounded-full px-3.5 py-1.5 text-[13px] font-bold transition-all duration-200",
             o.value === value ? "bg-surface text-ink shadow-[var(--shadow-sm)]" : "text-ink-2 hover:text-ink"
           )}
         >
@@ -181,7 +181,7 @@ export function Tooltip({ label, side = "right", children }: { label: string; si
       <span
         role="tooltip"
         className={clsx(
-          "pointer-events-none absolute z-50 whitespace-nowrap rounded-lg bg-inverse px-2 py-1 text-[11px] font-medium text-inverse-fg opacity-0 shadow-[var(--shadow-md)] transition-opacity duration-150 group-hover/tip:opacity-100",
+          "pointer-events-none absolute z-50 whitespace-nowrap rounded-xl bg-inverse px-2.5 py-1 text-[11px] font-bold text-inverse-fg opacity-0 shadow-[var(--shadow-md)] transition-opacity duration-150 group-hover/tip:opacity-100",
           pos
         )}
       >

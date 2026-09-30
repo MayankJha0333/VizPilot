@@ -88,7 +88,7 @@ export default function ReportsPage() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="card overflow-hidden">
-                <div className="skeleton h-44 rounded-none" />
+                <div className="skeleton m-2 h-40 rounded-[20px]" />
                 <div className="space-y-2 p-4">
                   <div className="skeleton h-4 w-2/3" />
                   <div className="skeleton h-3 w-1/2" />
@@ -119,7 +119,7 @@ export default function ReportsPage() {
               <tbody>
                 {filtered.map((r) => (
                   <tr key={r._id} className="cursor-pointer border-t transition-colors hover:bg-surface-2/70" onClick={() => router.push(`/reports/${r._id}`)}>
-                    <td className="px-4 py-3 font-medium text-ink">{r.title}</td>
+                    <td className="px-4 py-3 font-semibold text-ink">{r.title}</td>
                     <td className="hidden px-4 py-3 text-ink-2 md:table-cell">{r.dataset?.name ?? "—"}</td>
                     <td className="px-4 py-3 text-right tabular-nums">{r.chartCount ?? 0}</td>
                     <td className={clsx("hidden px-4 py-3 sm:table-cell")}>{r.isPublic ? <Badge tone="success">Public</Badge> : <Badge>Private</Badge>}</td>

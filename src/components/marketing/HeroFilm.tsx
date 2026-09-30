@@ -78,27 +78,27 @@ export function HeroFilm() {
   return (
     <div className="film-frame relative mx-auto w-full max-w-[1100px]">
       {/* glow under the window */}
-      <div className="pointer-events-none absolute -inset-x-10 -bottom-16 top-24 rounded-[48px] bg-[radial-gradient(60%_60%_at_50%_50%,rgba(76,95,213,0.45),transparent_70%)] blur-2xl" />
-      <div className="relative overflow-hidden rounded-[22px] border border-white/10 bg-[#f4f5f8] text-left shadow-[0_50px_120px_-40px_rgba(0,0,0,0.8),0_0_0_1px_rgba(255,255,255,0.04)]">
+      <div className="pointer-events-none absolute -inset-x-10 -bottom-16 top-24 rounded-[48px] bg-[radial-gradient(60%_60%_at_50%_50%,rgba(123,112,230,0.28),transparent_70%)] blur-2xl" />
+      <div className="relative overflow-hidden rounded-[34px] bg-bg p-2.5 text-left shadow-[var(--shadow-lg)]">
         {/* window chrome */}
-        <div className="flex items-center gap-2 border-b border-black/5 bg-white/80 px-4 py-2.5 backdrop-blur">
-          <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
-          <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
-          <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
-          <div className="mx-auto flex items-center gap-1.5 rounded-md bg-black/[0.04] px-3 py-1 text-[11px] text-ink-3">
+        <div className="flex items-center gap-2 px-3 pb-2.5 pt-1">
+          <span className="clay-tile h-3 w-3 rounded-full bg-clay-peach" />
+          <span className="clay-tile h-3 w-3 rounded-full bg-clay-lemon" />
+          <span className="clay-tile h-3 w-3 rounded-full bg-clay-mint" />
+          <div className="clay-inset mx-auto flex items-center gap-1.5 rounded-full px-4 py-1 text-[11px] font-bold text-ink-3">
             <span className="h-1.5 w-1.5 rounded-full bg-success" /> vizpilot.app/reports/q3-sales
           </div>
           <span className="w-12" />
         </div>
 
-        <div className="flex">
+        <div className="flex gap-2.5">
           {/* mini sidebar */}
-          <div className="hidden w-14 shrink-0 flex-col items-center gap-3 bg-[#0b0f1e] py-4 sm:flex">
-            <span className="gradient-brand flex h-8 w-8 items-center justify-center rounded-lg text-white">
+          <div className="clay hidden w-14 shrink-0 flex-col items-center gap-3 rounded-[22px] py-4 sm:flex">
+            <span className="clay-brand flex h-8 w-8 items-center justify-center rounded-[12px]">
               <BarChart3 className="h-4 w-4" />
             </span>
             {[Home, LayoutGrid, Database, Settings].map((I, k) => (
-              <span key={k} className={clsx("flex h-8 w-8 items-center justify-center rounded-lg", k === 1 ? "bg-white/10 text-white" : "text-white/40")}>
+              <span key={k} className={clsx("flex h-8 w-8 items-center justify-center rounded-[12px]", k === 1 ? "clay-inset text-brand" : "text-ink-3")}>
                 <I className="h-4 w-4" />
               </span>
             ))}
@@ -107,16 +107,16 @@ export function HeroFilm() {
           <div className="relative min-w-0 flex-1 p-3 sm:p-5">
             <div className="mb-3 flex items-center justify-between">
               <div>
-                <div className="text-sm font-semibold text-ink sm:text-base">Q3 sales review</div>
+                <div className="text-sm font-black text-ink sm:text-base">Q3 sales review</div>
                 <div className="text-[11px] text-ink-3">
                   E-commerce orders · 420 rows · <span className="tabular-nums">{count}</span> widget{count === 1 ? "" : "s"}
                 </div>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="hidden rounded-lg bg-brand-soft px-2.5 py-1.5 text-[11px] font-medium text-brand-ink sm:inline-flex">
+                <span className="hidden rounded-full bg-brand-soft px-3 py-1.5 text-[11px] font-extrabold text-brand-ink shadow-[var(--shadow-sm)] sm:inline-flex">
                   <Sparkles className="mr-1 h-3 w-3" /> Ask AI
                 </span>
-                <span className="rounded-lg bg-brand px-2.5 py-1.5 text-[11px] font-medium text-white">Share</span>
+                <span className="clay-brand rounded-full px-3 py-1.5 text-[11px] font-extrabold">Share</span>
               </div>
             </div>
 
@@ -133,9 +133,9 @@ export function HeroFilm() {
                       <Widget chart={charts[i]} rows={data.rows} columns={data.columns} theme="light" readOnly fill />
                     </div>
                   )}
-                  {!visible(i) && <div className="h-full rounded-[18px] border-2 border-dashed border-black/[0.06]" />}
+                  {!visible(i) && <div className="h-full rounded-[22px] shadow-[var(--clay-inset)]" />}
                   {phase.i === i && phase.step === "thinking" && (
-                    <div className="absolute inset-0 flex items-center justify-center rounded-[18px] border border-brand/30 bg-white/70 backdrop-blur-sm">
+                    <div className="absolute inset-0 flex items-center justify-center rounded-[22px] bg-surface/80 shadow-[var(--clay-inset)] backdrop-blur-sm">
                       <div className="flex items-center gap-2 text-xs font-medium text-brand">
                         <span className="typing-dot" />
                         <span className="typing-dot" style={{ animationDelay: "0.15s" }} />
@@ -150,14 +150,14 @@ export function HeroFilm() {
 
             {/* the Ask AI composer */}
             <div className="pointer-events-none absolute inset-x-0 bottom-5 flex justify-center px-4">
-              <div className={clsx("gradient-border flex w-full max-w-md items-center gap-2 rounded-2xl bg-white/95 p-1.5 pl-3 shadow-[0_18px_40px_-16px_rgba(11,15,30,0.45)] backdrop-blur transition-all duration-500", phase.step === "hold" || phase.step === "reset" ? "translate-y-3 opacity-0" : "opacity-100")}>
+              <div className={clsx("flex w-full max-w-md items-center gap-2 rounded-full bg-surface p-1.5 pl-4 shadow-[var(--shadow-md)] transition-all duration-500", phase.step === "hold" || phase.step === "reset" ? "translate-y-3 opacity-0" : "opacity-100")}>
                 <Sparkles className="h-4 w-4 shrink-0 text-brand" />
-                <span className="min-w-0 flex-1 truncate py-1.5 text-[13px] text-ink">
+                <span className="min-w-0 flex-1 truncate py-1.5 text-[13px] font-bold text-ink">
                   {typed}
                   {phase.step === "typing" && <span className="caret" />}
                   {!typed && <span className="text-ink-3">Ask about your data…</span>}
                 </span>
-                <span className={clsx("gradient-brand flex h-8 w-8 items-center justify-center rounded-xl text-white transition-transform", phase.step === "thinking" && "scale-90")}>
+                <span className={clsx("clay-brand flex h-9 w-9 items-center justify-center rounded-full transition-transform", phase.step === "thinking" && "scale-90")}>
                   <ArrowUp className="h-4 w-4" />
                 </span>
               </div>

@@ -83,13 +83,13 @@ export function DataTable({ columns, rows, editable = false, onChange, maxHeight
         <table className="w-full min-w-max border-collapse text-left text-[13px]">
           <thead className="sticky top-0 z-10 bg-surface-2">
             <tr>
-              <th className="w-10 border-b px-2 py-2 text-center text-[11px] font-medium text-ink-3">#</th>
+              <th className="w-10 border-b px-2 py-2 text-center text-[11px] font-semibold text-ink-3">#</th>
               {columns.map((col) => (
                 <th key={col.name} className="border-b border-l px-2 py-1.5 align-top">
                   <div className="flex items-center gap-1.5">
                     {editable ? (
                       <input
-                        className="w-full min-w-[110px] rounded-md bg-transparent px-1 py-0.5 text-[13px] font-semibold text-ink outline-none hover:bg-surface focus:bg-surface focus:ring-2 focus:ring-brand/30"
+                        className="w-full min-w-[110px] rounded-lg bg-transparent px-1 py-0.5 text-[13px] font-semibold text-ink outline-none hover:bg-surface focus:bg-surface focus:ring-2 focus:ring-brand/30"
                         defaultValue={col.name}
                         onBlur={(e) => renameColumn(col, e.target.value.trim())}
                         onKeyDown={(e) => e.key === "Enter" && (e.target as HTMLInputElement).blur()}
@@ -101,7 +101,7 @@ export function DataTable({ columns, rows, editable = false, onChange, maxHeight
                       <select
                         value={col.type}
                         onChange={(e) => setType(col, e.target.value as Column["type"])}
-                        className="rounded-md border bg-surface px-1 py-0.5 text-[11px] text-ink-2"
+                        className="rounded-lg border bg-surface px-1 py-0.5 text-[11px] text-ink-2"
                         title="Column type"
                       >
                         <option value="string">Text</option>
@@ -110,7 +110,7 @@ export function DataTable({ columns, rows, editable = false, onChange, maxHeight
                         <option value="boolean">Yes/No</option>
                       </select>
                     ) : (
-                      <span className="rounded-md bg-surface px-1.5 py-0.5 text-[10px] font-medium text-ink-3" title={col.type}>
+                      <span className="rounded-lg bg-surface px-1.5 py-0.5 text-[10px] font-semibold text-ink-3" title={col.type}>
                         {TYPE_BADGE[col.type]}
                       </span>
                     )}
@@ -124,7 +124,7 @@ export function DataTable({ columns, rows, editable = false, onChange, maxHeight
               ))}
               {editable && (
                 <th className="border-b border-l px-2 py-1.5">
-                  <button onClick={addColumn} className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] font-medium text-brand hover:bg-brand-soft">
+                  <button onClick={addColumn} className="inline-flex items-center gap-1 rounded-lg px-1.5 py-0.5 text-[11px] font-semibold text-brand hover:bg-brand-soft">
                     <Plus className="h-3 w-3" /> Column
                   </button>
                 </th>
@@ -149,7 +149,7 @@ export function DataTable({ columns, rows, editable = false, onChange, maxHeight
                     <td key={col.name} className={clsx("border-b border-l px-2 py-1 tabular-nums", col.type === "number" && "text-right")}>
                       {editable ? (
                         <input
-                          className="w-full min-w-[90px] rounded-md bg-transparent px-1 py-0.5 outline-none focus:bg-surface focus:ring-2 focus:ring-brand/30"
+                          className="w-full min-w-[90px] rounded-lg bg-transparent px-1 py-0.5 outline-none focus:bg-surface focus:ring-2 focus:ring-brand/30"
                           defaultValue={row[col.name] === null || row[col.name] === undefined ? "" : String(row[col.name])}
                           onBlur={(e) => updateCell(rowIndex, col, e.target.value)}
                         />
@@ -172,25 +172,25 @@ export function DataTable({ columns, rows, editable = false, onChange, maxHeight
           </tbody>
         </table>
       </div>
-      <div className="flex items-center justify-between gap-3 border-t bg-surface-2 px-3 py-2 text-xs text-ink-2">
+      <div className="flex items-center justify-between gap-3 bg-surface-2 px-3 py-2 text-xs font-semibold text-ink-2">
         <span>
           {rows.length.toLocaleString()} rows · {columns.length} columns
         </span>
         <div className="flex items-center gap-2">
           {editable && (
-            <button onClick={addRow} className="inline-flex items-center gap-1 rounded-md px-2 py-1 font-medium text-brand hover:bg-brand-soft">
+            <button onClick={addRow} className="inline-flex items-center gap-1 rounded-lg px-2 py-1 font-semibold text-brand hover:bg-brand-soft">
               <Plus className="h-3 w-3" /> Add row
             </button>
           )}
           {pages > 1 && (
             <>
-              <button disabled={page === 0} onClick={() => setPage((p) => p - 1)} className="rounded-md border bg-surface px-2 py-1 disabled:opacity-40">
+              <button disabled={page === 0} onClick={() => setPage((p) => p - 1)} className="clay-sm clay-press rounded-full px-3 py-1 font-bold disabled:opacity-40">
                 ‹
               </button>
               <span>
                 {page + 1} / {pages}
               </span>
-              <button disabled={page >= pages - 1} onClick={() => setPage((p) => p + 1)} className="rounded-md border bg-surface px-2 py-1 disabled:opacity-40">
+              <button disabled={page >= pages - 1} onClick={() => setPage((p) => p + 1)} className="clay-sm clay-press rounded-full px-3 py-1 font-bold disabled:opacity-40">
                 ›
               </button>
             </>

@@ -13,22 +13,22 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   loading?: boolean;
 }
 
+// Clay buttons: puffy, hue-tinted shadows, and they sink a little when pressed.
 const variants: Record<Variant, string> = {
-  primary:
-    "text-white gradient-brand shadow-[0_1px_0_rgba(255,255,255,0.2)_inset,var(--shadow-glow)] hover:brightness-110 hover:shadow-[0_1px_0_rgba(255,255,255,0.2)_inset,0_14px_34px_-10px_rgba(91,91,214,0.7)]",
-  secondary: "bg-inverse text-inverse-fg hover:opacity-90",
-  outline: "bg-surface text-ink border border-border-strong hover:bg-surface-2 hover:border-ink-3",
+  primary: "clay-brand hover:brightness-[1.06]",
+  secondary: "bg-inverse text-inverse-fg shadow-[var(--shadow-sm)] hover:opacity-90",
+  outline: "bg-surface text-ink shadow-[var(--shadow-sm)] hover:bg-surface-2",
   ghost: "bg-transparent text-ink-2 hover:bg-surface-3 hover:text-ink",
-  soft: "bg-brand-soft text-brand-ink hover:brightness-95",
-  danger: "bg-danger text-white hover:bg-red-700",
+  soft: "bg-brand-soft text-brand-ink shadow-[var(--shadow-sm)] hover:brightness-[0.97]",
+  danger: "bg-danger text-white shadow-[0_8px_18px_-8px_rgba(225,29,72,0.6),inset_0_-3px_6px_rgba(120,0,30,0.35),inset_0_3px_5px_rgba(255,255,255,0.3)] hover:brightness-110",
 };
 
 const sizes: Record<Size, string> = {
-  xs: "h-7 px-2.5 text-[12px] gap-1 rounded-lg",
-  sm: "h-8.5 px-3 text-[13px] gap-1.5 rounded-lg",
-  md: "h-10 px-4 text-sm gap-2 rounded-xl",
-  lg: "h-12 px-6 text-[15px] gap-2 rounded-xl",
-  icon: "h-9 w-9 rounded-lg",
+  xs: "h-7 px-3 text-[12px] gap-1 rounded-full",
+  sm: "h-9 px-3.5 text-[13px] gap-1.5 rounded-full",
+  md: "h-11 px-5 text-sm gap-2 rounded-[16px]",
+  lg: "h-13 px-7 text-[15px] gap-2 rounded-[18px]",
+  icon: "h-10 w-10 rounded-[14px]",
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
@@ -40,7 +40,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       ref={ref}
       disabled={disabled || loading}
       className={clsx(
-        "inline-flex select-none items-center justify-center whitespace-nowrap font-medium transition-[background,box-shadow,transform,filter,color,border-color] duration-200 ease-out focus-ring active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 disabled:active:scale-100",
+        "inline-flex select-none items-center justify-center whitespace-nowrap font-bold transition-[background,box-shadow,transform,filter,color,opacity] duration-150 ease-out focus-ring active:translate-y-px active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-55 disabled:active:translate-y-0 disabled:active:scale-100",
         variants[variant],
         sizes[size],
         className

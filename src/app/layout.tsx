@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { GeistSans } from "geist/font/sans";
+import "@fontsource-variable/nunito";
 import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 import { AuthProvider } from "@/components/auth/AuthProvider";
@@ -17,14 +17,14 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0b0f1e",
+  themeColor: "#eceefa",
   width: "device-width",
   initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-scroll-behavior="smooth" className={`${GeistSans.variable} ${GeistMono.variable} h-full antialiased`}>
+    <html lang="en" data-scroll-behavior="smooth" className={`${GeistMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <AuthProvider>
           <ToastProvider>

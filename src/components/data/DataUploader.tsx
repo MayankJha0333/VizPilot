@@ -105,13 +105,13 @@ export function DataUploader({ onReady, draft, initialMode }: Props) {
               setError(null);
             }}
             className={clsx(
-              "flex flex-col items-start gap-2 rounded-xl border p-3 text-left transition-all duration-200 hover:-translate-y-0.5",
+              "flex flex-col items-start gap-2 rounded-2xl border p-3 text-left transition-all duration-200 hover:-translate-y-0.5",
               mode === m.id ? "border-brand bg-brand-soft shadow-[0_0_0_3px_var(--ring)]" : "bg-surface hover:bg-surface-2"
             )}
           >
             <m.icon className={clsx("h-5 w-5", mode === m.id ? "text-brand" : "text-ink-3")} />
             <div>
-              <div className={clsx("text-sm font-medium", mode === m.id ? "text-brand-ink" : "text-ink")}>{m.label}</div>
+              <div className={clsx("text-sm font-semibold", mode === m.id ? "text-brand-ink" : "text-ink")}>{m.label}</div>
               <div className="text-[11px] text-ink-3">{m.hint}</div>
             </div>
           </button>
@@ -133,8 +133,8 @@ export function DataUploader({ onReady, draft, initialMode }: Props) {
           }}
           onClick={() => fileInput.current?.click()}
           className={clsx(
-            "bg-dots flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed px-6 py-12 text-center transition-colors",
-            dragging ? "border-brand bg-brand-soft/60" : "border-border-strong hover:border-brand/60"
+            "clay-inset flex cursor-pointer flex-col items-center justify-center rounded-[26px] border-2 border-dashed px-6 py-12 text-center transition-colors",
+            dragging ? "border-brand bg-brand-soft" : "border-border-strong hover:border-brand/60"
           )}
         >
           <input
@@ -152,7 +152,7 @@ export function DataUploader({ onReady, draft, initialMode }: Props) {
           <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-soft text-brand">
             <FileSpreadsheet className="h-6 w-6" />
           </div>
-          <p className="text-sm font-medium text-ink">{busy ? "Reading your file…" : "Drop a CSV or Excel file here"}</p>
+          <p className="text-sm font-semibold text-ink">{busy ? "Reading your file…" : "Drop a CSV or Excel file here"}</p>
           <p className="mt-1 text-xs text-ink-3">or click to browse · first row should be column names</p>
         </div>
       )}
@@ -184,22 +184,22 @@ export function DataUploader({ onReady, draft, initialMode }: Props) {
                 key={s.id}
                 onClick={() => onReady({ name: s.name, source: "sample", columns: s.columns, rows: s.rows })}
                 className={clsx(
-                  "card-hover group flex flex-col items-start gap-2 rounded-2xl border p-4 text-left",
-                  active ? "border-brand bg-brand-soft shadow-[0_0_0_3px_var(--ring)]" : "bg-surface"
+                  "card-hover group flex flex-col items-start gap-2 rounded-[22px] p-4 text-left",
+                  active ? "clay-inset ring-2 ring-brand/50" : "bg-surface shadow-[var(--card-shadow)]"
                 )}
                 data-testid={`sample-${s.id}`}
               >
                 <div className="flex w-full items-center justify-between">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-3 text-xl transition-transform duration-200 group-hover:scale-110">{s.emoji}</span>
+                  <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-surface-3 text-xl transition-transform duration-200 group-hover:scale-110">{s.emoji}</span>
                   {active && <span className="rounded-full bg-brand px-2 py-0.5 text-[10px] font-semibold text-white">Selected</span>}
                 </div>
                 <div className="text-sm font-semibold text-ink">{s.name}</div>
                 <div className="text-xs leading-relaxed text-ink-2">{s.description}</div>
                 <div className="mt-auto flex flex-wrap gap-1 pt-1">
-                  <span className="rounded-md bg-surface-3 px-1.5 py-0.5 text-[10px] text-ink-3">{s.rows.length} rows</span>
-                  <span className="rounded-md bg-surface-3 px-1.5 py-0.5 text-[10px] text-ink-3">{s.columns.length} cols</span>
+                  <span className="rounded-lg bg-surface-3 px-1.5 py-0.5 text-[10px] text-ink-3">{s.rows.length} rows</span>
+                  <span className="rounded-lg bg-surface-3 px-1.5 py-0.5 text-[10px] text-ink-3">{s.columns.length} cols</span>
                   {s.tags.map((t) => (
-                    <span key={t} className="rounded-md bg-brand-soft px-1.5 py-0.5 text-[10px] text-brand-ink">
+                    <span key={t} className="rounded-lg bg-brand-soft px-1.5 py-0.5 text-[10px] text-brand-ink">
                       {t}
                     </span>
                   ))}
@@ -211,9 +211,9 @@ export function DataUploader({ onReady, draft, initialMode }: Props) {
       )}
 
       {mode === "manual" && !draft && (
-        <div className="card bg-dots flex flex-col items-center px-6 py-10 text-center">
+        <div className="card flex flex-col items-center px-6 py-10 text-center">
           <Table2 className="mb-3 h-8 w-8 text-brand" />
-          <p className="text-sm font-medium">Start with a small table and edit it like a spreadsheet.</p>
+          <p className="text-sm font-semibold">Start with a small table and edit it like a spreadsheet.</p>
           <Button size="sm" className="mt-4" onClick={startManual}>
             Create blank table
           </Button>
@@ -221,7 +221,7 @@ export function DataUploader({ onReady, draft, initialMode }: Props) {
       )}
 
       {error && (
-        <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p role="alert" className="rounded-2xl bg-danger-soft px-4 py-2.5 text-sm font-bold text-danger-ink">
           {error}
         </p>
       )}
@@ -232,7 +232,7 @@ export function DataUploader({ onReady, draft, initialMode }: Props) {
             <div className="flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-success" />
               <input
-                className="rounded-md border-0 bg-transparent px-1 text-sm font-semibold text-ink outline-none focus:ring-2 focus:ring-brand/30"
+                className="rounded-lg border-0 bg-transparent px-1 text-sm font-semibold text-ink outline-none focus:ring-2 focus:ring-brand/30"
                 value={draft.name}
                 onChange={(e) => onReady({ ...draft, name: e.target.value })}
                 aria-label="Dataset name"

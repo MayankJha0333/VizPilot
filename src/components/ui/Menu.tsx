@@ -52,8 +52,8 @@ export function Menu({ trigger, items, align = "right", side = "bottom", classNa
       {open && (
         <div
           className={clsx(
-            "absolute z-40 min-w-[180px] overflow-hidden rounded-xl border bg-surface p-1 shadow-[var(--shadow-md)] animate-fade-up",
-            side === "top" ? "bottom-full mb-1" : "mt-1",
+            "absolute z-40 min-w-[190px] overflow-hidden rounded-[18px] bg-popover p-1.5 shadow-[var(--shadow-md)] animate-fade-up",
+            side === "top" ? "bottom-full mb-2" : "mt-2",
             align === "right" ? "right-0" : "left-0"
           )}
           role="menu"
@@ -70,8 +70,8 @@ export function Menu({ trigger, items, align = "right", side = "bottom", classNa
                 item.onClick();
               }}
               className={clsx(
-                "flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors disabled:opacity-50",
-                item.danger ? "text-danger hover:bg-red-50" : "text-ink hover:bg-surface-2"
+                "flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm font-semibold transition-colors disabled:opacity-50",
+                item.danger ? "text-danger-ink hover:bg-danger-soft" : "text-ink hover:bg-surface-2"
               )}
             >
               {item.icon && <span className="text-ink-3">{item.icon}</span>}

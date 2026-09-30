@@ -196,7 +196,7 @@ export function DashboardGrid({ layout, items, editable = false, onLayoutChange,
         {drag?.moved && (
           <div className="pointer-events-none absolute inset-0 animate-fade-in">
             {Array.from({ length: COLS }).map((_, i) => (
-              <div key={i} className={clsx("absolute inset-y-0 rounded-md", "bg-brand/[0.035]")} style={{ left: i * stepX, width: colW }} />
+              <div key={i} className={clsx("absolute inset-y-0 rounded-2xl", "bg-brand/[0.04]")} style={{ left: i * stepX, width: colW }} />
             ))}
           </div>
         )}
@@ -204,7 +204,7 @@ export function DashboardGrid({ layout, items, editable = false, onLayoutChange,
         {/* Placeholder where the widget will land */}
         {drag?.moved && active && (
           <div
-            className={clsx("pointer-events-none absolute left-0 top-0 rounded-[18px] border-2 border-dashed transition-transform duration-150 ease-out", "border-brand/50 bg-brand/[0.06]")}
+            className={clsx("pointer-events-none absolute left-0 top-0 rounded-[24px] shadow-[var(--clay-inset)] transition-transform duration-150 ease-out", "bg-brand/[0.08]")}
             style={{ ...sizeStyle(rect(active)), transform: `translate(${rect(active).left}px, ${rect(active).top}px)` }}
           />
         )}
@@ -229,7 +229,7 @@ export function DashboardGrid({ layout, items, editable = false, onLayoutChange,
                 style={{ ...sizeStyle(r), transform: `translate(${r.left}px, ${r.top}px)` }}
                 onPointerDown={(e) => start(e, it.id, "move")}
               >
-                <div className={clsx("h-full transition-[transform,box-shadow] duration-200", isActive && drag?.mode === "move" && "scale-[1.015] rotate-[0.4deg] rounded-[18px] shadow-[var(--shadow-lg)]")}>{it.node}</div>
+                <div className={clsx("h-full transition-[transform,box-shadow] duration-200", isActive && drag?.mode === "move" && "scale-[1.02] rotate-[0.4deg] rounded-[24px] shadow-[var(--shadow-lg)]")}>{it.node}</div>
                 {editable && (
                   <>
                     <span data-no-drag className="absolute inset-y-4 -right-1.5 z-20 w-3 cursor-ew-resize" onPointerDown={(e) => start(e, it.id, "e")} aria-hidden />
@@ -250,7 +250,7 @@ export function DashboardGrid({ layout, items, editable = false, onLayoutChange,
                       </svg>
                     </span>
                     {drag?.id === it.id && drag.moved && drag.mode !== "move" && (
-                      <span className="absolute bottom-3 right-3 z-30 rounded-md bg-inverse px-1.5 py-0.5 text-[10px] font-medium text-inverse-fg shadow">
+                      <span className="absolute bottom-3 right-3 z-30 rounded-full bg-inverse px-2 py-0.5 text-[10px] font-bold text-inverse-fg shadow-[var(--shadow-sm)]">
                         {byId.get(it.id)?.w} × {byId.get(it.id)?.h}
                       </span>
                     )}

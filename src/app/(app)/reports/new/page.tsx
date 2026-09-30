@@ -124,7 +124,7 @@ function NewReportWizard() {
   return (
     <div className="mx-auto max-w-4xl">
       <div className="mb-6 flex items-center gap-3">
-        <button onClick={() => (step === 2 ? setStep(1) : router.push("/dashboard"))} className="rounded-lg p-1.5 text-ink-3 hover:bg-surface-2 hover:text-ink" aria-label="Back">
+        <button onClick={() => (step === 2 ? setStep(1) : router.push("/dashboard"))} className="clay-sm clay-press rounded-[14px] p-2 text-ink-3 hover:text-ink" aria-label="Back">
           <ArrowLeft className="h-5 w-5" />
         </button>
         <div>
@@ -134,7 +134,7 @@ function NewReportWizard() {
         <ol className="ml-auto hidden items-center gap-2 text-xs sm:flex">
           {[1, 2].map((s) => (
             <li key={s} className={clsx("flex items-center gap-2", s <= step ? "text-brand" : "text-ink-3")}>
-              <span className={clsx("flex h-6 w-6 items-center justify-center rounded-full border text-[11px] font-semibold", s < step ? "border-brand bg-brand text-white" : s === step ? "border-brand" : "")}>
+              <span className={clsx("flex h-6 w-6 items-center justify-center rounded-full border text-[11px] font-semibold", s < step ? "clay-brand border-transparent" : s === step ? "border-brand text-brand-ink" : "")}>
                 {s < step ? <Check className="h-3 w-3" /> : s}
               </span>
               {s === 1 ? "Data" : "Report"}
@@ -147,9 +147,9 @@ function NewReportWizard() {
       {step === 1 && (
         <div key="step1" className="space-y-5 animate-fade-up">
           {existing.length > 0 && (
-            <div className="inline-flex rounded-lg border bg-surface-2 p-0.5">
+            <div className="clay-inset inline-flex rounded-full p-1">
               {(["new", "existing"] as const).map((t) => (
-                <button key={t} onClick={() => setTab(t)} className={clsx("rounded-md px-3 py-1.5 text-[13px] font-medium", tab === t ? "bg-surface text-ink shadow-[var(--shadow-sm)]" : "text-ink-2")}>
+                <button key={t} onClick={() => setTab(t)} className={clsx("rounded-full px-3.5 py-1.5 text-[13px] font-bold", tab === t ? "bg-surface text-ink shadow-[var(--shadow-sm)]" : "text-ink-2")}>
                   {t === "new" ? "Add new data" : `Use existing (${existing.length})`}
                 </button>
               ))}
@@ -171,11 +171,11 @@ function NewReportWizard() {
                       toast.error((err as Error).message);
                     }
                   }}
-                  className={clsx("flex items-start gap-3 rounded-xl border p-4 text-left transition-colors hover:bg-surface-2", existingFull?._id === d._id ? "border-brand bg-brand-soft" : "bg-surface")}
+                  className={clsx("flex items-start gap-3 rounded-2xl border p-4 text-left transition-colors hover:bg-surface-2", existingFull?._id === d._id ? "border-transparent clay-inset" : "bg-surface")}
                 >
                   <Database className="mt-0.5 h-5 w-5 text-brand" />
                   <div>
-                    <div className="text-sm font-medium">{d.name}</div>
+                    <div className="text-sm font-semibold">{d.name}</div>
                     <div className="text-xs text-ink-3">
                       {d.rowCount} rows · {d.columns.length} columns · {timeAgo(d.updatedAt)}
                     </div>
@@ -207,7 +207,7 @@ function NewReportWizard() {
                 <div className="label">Colour palette</div>
                 <div className="flex flex-wrap gap-2">
                   {PALETTES.map((p) => (
-                    <button key={p.id} onClick={() => setPalette(p.id)} className={clsx("flex items-center gap-2 rounded-full border px-2.5 py-1.5 text-xs font-medium", palette === p.id ? "border-brand bg-brand-soft text-brand-ink" : "text-ink-2 hover:bg-surface-2")}>
+                    <button key={p.id} onClick={() => setPalette(p.id)} className={clsx("flex items-center gap-2 rounded-full border px-2.5 py-1.5 text-xs font-semibold", palette === p.id ? "border-transparent clay-inset text-brand-ink" : "text-ink-2 hover:bg-surface-2")}>
                       <span className="flex gap-0.5">
                         {p.colors.slice(0, 4).map((c) => (
                           <span key={c} className="h-3 w-3 rounded-full" style={{ background: c }} />
@@ -233,7 +233,7 @@ function NewReportWizard() {
               {autoCharts && (
                 <div className="mt-4 grid gap-3 stagger stagger-auto sm:grid-cols-2">
                   {suggestions.map((s, i) => (
-                    <div key={i} className="card-hover rounded-xl border p-3">
+                    <div key={i} className="card-hover rounded-[20px] bg-surface p-3 shadow-[var(--shadow-sm)]">
                       <div className="truncate text-xs font-semibold">{s.title}</div>
                       <div className="mb-2 truncate text-[11px] text-ink-3">{s.reason}</div>
                       <div className="pointer-events-none">
@@ -249,7 +249,7 @@ function NewReportWizard() {
           <aside className="space-y-4">
             <div className="card p-5">
               <div className="text-xs font-semibold uppercase tracking-wide text-ink-3">Data</div>
-              <div className="mt-1 text-sm font-medium">{active.name}</div>
+              <div className="mt-1 text-sm font-semibold">{active.name}</div>
               <div className="text-xs text-ink-2">
                 {active.rows.length.toLocaleString()} rows · {active.columns.length} columns
               </div>

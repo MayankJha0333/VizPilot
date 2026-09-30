@@ -368,7 +368,7 @@ function ReportEditor({ id }: { id: string }) {
           </div>
         </div>
         <div className="mx-auto max-w-[1400px] px-6 py-8">
-          <h1 className="text-3xl font-semibold tracking-tight">{report.title}</h1>
+          <h1 className="text-3xl font-extrabold tracking-tight">{report.title}</h1>
           {report.description && <p className="mt-2 max-w-2xl text-ink-2">{report.description}</p>}
           <div className="mt-8">
             <DashboardGrid layout={layout} items={gridItems(true)} dark={dark} />
@@ -379,17 +379,17 @@ function ReportEditor({ id }: { id: string }) {
   }
 
   return (
-    <div data-theme={theme} className="flex min-h-[calc(100vh-56px)] flex-col bg-bg text-ink transition-colors duration-300 lg:min-h-screen">
+    <div data-theme={theme} className={clsx("flex min-h-[calc(100vh-56px)] flex-col bg-bg text-ink transition-colors duration-300", dark ? "overflow-clip lg:my-3 lg:mr-3 lg:min-h-[calc(100vh-24px)] lg:rounded-[28px] lg:shadow-[var(--shadow-lg)]" : "lg:min-h-screen")}>
       {/* Top bar */}
       <div className="glass sticky top-14 z-40 flex flex-wrap items-center gap-2 px-3 py-2 sm:h-14 sm:flex-nowrap sm:px-5 sm:py-0 lg:top-0">
         <Tooltip label="Back to home" side="bottom">
-          <Link href="/dashboard" className="rounded-lg p-1.5 text-ink-3 transition-colors hover:bg-surface-3 hover:text-ink" aria-label="Back">
+          <Link href="/dashboard" className="clay-sm clay-press flex h-9 w-9 items-center justify-center rounded-[14px] text-ink-3 transition-colors hover:text-ink" aria-label="Back">
             <ArrowLeft className="h-5 w-5" />
           </Link>
         </Tooltip>
         <div className="flex min-w-0 flex-1 flex-col">
           <input
-            className="min-w-0 rounded-lg bg-transparent px-2 py-0.5 text-base font-semibold text-ink outline-none transition-colors hover:bg-surface-3/70 focus:bg-surface focus:ring-2 focus:ring-brand/30 sm:text-lg"
+            className="min-w-0 rounded-xl bg-transparent px-2 py-0.5 text-base font-extrabold text-ink outline-none transition-colors hover:bg-surface-3/70 focus:bg-surface-2 focus:shadow-[var(--clay-inset)] sm:text-lg"
             value={report.title}
             onChange={(e) => setReport({ ...report, title: e.target.value })}
             onBlur={(e) => e.target.value.trim() && patchReport({ title: e.target.value.trim() })}
@@ -420,9 +420,9 @@ function ReportEditor({ id }: { id: string }) {
               aria-checked={dark}
               aria-label="Toggle theme"
               onClick={() => patchReport({ theme: dark ? "light" : "dark" })}
-              className="relative flex h-8 w-[62px] shrink-0 items-center justify-between rounded-full border bg-surface-3 px-2 text-ink-3 transition-colors hover:border-border-strong"
+              className="clay-inset relative flex h-9 w-[66px] shrink-0 items-center justify-between rounded-full px-2.5 text-ink-3 transition-colors"
             >
-              <span className={clsx("absolute top-[3px] h-6 w-6 rounded-full bg-surface shadow-[var(--shadow-sm)] ring-1 ring-border transition-transform duration-300 ease-[var(--ease-spring)]", dark ? "translate-x-[26px]" : "-translate-x-[3px]")} />
+              <span className={clsx("absolute top-[4px] h-7 w-7 rounded-full bg-surface shadow-[var(--shadow-sm)] transition-transform duration-300 ease-[var(--ease-spring)]", dark ? "translate-x-[26px]" : "-translate-x-[6px]")} />
               <Sun className={clsx("relative h-3.5 w-3.5 transition-colors", !dark && "text-warning")} />
               <Moon className={clsx("relative h-3.5 w-3.5 transition-colors", dark && "text-brand")} />
             </button>
@@ -453,7 +453,7 @@ function ReportEditor({ id }: { id: string }) {
           </Button>
           <Menu
             trigger={
-              <button className="rounded-lg p-2 text-ink-3 hover:bg-surface-3 hover:text-ink" aria-label="More">
+              <button className="clay-sm clay-press flex h-9 w-9 items-center justify-center rounded-full text-ink-3 hover:text-ink" aria-label="More">
                 <MoreHorizontal className="h-4 w-4" />
               </button>
             }
@@ -512,7 +512,7 @@ function ReportEditor({ id }: { id: string }) {
 
         {/* Floating AI composer */}
         {sources.length > 0 && !builder && (
-          <div className="pointer-events-none fixed inset-x-0 bottom-5 z-30 flex justify-center px-4 lg:left-[248px]">
+          <div className="pointer-events-none fixed inset-x-0 bottom-5 z-30 flex justify-center px-4 lg:left-[264px]">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -522,18 +522,18 @@ function ReportEditor({ id }: { id: string }) {
               }}
               className="pointer-events-auto w-full max-w-2xl animate-slide-up"
             >
-              <div className="gradient-border flex items-center gap-2 rounded-2xl bg-surface/95 p-1.5 pl-3 shadow-[var(--shadow-lg)] backdrop-blur transition-shadow focus-within:shadow-[0_0_0_3px_var(--ring),var(--shadow-lg)]">
-                <Sparkles className="h-4 w-4 shrink-0 text-brand" />
+              <div className="flex items-center gap-2 rounded-full border-[1.5px] border-[var(--input-border)] bg-surface p-2 pl-4 shadow-[var(--shadow-lg)] transition-shadow focus-within:shadow-[0_0_0_4px_var(--ring),var(--shadow-lg)]">
+                <span className="clay-tile h-8 w-8 shrink-0 rounded-full bg-clay-lavender text-clay-lavender-ink"><Sparkles className="h-4 w-4" /></span>
                 <input
                   ref={composerRef}
-                  className="min-w-0 flex-1 bg-transparent py-2 text-sm text-ink outline-none placeholder:text-ink-3"
+                  className="min-w-0 flex-1 bg-transparent py-2 text-sm font-semibold text-ink outline-none placeholder:text-ink-3"
                   placeholder={prompts[0] ? `Ask AI about your data… e.g. “${prompts[0]}”` : "Ask AI about your data…"}
                   value={composer}
                   onChange={(e) => setComposer(e.target.value)}
                   data-testid="ai-composer"
                 />
                 <span className="kbd hidden sm:inline-flex">⌘K</span>
-                <button type="submit" disabled={!composer.trim()} className="gradient-brand flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-white shadow-[var(--shadow-glow)] transition-transform hover:scale-105 disabled:opacity-40 disabled:hover:scale-100" aria-label="Ask">
+                <button type="submit" disabled={!composer.trim()} className="clay-brand clay-press flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-transform hover:-translate-y-0.5 disabled:opacity-40 disabled:hover:translate-y-0" aria-label="Ask">
                   <ArrowUp className="h-4 w-4" />
                 </button>
               </div>
@@ -578,7 +578,7 @@ function ReportEditor({ id }: { id: string }) {
             {reportSources.map((s) => {
               const on = (dataTab ?? reportSources[0].id) === s.id;
               return (
-                <button key={s.id} onClick={() => void getDataset(s.id).then(() => setDataTab(s.id))} className={clsx("inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium transition-colors", on ? "border-brand bg-brand-soft text-brand-ink" : "text-ink-2 hover:bg-surface-2")}>
+                <button key={s.id} onClick={() => void getDataset(s.id).then(() => setDataTab(s.id))} className={clsx("inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition-colors", on ? "clay-inset text-brand-ink" : "clay-sm clay-press text-ink-2")}>
                   <Database className="h-3 w-3" /> {s.name}
                 </button>
               );
@@ -593,9 +593,9 @@ function ReportEditor({ id }: { id: string }) {
 
       <Modal open={shareOpen} onClose={() => setShareOpen(false)} title="Share report" description="Publish a read-only link anyone can open, no login needed." size="sm">
         <div className="space-y-4">
-          <button onClick={() => patchReport({ isPublic: !report.isPublic })} className="flex w-full items-center justify-between rounded-xl border p-3 text-left transition-colors hover:bg-surface-2" data-testid="toggle-public">
+          <button onClick={() => patchReport({ isPublic: !report.isPublic })} className="clay-sm clay-press flex w-full items-center justify-between rounded-[20px] p-3 text-left transition-colors" data-testid="toggle-public">
             <div className="flex items-center gap-3">
-              <span className={clsx("flex h-9 w-9 items-center justify-center rounded-lg transition-colors", report.isPublic ? "bg-green-50 text-green-600" : "bg-surface-3 text-ink-3")}>
+              <span className={clsx("flex h-9 w-9 items-center justify-center rounded-lg transition-colors", report.isPublic ? "clay-tile bg-clay-mint text-clay-mint-ink" : "clay-tile bg-surface-3 text-ink-3")}>
                 <Globe className="h-4 w-4" />
               </span>
               <div>
@@ -603,8 +603,8 @@ function ReportEditor({ id }: { id: string }) {
                 <div className="text-xs text-ink-3">{report.isPublic ? "Anyone with the link can view" : "Currently only you can see this report"}</div>
               </div>
             </div>
-            <span className={clsx("relative h-5 w-9 rounded-full transition-colors", report.isPublic ? "bg-brand" : "bg-border-strong")}>
-              <span className={clsx("absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform", report.isPublic ? "translate-x-4" : "translate-x-0.5")} />
+            <span className={clsx("relative h-6 w-11 rounded-full shadow-[var(--clay-inset)] transition-colors", report.isPublic ? "bg-brand" : "bg-surface-3")}>
+              <span className={clsx("absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-[var(--shadow-sm)] transition-transform", report.isPublic ? "translate-x-[22px]" : "translate-x-0.5")} />
             </span>
           </button>
           {report.isPublic && shareUrl && (

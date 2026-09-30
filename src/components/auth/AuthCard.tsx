@@ -15,21 +15,26 @@ export function AuthCard({
   footer?: React.ReactNode;
 }) {
   return (
-    <div className="hero-glow bg-dots flex min-h-screen flex-col">
-      <header className="flex h-16 items-center px-6">
+    <div className="relative flex min-h-screen flex-col overflow-hidden bg-bg">
+      {/* soft clay pebbles floating behind the form */}
+      <span aria-hidden className="clay-blob animate-float -left-16 top-24 h-56 w-56 bg-clay-lavender" />
+      <span aria-hidden className="clay-blob animate-float -right-10 top-10 h-36 w-36 bg-clay-peach [animation-delay:-2s]" />
+      <span aria-hidden className="clay-blob animate-float bottom-10 right-[12%] h-24 w-24 bg-clay-mint [animation-delay:-4s]" />
+      <span aria-hidden className="clay-blob animate-float bottom-24 left-[14%] hidden h-16 w-16 bg-clay-sky [animation-delay:-3s] sm:block" />
+      <header className="relative flex h-16 items-center px-6">
         <Logo />
       </header>
-      <main className="flex flex-1 items-start justify-center px-4 pb-16 pt-6 sm:items-center sm:pt-0">
+      <main className="relative flex flex-1 items-start justify-center px-4 pb-16 pt-6 sm:items-center sm:pt-0">
         <div className="w-full max-w-[420px]">
-          <div className="card p-6 sm:p-8">
-            <h1 className="text-2xl font-semibold tracking-tight text-ink">{title}</h1>
-            {subtitle && <p className="mt-1.5 text-sm text-ink-2">{subtitle}</p>}
+          <div className="card rounded-[32px] p-6 sm:p-9">
+            <h1 className="text-[28px] font-extrabold tracking-tight text-ink">{title}</h1>
+            {subtitle && <p className="mt-1.5 text-sm font-semibold text-ink-2">{subtitle}</p>}
             <div className="mt-6">{children}</div>
           </div>
-          {footer && <p className="mt-5 text-center text-sm text-ink-2">{footer}</p>}
+          {footer && <p className="mt-5 text-center text-sm font-semibold text-ink-2">{footer}</p>}
         </div>
       </main>
-      <footer className="px-6 py-4 text-center text-xs text-ink-3">
+      <footer className="relative px-6 py-4 text-center text-xs font-semibold text-ink-3">
         By continuing you agree to our{" "}
         <Link href="/" className="underline hover:text-ink">
           terms

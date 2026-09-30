@@ -74,7 +74,7 @@ function SignupForm() {
       }
     >
       {!configured && (
-        <p className="mb-4 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-700">
+        <p className="mb-4 rounded-2xl bg-clay-lemon px-4 py-2.5 text-sm font-bold text-clay-lemon-ink">
           Firebase keys are missing in <code>.env</code>. Add them to enable sign-up.
         </p>
       )}
@@ -119,7 +119,7 @@ function SignupForm() {
           )}
         </Field>
         {error && (
-          <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+          <p role="alert" className="rounded-2xl bg-danger-soft px-4 py-2.5 text-sm font-bold text-danger-ink">
             {error}
           </p>
         )}

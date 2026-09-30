@@ -59,7 +59,7 @@ export function ChartEditor({ chart, columns, rows, onChange, onClose, embedded 
       {!embedded && (
       <div className="flex items-center justify-between border-b px-4 py-3">
         <div className="flex items-center gap-2.5">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-soft text-brand">
+          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand-soft text-brand">
             <SlidersHorizontal className="h-4 w-4" />
           </span>
           <div>
@@ -67,7 +67,7 @@ export function ChartEditor({ chart, columns, rows, onChange, onClose, embedded 
             <div className="text-xs text-ink-3">Changes save automatically</div>
           </div>
         </div>
-        <button onClick={onClose} className="rounded-lg p-1.5 text-ink-3 hover:bg-surface-2 hover:text-ink" aria-label="Close editor">
+        <button onClick={onClose} className="clay-sm clay-press rounded-[14px] p-2 text-ink-3 hover:text-ink" aria-label="Close editor">
           <X className="h-4 w-4" />
         </button>
       </div>
@@ -110,8 +110,8 @@ export function ChartEditor({ chart, columns, rows, onChange, onClose, embedded 
                       }}
                       title={t.hint}
                       className={clsx(
-                        "flex flex-col items-center gap-1 rounded-xl border px-2 py-2.5 text-[11px] font-medium transition-all duration-200 hover:-translate-y-0.5",
-                        active ? "border-brand bg-brand-soft text-brand-ink shadow-[0_0_0_3px_var(--ring)]" : "text-ink-2 hover:bg-surface-2"
+                        "flex flex-col items-center gap-1 rounded-2xl border px-2 py-2.5 text-[11px] font-semibold transition-all duration-200 hover:-translate-y-0.5",
+                        active ? "border-transparent clay-inset text-brand-ink shadow-[0_0_0_3px_var(--ring)]" : "text-ink-2 hover:bg-surface-2"
                       )}
                     >
                       <Icon className="h-4 w-4" />
@@ -155,7 +155,7 @@ export function ChartEditor({ chart, columns, rows, onChange, onClose, embedded 
                 {cfg.type !== "scatter" && cfg.type !== "table" && (
                   <button
                     onClick={() => setCfg({ yKeys: [], aggregate: "count" })}
-                    className={clsx("inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium transition-colors", cfg.yKeys.length === 0 && cfg.aggregate === "count" ? "border-brand bg-brand-soft text-brand-ink" : "text-ink-2 hover:bg-surface-2")}
+                    className={clsx("inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-semibold transition-colors", cfg.yKeys.length === 0 && cfg.aggregate === "count" ? "border-transparent clay-inset text-brand-ink" : "text-ink-2 hover:bg-surface-2")}
                     title="Count how many rows fall into each category"
                   >
                     {cfg.yKeys.length === 0 && cfg.aggregate === "count" && <Check className="h-3 w-3" />}# Count rows
@@ -164,7 +164,7 @@ export function ChartEditor({ chart, columns, rows, onChange, onClose, embedded 
                 {(cfg.type === "table" ? columns : numeric).map((c) => {
                   const on = cfg.yKeys.includes(c.name);
                   return (
-                    <button key={c.name} onClick={() => toggleY(c.name)} className={clsx("inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium transition-colors", on ? "border-brand bg-brand-soft text-brand-ink" : "text-ink-2 hover:bg-surface-2")}>
+                    <button key={c.name} onClick={() => toggleY(c.name)} className={clsx("inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-semibold transition-colors", on ? "border-transparent clay-inset text-brand-ink" : "text-ink-2 hover:bg-surface-2")}>
                       {on && <Check className="h-3 w-3" />}
                       {c.name}
                     </button>
@@ -225,7 +225,7 @@ export function ChartEditor({ chart, columns, rows, onChange, onClose, embedded 
                 <div className="label">Palette</div>
                 <div className="grid grid-cols-2 gap-2">
                   {PALETTES.map((p) => (
-                    <button key={p.id} onClick={() => setCfg({ palette: p.id })} className={clsx("flex items-center gap-2 rounded-xl border px-2.5 py-2 text-xs font-medium", cfg.palette === p.id ? "border-brand bg-brand-soft text-brand-ink" : "text-ink-2 hover:bg-surface-2")}>
+                    <button key={p.id} onClick={() => setCfg({ palette: p.id })} className={clsx("flex items-center gap-2 rounded-2xl border px-2.5 py-2 text-xs font-semibold", cfg.palette === p.id ? "border-transparent clay-inset text-brand-ink" : "text-ink-2 hover:bg-surface-2")}>
                       <span className="flex gap-0.5">
                         {p.colors.slice(0, 5).map((c, i) => (
                           <span key={c + i} className="h-3.5 w-2.5 first:rounded-l-full last:rounded-r-full" style={{ background: c }} />
@@ -282,7 +282,7 @@ export function FilterEditor({ filters, columns, rows, onChange }: { filters: Fi
       <div className="label">Filters</div>
       <div className="space-y-1.5">
         {filters.map((f, i) => (
-          <div key={i} className="flex items-center justify-between gap-2 rounded-lg border bg-surface-2 px-2.5 py-1.5 text-xs">
+          <div key={i} className="flex items-center justify-between gap-2 rounded-xl border bg-surface-2 px-2.5 py-1.5 text-xs">
             <span className="truncate">
               <strong>{f.column}</strong> {f.op} <span className="text-ink-2">{Array.isArray(f.value) ? f.value.join(", ") : String(f.value)}</span>
             </span>
@@ -325,7 +325,7 @@ export function FilterEditor({ filters, columns, rows, onChange }: { filters: Fi
         ) : (
           <input className="input h-9 py-1 text-xs" placeholder="Value" value={draftVal} onChange={(e) => setDraftVal(e.target.value)} />
         )}
-        <button onClick={add} disabled={!draftVal} className="flex h-9 items-center justify-center gap-1 rounded-lg border px-2.5 text-xs font-medium text-ink-2 hover:bg-surface-2 disabled:opacity-40">
+        <button onClick={add} disabled={!draftVal} className="flex h-9 items-center justify-center gap-1 rounded-xl border px-2.5 text-xs font-semibold text-ink-2 hover:bg-surface-2 disabled:opacity-40">
           <Plus className="h-3.5 w-3.5" /> Add
         </button>
       </div>
@@ -335,7 +335,7 @@ export function FilterEditor({ filters, columns, rows, onChange }: { filters: Fi
 
 export function Toggle({ label, value, onChange }: { label: string; value: boolean; onChange: (v: boolean) => void }) {
   return (
-    <button type="button" role="switch" aria-checked={value} onClick={() => onChange(!value)} className="flex w-full items-center justify-between rounded-lg px-1 py-1.5 text-sm text-ink hover:bg-surface-2">
+    <button type="button" role="switch" aria-checked={value} onClick={() => onChange(!value)} className="flex w-full items-center justify-between rounded-xl px-1 py-1.5 text-sm text-ink hover:bg-surface-2">
       {label}
       <span className={clsx("relative h-5 w-9 rounded-full transition-colors", value ? "bg-brand" : "bg-border-strong")}>
         <span className={clsx("absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform", value ? "translate-x-4" : "translate-x-0.5")} />
