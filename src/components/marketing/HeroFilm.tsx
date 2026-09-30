@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { clsx } from "clsx";
 import { ArrowUp, BarChart3, Database, Home, LayoutGrid, Settings, Sparkles } from "lucide-react";
 import { Widget } from "@/components/charts/Widget";
+import { useTheme } from "@/components/theme/ThemeProvider";
 import { getSample } from "@/lib/data/samples";
 import { DEFAULT_CONFIG, type ChartConfig, type ChartRecord } from "@/lib/charts/types";
 
@@ -32,6 +33,7 @@ const SCENES: Scene[] = [
 type Phase = { i: number; step: "typing" | "thinking" | "shown" | "hold" | "reset"; chars: number };
 
 export function HeroFilm() {
+  const { resolved } = useTheme();
   const data = useMemo(() => getSample("ecommerce-orders")!, []);
   const charts: ChartRecord[] = useMemo(
     () =>
@@ -130,7 +132,7 @@ export function HeroFilm() {
                 >
                   {visible(i) && (
                     <div className="h-full">
-                      <Widget chart={charts[i]} rows={data.rows} columns={data.columns} theme="light" readOnly fill />
+                      <Widget chart={charts[i]} rows={data.rows} columns={data.columns} theme={resolved} readOnly fill />
                     </div>
                   )}
                   {!visible(i) && <div className="h-full rounded-[22px] shadow-[var(--clay-inset)]" />}

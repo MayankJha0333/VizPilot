@@ -1082,7 +1082,7 @@ function DesignPanel({ config: cfg, setCfg, previewTheme, setPreviewTheme }: { c
         </div>
       </div>
       <p className="clay-inset rounded-2xl px-3 py-2 text-[11px] font-semibold text-ink-3">
-        Palettes are checked for colour-blind separation. The dashboard&apos;s light/dark theme is set from the report toolbar.
+        Palettes are checked for colour-blind separation. Your app theme is set from the sidebar; what viewers see is set in Share.
       </p>
     </div>
   );

@@ -18,6 +18,7 @@ import { Menu } from "@/components/ui/Menu";
 import { Modal } from "@/components/ui/Modal";
 import { EmptyState, PageLoader, Tooltip, Wordmark, timeAgo } from "@/components/ui/misc";
 import { useToast } from "@/components/ui/Toast";
+import { useTheme } from "@/components/theme/ThemeProvider";
 import { api } from "@/lib/api";
 import { suggestCharts } from "@/lib/charts/suggest";
 import { DEFAULT_CONFIG, type ChartConfig, type ChartRecord, type Column, type DatasetRecord, type DatasetSummary, type ReportRecord, type Row } from "@/lib/charts/types";
@@ -84,8 +85,9 @@ function ReportEditor({ id }: { id: string }) {
 
   const primaryId = report?.datasetId ?? null;
   const primary = primaryId ? datasets[primaryId] ?? null : null;
-  const theme = report?.theme ?? "light";
-  const dark = theme === "dark";
+  // The editor follows the person's app theme; the report's own theme is what viewers see (share link + Present).
+  const { resolved: appTheme } = useTheme();
+  const reportTheme = report?.theme ?? "light";
 
   // Sources: datasets used in this report first, then the rest of the workspace.
   const usedIds = useMemo(() => new Set([primaryId, ...charts.map((c) => c.datasetId)].filter(Boolean) as string[]), [primaryId, charts]);
@@ -341,7 +343,7 @@ function ReportEditor({ id }: { id: string }) {
             chart={c}
             rows={ds?.rows ?? EMPTY_ROWS}
             columns={ds?.columns ?? EMPTY_COLS}
-            theme={theme}
+            theme={readOnly ? reportTheme : appTheme}
             index={i}
             readOnly={readOnly}
             draggable={!readOnly}
@@ -357,9 +359,9 @@ function ReportEditor({ id }: { id: string }) {
 
   if (present) {
     return (
-      <div data-theme={theme} className="canvas-dots fixed inset-0 z-[85] overflow-y-auto text-ink animate-fade-in">
+      <div data-theme={reportTheme} className="canvas-dots fixed inset-0 z-[85] overflow-y-auto text-ink animate-fade-in">
         <div className="glass sticky top-0 z-40 flex items-center justify-between px-6 py-3">
-          <Wordmark dark={dark} size={24} />
+          <Wordmark size={24} />
           <div className="flex items-center gap-2">
             <span className="text-xs text-ink-3">Press Esc to exit</span>
             <Button size="sm" variant="ghost" onClick={() => setPresent(false)}>
@@ -371,7 +373,7 @@ function ReportEditor({ id }: { id: string }) {
           <h1 className="text-3xl font-extrabold tracking-tight">{report.title}</h1>
           {report.description && <p className="mt-2 max-w-2xl text-ink-2">{report.description}</p>}
           <div className="mt-8">
-            <DashboardGrid layout={layout} items={gridItems(true)} dark={dark} />
+            <DashboardGrid layout={layout} items={gridItems(true)} />
           </div>
         </div>
       </div>
@@ -379,7 +381,7 @@ function ReportEditor({ id }: { id: string }) {
   }
 
   return (
-    <div data-theme={theme} className={clsx("flex min-h-[calc(100vh-56px)] flex-col bg-bg text-ink transition-colors duration-300", dark ? "overflow-clip lg:my-3 lg:mr-3 lg:min-h-[calc(100vh-24px)] lg:rounded-[28px] lg:shadow-[var(--shadow-lg)]" : "lg:min-h-screen")}>
+    <div className="flex min-h-[calc(100vh-56px)] flex-col bg-bg text-ink lg:min-h-screen">
       {/* Top bar */}
       <div className="glass sticky top-14 z-40 flex flex-wrap items-center gap-2 px-3 py-2 sm:h-14 sm:flex-nowrap sm:px-5 sm:py-0 lg:top-0">
         <Tooltip label="Back to home" side="bottom">
@@ -414,19 +416,6 @@ function ReportEditor({ id }: { id: string }) {
           </div>
         </div>
         <div className="flex w-full items-center justify-end gap-1.5 sm:ml-auto sm:w-auto">
-          <Tooltip label={dark ? "Switch to light" : "Switch to dark"} side="bottom">
-            <button
-              role="switch"
-              aria-checked={dark}
-              aria-label="Toggle theme"
-              onClick={() => patchReport({ theme: dark ? "light" : "dark" })}
-              className="clay-inset relative flex h-9 w-[66px] shrink-0 items-center justify-between rounded-full px-2.5 text-ink-3 transition-colors"
-            >
-              <span className={clsx("absolute top-[4px] h-7 w-7 rounded-full bg-surface shadow-[var(--shadow-sm)] transition-transform duration-300 ease-[var(--ease-spring)]", dark ? "translate-x-[26px]" : "-translate-x-[6px]")} />
-              <Sun className={clsx("relative h-3.5 w-3.5 transition-colors", !dark && "text-warning")} />
-              <Moon className={clsx("relative h-3.5 w-3.5 transition-colors", dark && "text-brand")} />
-            </button>
-          </Tooltip>
           <Tooltip label="Present" side="bottom">
             <Button size="sm" variant="ghost" onClick={() => setPresent(true)} aria-label="Present" disabled={charts.length === 0}>
               <Play className="h-4 w-4" />
@@ -505,7 +494,6 @@ function ReportEditor({ id }: { id: string }) {
             layout={layout}
             items={gridItems(false)}
             editable
-            dark={dark}
             onLayoutChange={saveLayout}
           />
         )}
@@ -560,7 +548,7 @@ function ReportEditor({ id }: { id: string }) {
                 : null
         }
         sources={sources}
-        theme={theme}
+        theme={appTheme}
         palette={report.palette}
         reportTitle={report.title}
         onEditData={(dsId, next) => void saveDataset(dsId, next)}
@@ -613,7 +601,28 @@ function ReportEditor({ id }: { id: string }) {
               <CopyButton text={shareUrl} />
             </div>
           )}
-          <p className="text-xs text-ink-3">Tip: use Present (▶) for a clean full-screen view in meetings.</p>
+          <div className="flex items-center justify-between gap-3 rounded-[20px] px-1">
+            <div>
+              <div className="text-sm font-bold text-ink">Viewers see</div>
+              <div className="text-xs text-ink-3">Theme for the shared link and Present mode. Your own view follows your app theme.</div>
+            </div>
+            <div className="clay-inset inline-flex shrink-0 rounded-full p-1" role="radiogroup" aria-label="Theme for viewers">
+              {(["light", "dark"] as const).map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  role="radio"
+                  aria-checked={reportTheme === t}
+                  onClick={() => reportTheme !== t && patchReport({ theme: t })}
+                  className={clsx("inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold capitalize transition-all", reportTheme === t ? "bg-surface text-ink shadow-[var(--shadow-sm)]" : "text-ink-2 hover:text-ink")}
+                  data-testid={`viewer-theme-${t}`}
+                >
+                  {t === "light" ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />} {t}
+                </button>
+              ))}
+            </div>
+          </div>
+          <p className="text-xs text-ink-3">Tip: use Present (▶) to preview exactly what viewers see, full-screen.</p>
         </div>
       </Modal>
 

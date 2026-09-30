@@ -10,6 +10,7 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
 import { Badge, Field } from "@/components/ui/misc";
 import { useToast } from "@/components/ui/Toast";
+import { ThemePicker } from "@/components/theme/ThemeSwitch";
 import { api } from "@/lib/api";
 import type { ProviderStatus } from "@/lib/ai/types";
 
@@ -87,8 +88,17 @@ export default function SettingsPage() {
       <div className="mx-auto max-w-3xl space-y-6">
         <div className="animate-fade-up">
           <h1 className="text-3xl font-semibold tracking-tight">Settings</h1>
-          <p className="text-sm text-ink-2">Your account, AI providers and workspace status.</p>
+          <p className="text-sm text-ink-2">Your account, appearance, AI providers and workspace status.</p>
         </div>
+
+        {/* Appearance */}
+        <section className="card flex flex-wrap items-center justify-between gap-4 p-5 animate-fade-up" data-testid="appearance">
+          <div>
+            <h2 className="text-sm font-semibold">Appearance</h2>
+            <p className="mt-0.5 text-xs text-ink-3">Applies to the whole app on this device. System follows your computer&apos;s setting. Shared reports use their own theme (set in Share).</p>
+          </div>
+          <ThemePicker />
+        </section>
 
         {/* AI providers */}
         <section className="card overflow-hidden animate-fade-up">

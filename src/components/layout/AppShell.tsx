@@ -9,6 +9,7 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import { LogoMark, Tooltip, Wordmark } from "@/components/ui/misc";
 import { Menu } from "@/components/ui/Menu";
 import { CommandPalette } from "@/components/layout/CommandPalette";
+import { ThemeSwitch } from "@/components/theme/ThemeSwitch";
 
 const NAV = [
   { href: "/dashboard", label: "Home", icon: LayoutGrid, match: ["/dashboard", "/reports"] },
@@ -139,6 +140,14 @@ export function AppShell({ children, wide = false, title }: { children: React.Re
       )}
 
       <div className={clsx("mt-auto flex flex-col gap-1 px-3 pb-3", compact && "items-center")}>
+        {compact ? (
+          <ThemeSwitch compact className="mb-1" />
+        ) : (
+          <div className="mb-1 flex items-center justify-between rounded-2xl px-3 py-1.5 text-xs font-bold text-ink-3">
+            Appearance
+            <ThemeSwitch />
+          </div>
+        )}
         <button onClick={toggleCollapsed} className={clsx("hidden items-center gap-3 rounded-2xl px-3 py-2 text-xs font-bold text-ink-3 transition-colors hover:bg-surface-2 hover:text-ink lg:flex", compact && "justify-center px-0")} aria-label={compact ? "Expand sidebar" : "Collapse sidebar"}>
           {compact ? <ChevronsRight className="h-4 w-4" /> : <ChevronsLeft className="h-4 w-4" />}
           {!compact && "Collapse"}

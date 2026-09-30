@@ -5,6 +5,8 @@ import "./globals.css";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { ToastProvider } from "@/components/ui/Toast";
 import { RouteProgress } from "@/components/ui/misc";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
+import { THEME_BOOT_SCRIPT } from "@/components/theme/boot";
 
 export const metadata: Metadata = {
   title: {
@@ -17,21 +19,30 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#eceefa",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#eceefa" },
+    { media: "(prefers-color-scheme: dark)", color: "#11131f" },
+  ],
   width: "device-width",
   initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-scroll-behavior="smooth" className={`${GeistMono.variable} h-full antialiased`}>
+    // suppressHydrationWarning: the boot script sets data-theme on <html> before React loads.
+    <html lang="en" data-scroll-behavior="smooth" className={`${GeistMono.variable} h-full antialiased`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
+      </head>
       <body className="min-h-full flex flex-col">
-        <AuthProvider>
-          <ToastProvider>
-            <RouteProgress />
-            {children}
-          </ToastProvider>
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <ToastProvider>
+              <RouteProgress />
+              {children}
+            </ToastProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

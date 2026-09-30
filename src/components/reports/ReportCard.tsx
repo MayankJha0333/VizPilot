@@ -9,6 +9,7 @@ import { Menu } from "@/components/ui/Menu";
 import { timeAgo } from "@/components/ui/misc";
 import type { ChartRecord, ReportRecord, Row, Column } from "@/lib/charts/types";
 import { getPalette } from "@/lib/charts/types";
+import { useTheme } from "@/components/theme/ThemeProvider";
 
 export interface ReportListItem extends ReportRecord {
   dataset: { _id: string; name: string; rowCount: number } | null;
@@ -32,16 +33,18 @@ interface Props {
 export function ReportCard({ report, previewRows, previewColumns, onDuplicate, onDelete, compact }: Props) {
   const router = useRouter();
   const colors = getPalette(report.palette);
-  const dark = report.theme === "dark";
+  // Previews follow the app theme so the home page reads as one surface.
+  const { resolved: theme } = useTheme();
+  const dark = theme === "dark";
   const previewCfg = report.preview ? { ...report.preview.config, showLabels: false, showLegend: false } : null;
   return (
     <Link href={`/reports/${report._id}`} className="card card-hover group flex flex-col overflow-hidden" data-testid="report-card">
-      <div data-theme={report.theme} className={clsx("relative m-2 mb-0 overflow-hidden rounded-[20px] p-3 shadow-[var(--clay-inset)]", compact ? "h-32" : "h-44")} style={{ background: dark ? "#11131f" : `linear-gradient(135deg, ${colors[0]}26, ${colors[1]}1c 60%, ${colors[2]}14)` }}>
+      <div className={clsx("relative m-2 mb-0 overflow-hidden rounded-[20px] p-3 shadow-[var(--clay-inset)]", compact ? "h-32" : "h-44")} style={{ background: dark ? "#11131f" : `linear-gradient(135deg, ${colors[0]}26, ${colors[1]}1c 60%, ${colors[2]}14)` }}>
         {previewCfg && previewRows && previewColumns ? (
           <div className="h-full rounded-[16px] bg-surface p-2.5 shadow-[var(--shadow-sm)] transition-transform duration-300 group-hover:-translate-y-0.5">
             <div className="mb-1 truncate text-[10px] font-bold text-ink">{report.preview!.title}</div>
             <div className="pointer-events-none">
-              <ChartRenderer config={previewCfg} rows={previewRows} columns={previewColumns} theme={report.theme} height={compact ? 80 : 118} compact animate={false} text={report.preview!.note} />
+              <ChartRenderer config={previewCfg} rows={previewRows} columns={previewColumns} theme={theme} height={compact ? 80 : 118} compact animate={false} text={report.preview!.note} />
             </div>
           </div>
         ) : previewCfg ? (

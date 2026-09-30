@@ -720,6 +720,9 @@
     transform: rotate(-1.5deg);
     box-shadow: 0 10px 20px -10px rgba(var(--clay-rgb), 0.45), inset 0 -4px 8px rgba(var(--clay-rgb), 0.14), inset 0 4px 7px rgba(255, 255, 255, 0.7);
   }
+  [data-theme="dark"] .clay-mark {
+    box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.7), inset 0 -4px 8px rgba(0, 0, 0, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.1);
+  }
   .clay-mark.peach {
     color: var(--clay-peach-ink);
     background: var(--clay-peach);
@@ -904,6 +907,13 @@
     animation-duration: 7s;
     animation-iteration-count: infinite;
     animation-timing-function: var(--ease-out);
+  }
+  [data-theme="dark"] .mg-block {
+    box-shadow: 0 10px 18px -10px rgba(0, 0, 0, 0.7), inset 0 -4px 8px rgba(0, 0, 0, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.08);
+  }
+  [data-theme="dark"] .mg-line {
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 10px 0 rgba(255, 255, 255, 0.18), 0 20px 0 rgba(255, 255, 255, 0.1);
   }
   .mg-a {
     animation-name: mg-a;
