@@ -15,11 +15,12 @@ interface MenuProps {
   trigger: React.ReactNode;
   items: MenuItem[];
   align?: "left" | "right";
+  side?: "top" | "bottom";
   className?: string;
 }
 
 /** Tiny dropdown menu (no external deps). */
-export function Menu({ trigger, items, align = "right", className }: MenuProps) {
+export function Menu({ trigger, items, align = "right", side = "bottom", className }: MenuProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -51,7 +52,8 @@ export function Menu({ trigger, items, align = "right", className }: MenuProps) 
       {open && (
         <div
           className={clsx(
-            "absolute z-40 mt-1 min-w-[180px] overflow-hidden rounded-xl border bg-surface p-1 shadow-[var(--shadow-md)] animate-fade-up",
+            "absolute z-40 min-w-[180px] overflow-hidden rounded-xl border bg-surface p-1 shadow-[var(--shadow-md)] animate-fade-up",
+            side === "top" ? "bottom-full mb-1" : "mt-1",
             align === "right" ? "right-0" : "left-0"
           )}
           role="menu"
